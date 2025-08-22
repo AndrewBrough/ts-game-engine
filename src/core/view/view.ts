@@ -1,4 +1,4 @@
-import { getContext } from '../canvas/canvas';
+import { getContext, getCanvas } from '../canvas/canvas';
 import { config, textConfig } from '../config';
 import {
   convertPositionToPixels,
@@ -35,6 +35,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     anchor,
     position,
     units,
+    relativeTo,
     shapeProps,
     textProps,
   } = mergedProps;
@@ -42,7 +43,51 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
 
   console.log(mergedProps);
 
+  const getScreenRelativePosition = (): { x: number; y: number } => {
+    const canvas = getCanvas();
+    const screenWidth = canvas.width;
+    const screenHeight = canvas.height;
+    
+    // Convert position to pixels for offset from the screen corner/center
+    const pixelOffset = convertPositionToPixels(position.x, position.y, units);
+    
+    switch (relativeTo) {
+      case 'top-right':
+        return { 
+          x: screenWidth - pixelOffset.x, 
+          y: pixelOffset.y 
+        };
+      case 'top-left':
+        return { 
+          x: pixelOffset.x, 
+          y: pixelOffset.y 
+        };
+      case 'bottom-right':
+        return { 
+          x: screenWidth - pixelOffset.x, 
+          y: screenHeight - pixelOffset.y 
+        };
+      case 'bottom-left':
+        return { 
+          x: pixelOffset.x, 
+          y: screenHeight - pixelOffset.y 
+        };
+      case 'center':
+        return { 
+          x: screenWidth / 2 + pixelOffset.x, 
+          y: screenHeight / 2 + pixelOffset.y 
+        };
+      default:
+        return pixelOffset;
+    }
+  };
+
   const getAnchorPosition = (): { x: number; y: number } => {
+    // If relativeTo is specified, use screen-relative positioning
+    if (relativeTo) {
+      return getScreenRelativePosition();
+    }
+    
     // Convert position and size to pixels
     const pixelPosition = convertPositionToPixels(
       position.x,
@@ -76,6 +121,41 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     ctx: CanvasRenderingContext2D,
     text: string
   ): { x: number; y: number } => {
+    // If relativeTo is specified, use screen-relative positioning for text
+    if (relativeTo) {
+      const screenPos = getScreenRelativePosition();
+      const pixelSize = convertSizeToPixels(width, height, units);
+      const pixelFontSize = convertFontSizeToPixels(fontSize, units);
+
+      // Set font first to get accurate metrics
+      ctx.font = `${pixelFontSize}px Arial`;
+      const metrics = ctx.measureText(text);
+
+      // Use actual ascent if available, otherwise estimate
+      const ascent = metrics.actualBoundingBoxAscent || pixelFontSize * 0.8;
+
+      switch (relativeTo) {
+        case 'top-right':
+          return {
+            x: screenPos.x - metrics.width,
+            y: screenPos.y + ascent,
+          };
+        case 'top-left':
+          return { x: screenPos.x, y: screenPos.y + ascent };
+        case 'bottom-right':
+          return { x: screenPos.x - metrics.width, y: screenPos.y };
+        case 'bottom-left':
+          return { x: screenPos.x, y: screenPos.y };
+        case 'center':
+          return {
+            x: screenPos.x - metrics.width / 2,
+            y: screenPos.y + ascent / 2,
+          };
+        default:
+          return screenPos;
+      }
+    }
+    
     // Convert position, size, and font size to pixels
     const pixelPosition = convertPositionToPixels(
       position.x,

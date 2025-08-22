@@ -23,6 +23,10 @@ export type ViewRenderProps = {
    * Units for position and size values
    */
   units: Units;
+  /**
+   * Position relative to screen corners or center (ignores anchor when used)
+   */
+  relativeTo?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
   shape: 'rect' | 'circle' | 'line' | 'text';
   shapeProps: {
     width: number;

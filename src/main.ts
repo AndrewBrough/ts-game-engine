@@ -19,6 +19,27 @@ window.onload = () => {
 
   createView({
     position: { x: 1, y: 1 },
+    relativeTo: 'top-right',
+    textProps: {
+      text: "Hello World",
+    },
+  });
+  createView({
+    position: { x: 1, y: 1 },
+    relativeTo: 'bottom-left',
+    fill: {
+      color: 'red',
+    },
+    textProps: {
+      text: "Hello World",
+    },
+  });
+  createView({
+    position: { x: 1, y: 1 },
+    relativeTo: 'bottom-right',
+    fill: {
+      color: 'blue',
+    },
     textProps: {
       text: "Hello World",
     },
