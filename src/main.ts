@@ -15,12 +15,8 @@ window.onload = () => {
     units: 'vh',
     anchor: 'top-left',
     shape: 'text',
-    stroke: {
-      color: 'red',
-    },
     textProps: {
       text: testModel.score,
-      fontSize: 3,
     },
   });
 

@@ -1,3 +1,4 @@
+import type { DeepPartial } from './types';
 import type { ViewRenderProps } from './view/types';
 
 export type Units = 'px' | 'vh' | 'vw';
@@ -19,12 +20,12 @@ export const config: Config = {
   shape: 'rect',
   shapeProps: {
     radius: 0,
-    width: 100,
-    height: 100,
+    width: 0,
+    height: 0,
   },
   textProps: {
     text: 'Hello, world!',
-    fontSize: 16,
+    fontSize: 3,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
@@ -32,5 +33,22 @@ export const config: Config = {
   position: {
     x: 0,
     y: 0,
+  },
+};
+
+export const textConfig: DeepPartial<Config> = {
+  shape: 'text',
+  fill: {
+    color: 'white',
+  },
+  stroke: {
+    color: 'transparent',
+    width: 0,
+  },
+  textProps: {
+    fontFamily: 'Arial',
+    fontWeight: 'normal',
+    fontStyle: 'normal',
+    fontSize: 5,
   },
 };

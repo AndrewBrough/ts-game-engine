@@ -1,17 +1,19 @@
 import { getContext } from '../canvas/canvas';
-import { config } from '../config';
+import { config, textConfig } from '../config';
 import {
   convertPositionToPixels,
   convertSizeToPixels,
   convertFontSizeToPixels,
   addResizeListener,
 } from '../conversions';
+import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
 import type { ViewRenderProps } from './types';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
-  // Merge with config defaults
-  const mergedProps = { ...config, ...props } as ViewRenderProps;
+  // Merge with config defaults using deep merge
+  const baseConfig = { ...config, ...(props.shape === 'text' ? textConfig : {}) };
+  const mergedProps = deepMerge(baseConfig, props) as ViewRenderProps;
   const {
     fill,
     stroke,
@@ -23,6 +25,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     textProps,
   } = mergedProps;
   const { width, height } = shapeProps;
+
+  console.log(mergedProps);
 
   const getAnchorPosition = (): { x: number; y: number } => {
     // Convert position and size to pixels
