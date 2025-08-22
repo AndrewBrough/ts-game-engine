@@ -1,15 +1,17 @@
+import type { Units } from '../config';
+
 export type ViewRenderProps = {
-  fill?: {
-    color?: string;
+  fill: {
+    color: string;
   };
-  stroke?: {
-    color?: string;
-    width?: number;
+  stroke: {
+    color: string;
+    width: number;
   };
   /**
    * Position to start drawing from
    */
-  anchor?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
+  anchor: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
   /**
    * Relative to the anchor position
    */
@@ -17,17 +19,21 @@ export type ViewRenderProps = {
     x: number;
     y: number;
   };
+  /**
+   * Units for position and size values
+   */
+  units: Units;
   shape: 'rect' | 'circle' | 'line' | 'text';
-  shapeProps?: {
-    width?: number;
-    height?: number;
-    radius?: number;
+  shapeProps: {
+    width: number;
+    height: number;
+    radius: number;
   };
-  textProps?: {
-    text?: string | number;
-    fontSize?: number;
-    fontFamily?: string;
-    fontWeight?: string;
-    fontStyle?: string;
+  textProps: {
+    text: string | number;
+    fontSize: number;
+    fontFamily: string;
+    fontWeight: string;
+    fontStyle: string;
   };
 };

@@ -1,23 +1,55 @@
 import { getContext } from '../canvas/canvas';
+import { config } from '../config';
+import {
+  convertPositionToPixels,
+  convertSizeToPixels,
+  convertFontSizeToPixels,
+  addResizeListener,
+} from '../conversions';
+import type { DeepPartial } from '../types';
 import type { ViewRenderProps } from './types';
 
-export const createView = (props: ViewRenderProps) => {
-  const { fill, stroke, shape, anchor, position, shapeProps, textProps } =
-    props;
-  const { width = 0, height = 0 } = shapeProps ?? {};
+export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
+  // Merge with config defaults
+  const mergedProps = { ...config, ...props } as ViewRenderProps;
+  const {
+    fill,
+    stroke,
+    shape,
+    anchor,
+    position,
+    units,
+    shapeProps,
+    textProps,
+  } = mergedProps;
+  const { width, height } = shapeProps;
 
   const getAnchorPosition = (): { x: number; y: number } => {
+    // Convert position and size to pixels
+    const pixelPosition = convertPositionToPixels(
+      position.x,
+      position.y,
+      units
+    );
+    const pixelSize = convertSizeToPixels(width, height, units);
+
     switch (anchor) {
       case 'top-right':
-        return { x: position.x + width, y: position.y };
+        return { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y };
       case 'top-left':
-        return { x: position.x, y: position.y };
+        return { x: pixelPosition.x, y: pixelPosition.y };
       case 'bottom-right':
-        return { x: position.x + width, y: position.y + height };
+        return {
+          x: pixelPosition.x + pixelSize.width,
+          y: pixelPosition.y + pixelSize.height,
+        };
       case 'bottom-left':
-        return { x: position.x, y: position.y + height };
+        return { x: pixelPosition.x, y: pixelPosition.y + pixelSize.height };
       default:
-        return { x: position.x + width / 2, y: position.y + height / 2 };
+        return {
+          x: pixelPosition.x + pixelSize.width / 2,
+          y: pixelPosition.y + pixelSize.height / 2,
+        };
     }
   };
 
@@ -26,25 +58,40 @@ export const createView = (props: ViewRenderProps) => {
     ctx: CanvasRenderingContext2D,
     text: string
   ): { x: number; y: number } => {
+    // Convert position, size, and font size to pixels
+    const pixelPosition = convertPositionToPixels(
+      position.x,
+      position.y,
+      units
+    );
+    const pixelSize = convertSizeToPixels(width, height, units);
+    const pixelFontSize = convertFontSizeToPixels(fontSize, units);
+
     // Set font first to get accurate metrics
-    ctx.font = `${fontSize}px Arial`;
+    ctx.font = `${pixelFontSize}px Arial`;
     const metrics = ctx.measureText(text);
 
     // Use actual ascent if available, otherwise estimate
-    const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
+    const ascent = metrics.actualBoundingBoxAscent || pixelFontSize * 0.8;
 
     switch (anchor) {
       case 'top-right':
-        return { x: position.x + width, y: position.y + ascent };
+        return {
+          x: pixelPosition.x + pixelSize.width,
+          y: pixelPosition.y + ascent,
+        };
       case 'top-left':
-        return { x: position.x, y: position.y + ascent };
+        return { x: pixelPosition.x, y: pixelPosition.y + ascent };
       case 'bottom-right':
-        return { x: position.x + width, y: position.y };
+        return { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y };
       case 'bottom-left':
-        return { x: position.x, y: position.y };
+        return { x: pixelPosition.x, y: pixelPosition.y };
       default:
         // For center anchor, position text so it's centered vertically
-        return { x: position.x + width / 2, y: position.y + ascent / 2 };
+        return {
+          x: pixelPosition.x + pixelSize.width / 2,
+          y: pixelPosition.y + ascent / 2,
+        };
     }
   };
 
@@ -58,37 +105,39 @@ export const createView = (props: ViewRenderProps) => {
       throw new Error('Context not found');
     }
 
-    ctx.fillStyle = fill?.color ?? 'pink';
-    ctx.strokeStyle = stroke?.color ?? 'violet';
-    ctx.lineWidth = stroke?.width ?? 1;
+    ctx.fillStyle = fill.color;
+    ctx.strokeStyle = stroke.color;
+    ctx.lineWidth = stroke.width;
 
     const { x, y } = getAnchorPosition();
+    const pixelSize = convertSizeToPixels(width, height, units);
 
     const {
-      text = '🐞',
-      fontSize = 32,
-      fontFamily = 'Arial',
-      fontWeight = 'normal',
-      fontStyle = 'normal',
-    } = textProps ?? {};
+      text,
+      fontSize,
+      fontFamily,
+      fontWeight,
+      fontStyle,
+    } = textProps;
 
     switch (shape) {
       case 'rect':
-        ctx.fillRect(x, y, width, height);
-        ctx.strokeRect(x, y, width, height);
+        ctx.fillRect(x, y, pixelSize.width, pixelSize.height);
+        ctx.strokeRect(x, y, pixelSize.width, pixelSize.height);
         break;
       case 'circle':
-        ctx.fillRect(x, y, width, height);
-        ctx.ellipse(x, y, width, height, 0, 0, 2 * Math.PI);
+        ctx.fillRect(x, y, pixelSize.width, pixelSize.height);
+        ctx.ellipse(x, y, pixelSize.width, pixelSize.height, 0, 0, 2 * Math.PI);
         break;
       case 'line':
-        ctx.fillRect(x, y, width, height);
-        ctx.strokeRect(x, y, width, height);
+        ctx.fillRect(x, y, pixelSize.width, pixelSize.height);
+        ctx.strokeRect(x, y, pixelSize.width, pixelSize.height);
         break;
       case 'text': {
-        const textStr = text?.toString() || '';
+        const textStr = text.toString();
+        const pixelFontSize = convertFontSizeToPixels(fontSize, units);
         const textPos = getTextAnchorPosition(fontSize, ctx, textStr);
-        ctx.font = `${fontWeight} ${fontStyle} ${fontSize}px ${fontFamily}`;
+        ctx.font = `${fontWeight} ${fontStyle} ${pixelFontSize}px ${fontFamily}`;
         ctx.fillText(textStr, textPos.x, textPos.y);
         ctx.strokeText(textStr, textPos.x, textPos.y);
         break;
@@ -97,7 +146,7 @@ export const createView = (props: ViewRenderProps) => {
   };
 
   const bindEvents = () => {
-    window.addEventListener('resize', () => {
+    addResizeListener(() => {
       draw();
     });
   };

@@ -9,13 +9,18 @@ window.onload = () => {
 
   createView({
     position: {
-      x: 20,
-      y: 20,
+      x: 1,
+      y: 1,
     },
+    units: 'vh',
     anchor: 'top-left',
     shape: 'text',
+    stroke: {
+      color: 'red',
+    },
     textProps: {
       text: testModel.score,
+      fontSize: 3,
     },
   });
 
