@@ -8,7 +8,8 @@ import {
 } from '../conversions';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
-import type { ViewRenderProps } from './types';
+import type { View, ViewRenderProps } from './types';
+import { addView } from '../state/state';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
   // Auto-detect text shape if textProps.text has content and shape isn't explicitly set
@@ -40,8 +41,6 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     textProps,
   } = mergedProps;
   const { width, height } = shapeProps;
-
-  console.log(mergedProps);
 
   const getScreenRelativePosition = (): { x: number; y: number } => {
     const canvas = getCanvas();
@@ -120,11 +119,10 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     fontSize: number,
     ctx: CanvasRenderingContext2D,
     text: string
-  ): { x: number; y: number } => {
+  ): View => {
     // If relativeTo is specified, use screen-relative positioning for text
     if (relativeTo) {
       const screenPos = getScreenRelativePosition();
-      const pixelSize = convertSizeToPixels(width, height, units);
       const pixelFontSize = convertFontSizeToPixels(fontSize, units);
 
       // Set font first to get accurate metrics
@@ -137,22 +135,34 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
       switch (relativeTo) {
         case 'top-right':
           return {
-            x: screenPos.x - metrics.width,
-            y: screenPos.y + ascent,
+            position: {
+              x: screenPos.x - metrics.width,
+              y: screenPos.y + ascent,
+            },
+            size: {
+              width: metrics.width,
+              height: ascent,
+            },
           };
         case 'top-left':
-          return { x: screenPos.x, y: screenPos.y + ascent };
+          return { position: { x: screenPos.x, y: screenPos.y + ascent }, size: { width: metrics.width, height: ascent } };
         case 'bottom-right':
-          return { x: screenPos.x - metrics.width, y: screenPos.y };
+          return { position: { x: screenPos.x - metrics.width, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
         case 'bottom-left':
-          return { x: screenPos.x, y: screenPos.y };
+          return { position: { x: screenPos.x, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
         case 'center':
           return {
-            x: screenPos.x - metrics.width / 2,
-            y: screenPos.y + ascent / 2,
+            position: {
+              x: screenPos.x - metrics.width / 2,
+              y: screenPos.y + ascent / 2,
+            },
+            size: {
+              width: metrics.width,
+              height: ascent,
+            },
           };
         default:
-          return screenPos;
+          return { position: screenPos, size: { width: metrics.width, height: ascent } };
       }
     }
     
@@ -175,20 +185,32 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     switch (anchor) {
       case 'top-right':
         return {
-          x: pixelPosition.x + pixelSize.width,
-          y: pixelPosition.y + ascent,
+          position: {
+            x: pixelPosition.x + pixelSize.width,
+            y: pixelPosition.y + ascent,
+          },
+          size: {
+            width: metrics.width,
+            height: ascent,
+          },
         };
       case 'top-left':
-        return { x: pixelPosition.x, y: pixelPosition.y + ascent };
+        return { position: { x: pixelPosition.x, y: pixelPosition.y + ascent }, size: { width: metrics.width, height: ascent } };
       case 'bottom-right':
-        return { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y };
+        return { position: { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
       case 'bottom-left':
-        return { x: pixelPosition.x, y: pixelPosition.y };
+        return { position: { x: pixelPosition.x, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
       default:
         // For center anchor, position text so it's centered vertically
         return {
-          x: pixelPosition.x + pixelSize.width / 2,
-          y: pixelPosition.y + ascent / 2,
+          position: {
+            x: pixelPosition.x + pixelSize.width / 2,
+            y: pixelPosition.y + ascent / 2,
+          },
+          size: {
+            width: metrics.width,
+            height: ascent,
+          },
         };
     }
   };
@@ -218,6 +240,17 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
       fontStyle,
     } = textProps;
 
+    const view: View = {
+      position: {
+        x,
+        y,
+      },
+      size: {
+        width: pixelSize.width,
+        height: pixelSize.height,
+      },
+    };
+
     switch (shape) {
       case 'rect':
         ctx.fillRect(x, y, pixelSize.width, pixelSize.height);
@@ -235,12 +268,16 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
         const textStr = text.toString();
         const pixelFontSize = convertFontSizeToPixels(fontSize, units);
         const textPos = getTextAnchorPosition(fontSize, ctx, textStr);
+        view.size.width = textPos.size.width;
+        view.size.height = textPos.size.height;
         ctx.font = `${fontWeight} ${fontStyle} ${pixelFontSize}px ${fontFamily}`;
-        ctx.fillText(textStr, textPos.x, textPos.y);
-        ctx.strokeText(textStr, textPos.x, textPos.y);
+        ctx.fillText(textStr, textPos.position.x, textPos.position.y);
+        ctx.strokeText(textStr, textPos.position.x, textPos.position.y);
         break;
       }
     }
+
+    return view;
   };
 
   const bindEvents = () => {
@@ -250,5 +287,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
   };
 
   bindEvents();
-  draw();
+  const view = draw();
+  addView(view);
+
+  console.log(view);
 };

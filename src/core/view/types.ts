@@ -15,10 +15,7 @@ export type ViewRenderProps = {
   /**
    * Relative to the anchor position
    */
-  position: {
-    x: number;
-    y: number;
-  };
+  position: Position;
   /**
    * Units for position and size values
    */
@@ -39,5 +36,24 @@ export type ViewRenderProps = {
     fontFamily: string;
     fontWeight: string;
     fontStyle: string;
+  };
+};
+
+export type Position = {
+  x: number;
+  y: number;
+};
+
+export type View = {
+  /**
+   * The anchor position of the view (where it's positioned based on anchor setting)
+   */
+  position: Position;
+  /**
+   * Width and height of the view in pixels
+   */
+  size: {
+    width: number;
+    height: number;
   };
 };
