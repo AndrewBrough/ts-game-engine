@@ -11,9 +11,23 @@ import type { DeepPartial } from '../types';
 import type { ViewRenderProps } from './types';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
+  // Auto-detect text shape if textProps.text has content and shape isn't explicitly set
+  const hasTextContent = props.textProps?.text !== undefined && 
+                        props.textProps?.text !== null && 
+                        props.textProps?.text !== '';
+  
+  const shouldBeTextShape = props.shape === 'text' || 
+                           (props.shape === undefined && hasTextContent);
+  
   // Merge with config defaults using deep merge
-  const baseConfig = { ...config, ...(props.shape === 'text' ? textConfig : {}) };
+  const baseConfig = { ...config, ...(shouldBeTextShape ? textConfig : {}) };
   const mergedProps = deepMerge(baseConfig, props) as ViewRenderProps;
+  
+  // Ensure shape is set to 'text' if auto-detected
+  if (shouldBeTextShape && mergedProps.shape !== 'text') {
+    mergedProps.shape = 'text';
+  }
+  
   const {
     fill,
     stroke,

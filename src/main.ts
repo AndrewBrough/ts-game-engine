@@ -12,11 +12,15 @@ window.onload = () => {
       x: 1,
       y: 1,
     },
-    units: 'vh',
-    anchor: 'top-left',
-    shape: 'text',
     textProps: {
       text: testModel.score,
+    },
+  });
+
+  createView({
+    position: { x: 1, y: 1 },
+    textProps: {
+      text: "Hello World",
     },
   });
 

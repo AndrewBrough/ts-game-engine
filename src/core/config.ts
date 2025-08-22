@@ -9,7 +9,7 @@ export type Config = ViewRenderProps & {
 
 export const config: Config = {
   units: 'vw',
-  anchor: 'center',
+  anchor: 'top-left',
   fill: {
     color: 'transparent',
   },
@@ -44,11 +44,5 @@ export const textConfig: DeepPartial<Config> = {
   stroke: {
     color: 'transparent',
     width: 0,
-  },
-  textProps: {
-    fontFamily: 'Arial',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    fontSize: 5,
   },
 };
