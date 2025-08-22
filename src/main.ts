@@ -1,14 +1,16 @@
 import { createCanvas } from './core/canvas/canvas';
-import { createView } from './core/view/view';
 
 import { getState } from './core/state/state';
 import { bindMouse } from './core/input/mouse';
+import { createLoop } from './core/loop/loop';
+import { createAnimatedView } from './core/view/animatedView';
 
 window.onload = () => {
   createCanvas('app');
   bindMouse();
+  createLoop();
   
-  createView({
+  createAnimatedView({
     position: {
       x: 1,
       y: 1,

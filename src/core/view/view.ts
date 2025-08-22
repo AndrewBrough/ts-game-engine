@@ -4,14 +4,16 @@ import {
   convertPositionToPixels,
   convertSizeToPixels,
   convertFontSizeToPixels,
-  addResizeListener,
 } from '../conversions';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
-import type { View, ViewRenderProps } from './types';
+import type { View, ViewRenderProps, ViewInstance } from './types';
 import { addView } from '../state/state';
+import { createEvents } from '../events/events';
 
-export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
+export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
+  const events = createEvents();
+
   // Auto-detect text shape if textProps.text has content and shape isn't explicitly set
   const hasTextContent = props.textProps?.text !== undefined && 
                         props.textProps?.text !== null && 
@@ -40,6 +42,10 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     shapeProps,
     textProps,
   } = mergedProps;
+
+  // Create a mutable view state that can be updated
+  let currentView: View | null = null;
+  let mutablePosition = { ...position };
   const { width, height } = shapeProps;
 
   const getScreenRelativePosition = (): { x: number; y: number } => {
@@ -48,7 +54,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     const screenHeight = canvas.height;
     
     // Convert position to pixels for offset from the screen corner/center
-    const pixelOffset = convertPositionToPixels(position.x, position.y, units);
+    const pixelOffset = convertPositionToPixels(mutablePosition.x, mutablePosition.y, units);
     
     switch (relativeTo) {
       case 'top-right':
@@ -89,8 +95,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     
     // Convert position and size to pixels
     const pixelPosition = convertPositionToPixels(
-      position.x,
-      position.y,
+      mutablePosition.x,
+      mutablePosition.y,
       units
     );
     const pixelSize = convertSizeToPixels(width, height, units);
@@ -168,8 +174,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     
     // Convert position, size, and font size to pixels
     const pixelPosition = convertPositionToPixels(
-      position.x,
-      position.y,
+      mutablePosition.x,
+      mutablePosition.y,
       units
     );
     const pixelSize = convertSizeToPixels(width, height, units);
@@ -218,6 +224,14 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
   if (!shape) {
     throw new Error('Shape is required');
   }
+
+  // Function to update the position and trigger a redraw
+  const updatePosition = (newPosition: { x: number; y: number }) => {
+    currentPosition.x = newPosition.x;
+    currentPosition.y = newPosition.y;
+    // Trigger a redraw by dispatching an update event
+    window.dispatchEvent(new Event('update'));
+  };
 
   const draw = () => {
     const ctx = getContext();
@@ -280,15 +294,18 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config) => {
     return view;
   };
 
-  const bindEvents = () => {
-    addResizeListener(() => {
-      draw();
-    });
-  };
+  currentView = draw();
+  addView(currentView);
+  events.addEvent('resize', () => {
+    currentView = draw();
+  });
+  events.addEvent('update', () => {
+    currentView = draw();
+  });
 
-  bindEvents();
-  const view = draw();
-  addView(view);
-
-  console.log(view);
+  return {
+    view: currentView,
+    events,
+    updatePosition,
+  }
 };

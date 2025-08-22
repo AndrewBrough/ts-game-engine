@@ -57,3 +57,12 @@ export type View = {
     height: number;
   };
 };
+
+export type ViewInstance = {
+  view: View;
+  events: {
+    addEvent: (event: string, callback: (event: Event) => void) => () => void;
+    removeEvent: (event: string) => void;
+  };
+  updatePosition: (newPosition: Position) => void;
+};

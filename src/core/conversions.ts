@@ -17,13 +17,6 @@ export const convertToPixels = (value: number, unit: Units): number => {
 };
 
 /**
- * Add resize listener to trigger redraws when viewport units change
- */
-export const addResizeListener = (callback: () => void): void => {
-  window.addEventListener('resize', callback);
-};
-
-/**
  * Convert multiple values with units to pixels
  */
 export const convertPositionToPixels = (
