@@ -29,7 +29,9 @@ export const createView = (props: ViewRenderProps) => {
     // Set font first to get accurate metrics
     ctx.font = `${fontSize}px Arial`;
     const metrics = ctx.measureText(text);
-    const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8; // Fallback if not supported
+
+    // Use actual ascent if available, otherwise estimate
+    const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
 
     switch (anchor) {
       case 'top-right':
@@ -41,6 +43,7 @@ export const createView = (props: ViewRenderProps) => {
       case 'bottom-left':
         return { x: position.x, y: position.y };
       default:
+        // For center anchor, position text so it's centered vertically
         return { x: position.x + width / 2, y: position.y + ascent / 2 };
     }
   };
