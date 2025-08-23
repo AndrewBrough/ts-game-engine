@@ -7,12 +7,14 @@ import { createDemoCubeView } from './core/view/demoCubeView';
 import { createPauseButton } from './core/view/pauseButton';
 import { bindKeyboard } from './core/input/keyboard';
 import { createPlayerView } from './core/view/player/playerView';
+import { collisionManager } from './core/state/collisionManager';
 
 window.onload = () => {
   createCanvas('app');
   bindMouse();
   bindKeyboard();
   createLoop();
+  collisionManager();
   
   createDemoCubeView();
   createFpsView();
