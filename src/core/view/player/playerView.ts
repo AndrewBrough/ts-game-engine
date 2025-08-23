@@ -2,6 +2,8 @@ import { createAnimatedView } from "../animatedView";
 import { isKeyHeld } from "../../input/keyboard";
 import { LAYERS } from "../../gameState/collisionLayers";
 
+const PLAYER_SPEED = 0.5;
+
 export const createPlayerView = () => {
     const animatedView = createAnimatedView({
         id: 'player',
@@ -20,26 +22,25 @@ export const createPlayerView = () => {
 
     // Add movement animation
     animatedView.addAnimation(() => {
-        const moveSpeed = 1;
         let deltaX = 0;
         let deltaY = 0;
 
         // Check for left movement (A key or left arrow)
         if (isKeyHeld('a') || isKeyHeld('A') || isKeyHeld('ArrowLeft')) {
-            deltaX -= moveSpeed;
+            deltaX -= PLAYER_SPEED;
         }
 
         // Check for right movement (D key or right arrow)
         if (isKeyHeld('d') || isKeyHeld('D') || isKeyHeld('ArrowRight')) {
-            deltaX += moveSpeed;
+            deltaX += PLAYER_SPEED;
         }
 
         if(isKeyHeld('w') || isKeyHeld('W') || isKeyHeld('ArrowUp')) {
-            deltaY -= moveSpeed;
+            deltaY -= PLAYER_SPEED;
         }
 
         if(isKeyHeld('s') || isKeyHeld('S') || isKeyHeld('ArrowDown')) {
-            deltaY += moveSpeed;
+            deltaY += PLAYER_SPEED;
         }
 
         // Update position if there's movement
