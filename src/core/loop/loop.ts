@@ -42,6 +42,9 @@ export const createLoop = () => {
               frameCount = 0;
               fpsStartTime = currentTime;
           }
+
+          /* Check collisions more frequently for better reliability while still being optimized */
+          window.dispatchEvent(new CustomEvent('collisions', { detail: { elapsedTime } }));
           
           getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
           window.dispatchEvent(new CustomEvent('render', { detail: { time: currentTime } }));

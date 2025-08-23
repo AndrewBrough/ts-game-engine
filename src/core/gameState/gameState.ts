@@ -11,6 +11,10 @@ export type GameState = {
   focusedView: InteractiveView | null;
 };
 
+// Track game state instances
+let gameStateInstanceCount = 0;
+const gameStateInstanceId = ++gameStateInstanceCount;
+
 const gameState = createModel<GameState>({
   score: 0,
   views: {} as Record<CollisionLayer, (View | InteractiveView)[]>,
@@ -20,14 +24,18 @@ const gameState = createModel<GameState>({
   focusedView: null,
 });
 
+console.log(`🎮 GameState instance #${gameStateInstanceId} created at ${new Date().toISOString()}`);
+
 export const getState = () => gameState;
 
 export const addView = (view: View | InteractiveView) => {
   const layer = view.layer;
+  console.log(`🎮 [Instance #${gameStateInstanceId}] Adding view ${view.id} to layer ${layer}`);
   if (!gameState.views[layer]) {
     gameState.views[layer] = [];
   }
   gameState.views[layer].push(view);
+  console.log(`🎮 [Instance #${gameStateInstanceId}] Total views in ${layer}: ${gameState.views[layer].length}`);
 };
 
 export const removeView = (view: View | InteractiveView) => {
@@ -100,6 +108,30 @@ export const setFocusedView = (view: InteractiveView | null) => {
 
 export const getFocusedView = () => {
   return gameState.focusedView;
+};
+
+// Debug function to check game state status
+export const debugGameState = () => {
+  console.log(`🎮 === GameState Debug Info ===`);
+  console.log(`🎮 Instance ID: #${gameStateInstanceId}`);
+  console.log(`🎮 Total views across all layers: ${getAllViews().length}`);
+  
+  const viewsByLayer = new Map<string, number>();
+  getAllViews().forEach(view => {
+    const count = viewsByLayer.get(view.layer) || 0;
+    viewsByLayer.set(view.layer, count + 1);
+  });
+  
+  console.log(`🎮 Views by layer:`, Object.fromEntries(viewsByLayer));
+  console.log(`🎮 Collidable views: ${getAllCollidableViews().length}`);
+  console.log(`🎮 ===============================`);
+  
+  return {
+    instanceId: gameStateInstanceId,
+    totalViews: getAllViews().length,
+    viewsByLayer: Object.fromEntries(viewsByLayer),
+    collidableViews: getAllCollidableViews().length
+  };
 };
 
 export const getCollisionLayerViews = (layer: CollisionLayer, excludeEmptyBounds = true): (View | InteractiveView)[] => {

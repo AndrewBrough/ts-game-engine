@@ -22,8 +22,9 @@ const createSceneManager = () => {
             unloadScene(scene.name);
         }
 
-        scenes.add(scene());
-        return scene();
+        const sceneInstance = scene();
+        scenes.add(sceneInstance);
+        return sceneInstance;
     }
 
     const unloadScene = (sceneName: string) => {

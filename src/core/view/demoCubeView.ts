@@ -30,3 +30,34 @@ export const createDemoCubeView = () => {
 
     return animatedView;
 };
+
+// Function to create multiple demo cubes for performance testing
+export const createMultipleDemoCubes = (count: number) => {
+    const cubes = [];
+    for (let i = 0; i < count; i++) {
+        const cube = createAnimatedView({
+            id: `demoCube${i}`,
+            layer: 'DEFAULT',
+            position: {
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+            },
+            shapeProps: {
+                width: 10,
+                height: 10,
+            },
+            shape: 'rect',
+            fill: {
+                color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+            },
+        });
+        
+        const screenSaverAnimate = screenSaver(cube);
+        cube.addAnimation(() => {
+            screenSaverAnimate();
+        }, 'update');
+        
+        cubes.push(cube);
+    }
+    return cubes;
+};
