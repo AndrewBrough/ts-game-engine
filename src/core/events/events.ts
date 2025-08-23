@@ -1,5 +1,7 @@
+export type EventInstance = ReturnType<typeof createEvents>;
+
 export const createEvents = () => {
-  const events = new Map<string, EventListener>();
+  const events = new Map<string, EventListener>(); 
 
   const addEvent = (event: string, callback: EventListener) => {
     events.set(event, callback);

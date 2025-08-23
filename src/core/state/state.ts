@@ -1,7 +1,7 @@
 import { createModel } from "../model/model";
 import type { View, InteractiveView } from "../view/types";
 
-export type State = {
+export type GameState = {
   score: number;
   views: (View | InteractiveView)[];
   fps: number;
@@ -10,7 +10,7 @@ export type State = {
   focusedView: InteractiveView | null;
 };
 
-const state = createModel<State>({
+const gameState = createModel<GameState>({
   score: 0,
   views: [],
   fps: 0,
@@ -19,40 +19,40 @@ const state = createModel<State>({
   focusedView: null,
 });
 
-export const getState = () => state;
+export const getState = () => gameState;
 
 export const addView = (view: View | InteractiveView) => {
-  state.views.push(view);
+  gameState.views.push(view);
 };
 
 export const removeView = (view: View | InteractiveView) => {
-  state.views = state.views.filter((v) => v !== view);
+  gameState.views = gameState.views.filter((v) => v !== view);
 };
 
 export const updateFPS = (fps: number) => {
-  state.fps = fps;
+  gameState.fps = fps;
 };
 
 export const setLogicPaused = (paused: boolean) => {
-  state.isLogicPaused = paused;
+  gameState.isLogicPaused = paused;
 };
 
 export const toggleLogicPaused = () => {
-  setLogicPaused(!state.isLogicPaused);
+  setLogicPaused(!gameState.isLogicPaused);
 };
 
 export const setTimeScale = (timeScale: number) => {
-  state.timeScale = timeScale;
+  gameState.timeScale = timeScale;
 };
 
 export const toggleTimeScale = () => {
-  setTimeScale(state.timeScale === 1 ? 0 : 1);
+  setTimeScale(gameState.timeScale === 1 ? 0 : 1);
 };
 
 export const setFocusedView = (view: InteractiveView | null) => {
-  state.focusedView = view;
+  gameState.focusedView = view;
 };
 
 export const getFocusedView = () => {
-  return state.focusedView;
+  return gameState.focusedView;
 };

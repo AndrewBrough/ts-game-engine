@@ -8,6 +8,8 @@ export type Collision = {
     view2: View;
 }
 
+export type CollisionManager = ReturnType<typeof collisionManager>;
+
 export const collisionManager = () => {
     const events = createEvents();
     const state = getState();
