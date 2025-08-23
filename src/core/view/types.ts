@@ -1,7 +1,9 @@
 import type { Units } from '../config';
+import type { Bounds } from './collision';
 
 export type View = {
   id: string;
+  bounds: Bounds;
   fill: {
     color: string;
   };
@@ -31,6 +33,10 @@ export type View = {
     height: number;
     radius: number;
   };
+  /**
+   * Indicates if the shapeProps dimensions have been calculated from rendering
+   */
+  dimensionsCalculated?: boolean;
   textProps: {
     text: string | number;
     fontSize: number;
@@ -43,4 +49,9 @@ export type View = {
 export type Position = {
   x: number;
   y: number;
+};
+
+export type Size = {
+  width: number;
+  height: number;
 };

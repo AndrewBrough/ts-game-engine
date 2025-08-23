@@ -6,6 +6,7 @@ import type { View } from './types';
 import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
+import { calculateBounds } from './collision';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
@@ -24,7 +25,8 @@ export const createView = (props: DeepPartial<View> = config) => {
     anchor: mergedProps.anchor,
     units: mergedProps.units,
     relativeTo: mergedProps.relativeTo,
-    shape: mergedProps.shape
+    shape: mergedProps.shape,
+    bounds: { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 },
   };
 
   // Helper function to update the view in state
@@ -105,38 +107,53 @@ export const createView = (props: DeepPartial<View> = config) => {
   };
 
   // Debug function to draw anchor point and bounds
-  // const drawDebugInfo = (view: View) => {
-  //   const ctx = getContext();
-  //   if (!ctx) {
-  //     throw new Error('Context not found');
-  //   }
+  const drawDebugInfo = () => {
+    const ctx = getContext();
+    if (!ctx) {
+      throw new Error('Context not found');
+    }
 
-  //   // Save current context state
-  //   ctx.save();
+    // Save current context state
+    ctx.save();
     
-  //   // Draw purple dot at anchor point
-  //   ctx.fillStyle = 'purple';
-  //   ctx.strokeStyle = 'purple';
-  //   ctx.lineWidth = 2;
+    // Draw purple dot at anchor point
+    ctx.fillStyle = 'yellow';
+    ctx.strokeStyle = 'yellow';
+    ctx.lineWidth = 5;
     
-  //   // Draw a small circle at the anchor position
-  //   const anchorX = view.position.x;
-  //   const anchorY = view.position.y;
-  //   ctx.beginPath();
-  //   ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
-  //   ctx.fill();
+    // Handle text vs other shapes differently for bounds calculation
+    let w, h;
+    if (mutableProps.shape === 'text') {
+      // For text, shapeProps are already in pixels (set by measureText)
+      w = mutableProps.shapeProps.width;
+      h = mutableProps.shapeProps.height;
+    } else {
+      // For other shapes, convert to pixels
+      const sizeInPixels = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
+      w = sizeInPixels.width;
+      h = sizeInPixels.height;
+    }
     
-  //   // Draw purple rectangle around the actual rendered bounds
-  //   ctx.strokeStyle = 'purple';
-  //   ctx.lineWidth = 1;
-  //   ctx.setLineDash([5, 5]); // Dashed line
+    const positionInPixels = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
+    const { x: anchorX, y: anchorY } = positionInPixels;
     
-  //   // Draw the bounds rectangle - same as the rendered object
-  //   ctx.strokeRect(anchorX, anchorY, view.size.width, view.size.height);
+    // Draw a small circle at the anchor position
+    ctx.beginPath();
+    ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
+    ctx.fill();
     
-  //   // Restore context state
-  //   ctx.restore();
-  // };
+    // Draw purple rectangle around the actual rendered bounds
+    ctx.strokeStyle = 'yellow';
+    ctx.lineWidth = 2;
+    
+    // Draw the bounds rectangle - same as the rendered object
+    ctx.strokeRect(anchorX, anchorY, w, h);
+    
+    mutableProps.bounds = calculateBounds({ x: anchorX, y: anchorY }, { width: w, height: h }, mutableProps.anchor);
+    
+    // Restore context state
+    ctx.restore();
+  };
 
   const draw = () => {
     const ctx = getContext();
@@ -149,43 +166,55 @@ export const createView = (props: DeepPartial<View> = config) => {
     ctx.lineWidth = mutableProps.stroke.width;
 
     // Use props directly - no conversion, no anchor calculations
-    const { width, height } = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
-    const { x, y } = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
+    const { width: w, height: h } = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
+    const positionInPixels = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
+    const { x, y } = positionInPixels;
     const {
       text,
+      fontSize,
       fontFamily,
       fontWeight,
       fontStyle,
     } = mutableProps.textProps;
 
-    const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
+    const fontSizePx = convertFontSizeToPixels(fontSize);
 
-    switch (mutableProps.shape) {
-      case 'rect':
-        ctx.fillRect(x, y, width, height);
-        ctx.strokeRect(x, y, width, height);
-        break;
-      case 'circle':
-        ctx.fillRect(x, y, width, height);
-        ctx.ellipse(x, y, width, height, 0, 0, 2 * Math.PI);
-        break;
-      case 'line':
-        ctx.fillRect(x, y, width, height);
-        ctx.strokeRect(x, y, width, height);
-        break;
-      case 'text': {
-        const textStr = text.toString();
-        ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
-        ctx.fillText(textStr, x, y);
-        ctx.strokeText(textStr, x, y);
-        break;
+    const renderShape = () => {
+      switch (mutableProps.shape) {
+        case 'rect':
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeRect(x, y, w, h);
+          break;
+        case 'circle':
+          ctx.fillRect(x, y, w, h);
+          ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
+          break;
+        case 'line':
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeRect(x, y, w, h);
+          break;
+        case 'text': {
+          const textStr = text.toString();
+          ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
+          ctx.fillText(textStr, x, y);
+          ctx.strokeText(textStr, x, y);
+          
+          // Calculate actual text dimensions
+          const metrics = ctx.measureText(textStr);
+          const actualWidth = metrics.width;
+          const actualHeight = (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) + 
+          (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
+          mutableProps.shapeProps.width = actualWidth;
+          mutableProps.shapeProps.height = actualHeight;
+        }
       }
     }
+    renderShape();
   };
 
   const update = () => {
     draw();
-    // drawDebugInfo(view);
+    drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

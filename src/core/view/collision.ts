@@ -65,13 +65,11 @@ export const calculateBounds = (
 
     case 'center':
     default:
-      const halfWidth = width / 2;
-      const halfHeight = height / 2;
       return {
-        left: x - halfWidth,
-        right: x + halfWidth,
-        top: y - halfHeight,
-        bottom: y + halfHeight,
+        left: x - width / 2,
+        right: x + width / 2,
+        top: y - height / 2,
+        bottom: y + height / 2,
         width,
         height
       };
