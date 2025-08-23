@@ -42,6 +42,10 @@ export const getAllViews = (): (View | InteractiveView)[] => {
   return Object.values(gameState.views).flat();
 };
 
+export const getAllCollidableViews = (): (View | InteractiveView)[] => {
+  return [...getViewsOnLayer('DEFAULT'), ...getViewsOnLayer('PLAYER')];
+};
+
 export const updateView = (view: View | InteractiveView) => {
   const layer = view.layer;
   const stateViews = getViewsOnLayer(layer);
@@ -98,7 +102,7 @@ export const getFocusedView = () => {
   return gameState.focusedView;
 };
 
-export const getCollisionLayerViews = (layer: CollisionLayer): (View | InteractiveView)[] => {
+export const getCollisionLayerViews = (layer: CollisionLayer, excludeEmptyBounds = true): (View | InteractiveView)[] => {
   const collidingViews = [];
   const layers = COLLISION_MATRIX[layer]
   
@@ -108,7 +112,12 @@ export const getCollisionLayerViews = (layer: CollisionLayer): (View | Interacti
   }
 
   for(const layer of layers) {
-    collidingViews.push(...getViewsOnLayer(layer));
+    const views = getViewsOnLayer(layer);
+    if(excludeEmptyBounds) {
+      collidingViews.push(...views.filter((v) => v.bounds));
+    } else {
+      collidingViews.push(...views);
+    }
   }
 
   return collidingViews;

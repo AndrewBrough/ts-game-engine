@@ -22,7 +22,8 @@ export const calculateBounds = (
   const { x, y } = position;
   const { width, height } = size;
 
-  switch (anchor) {
+  const getBoundsAroundAnchor = (anchor: Anchor) => {
+    switch (anchor) {
     case 'top-left':
       return {
         left: x,
@@ -73,7 +74,17 @@ export const calculateBounds = (
         width,
         height
       };
+    }
   }
+
+  const bounds = getBoundsAroundAnchor(anchor);
+  bounds.left = Math.round(bounds.left);
+  bounds.right = Math.round(bounds.right);
+  bounds.top = Math.round(bounds.top);
+  bounds.bottom = Math.round(bounds.bottom);
+  bounds.width = Math.round(bounds.width);
+  bounds.height = Math.round(bounds.height);
+  return bounds;
 };
 
 /**
@@ -95,11 +106,11 @@ export const isPointInBounds = (
  * Check if two bounds overlap (collision detection)
  */
 export const doBoundsOverlap = (bounds1: Bounds, bounds2: Bounds): boolean => {
-  return !(
-    bounds1.right < bounds2.left ||
-    bounds1.left > bounds2.right ||
-    bounds1.bottom < bounds2.top ||
-    bounds1.top > bounds2.bottom
+  return (
+    bounds1.right >= bounds2.left &&
+    bounds1.left <= bounds2.right &&
+    bounds1.bottom >= bounds2.top &&
+    bounds1.top <= bounds2.bottom
   );
 };
 

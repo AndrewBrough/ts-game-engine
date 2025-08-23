@@ -1,13 +1,12 @@
 import { createAnimatedView } from "../animatedView";
 import { isKeyHeld } from "../../input/keyboard";
-import { LAYERS } from "../../gameState/collisionLayers";
 
 const PLAYER_SPEED = 0.5;
 
 export const createPlayerView = () => {
     const animatedView = createAnimatedView({
         id: 'player',
-        layer: LAYERS.PLAYER,
+        layer: 'PLAYER',
         // anchor: 'center',
         relativeTo: 'bottom-left',
         shapeProps: {

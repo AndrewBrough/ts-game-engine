@@ -32,8 +32,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
       view.handlers.onKeyDown(e, view);
     }
   }
-  
-  console.log('Key down:', e.key);
 };
 
 // Key up handler

@@ -8,6 +8,7 @@ export const createDemoCubeView = () => {
     
     const animatedView = createAnimatedView({
         id: 'demoCube',
+        layer: 'DEFAULT',
         position: {
             x: randomX,
             y: randomY,

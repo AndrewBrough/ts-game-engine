@@ -7,6 +7,7 @@ import { config } from "../config";
 export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logicOrAnimation: 'logic' | 'animation' | 'both' = 'both') => {
     const defaultProps: DeepPartial<InteractiveView> = {
         id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
+        layer: 'UI',
         shape: 'text',
         fill: {
             color: 'white',
