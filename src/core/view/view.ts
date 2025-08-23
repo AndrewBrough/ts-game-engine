@@ -191,7 +191,8 @@ export const createView = (props: DeepPartial<View> = config) => {
           (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
           mutableProps.shapeProps.width = actualWidth;
           mutableProps.shapeProps.height = actualHeight;
-          mutableProps.bounds = calculateBounds({ x, y: actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
+          mutableProps.bounds = calculateBounds({ x, y: y + actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
+          console.log(mutableProps.bounds, mutableProps.anchor);
           return;
         }
       }

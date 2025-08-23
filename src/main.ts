@@ -15,22 +15,20 @@ window.onload = () => {
   createFpsView();
 
   // Create static text display
-  // createAnimatedView({
-  //   id: 'test-hilo-text-view',
-  //   position: { x: 1, y: 10 },
-  //   relativeTo: 'top-right',
-  //   anchor: 'top-right',
-  //   shape: 'text',
-  //   textProps: {
-  //     text: 'Hilo',
-  //     fontFamily: 'Arial',
-  //     fontWeight: 'bold',
-  //     fontStyle: 'normal',
-  //   },
-  //   fill: {
-  //     color: 'white',
-  //   },
-  // });
+  createAnimatedView({
+    id: 'test-hilo-text-view',
+    position: { x: 10, y: 10 },
+    shape: 'text',
+    textProps: {
+      text: 'Hilo',
+      fontFamily: 'Arial',
+      fontWeight: 'bold',
+      fontStyle: 'normal',
+    },
+    fill: {
+      color: 'white',
+    },
+  });
   // createView({
   //   position: { x: 1, y: 1 },
   //   relativeTo: 'bottom-left',
