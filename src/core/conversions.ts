@@ -1,4 +1,4 @@
-import type { Units } from './config';
+import { config, type Units } from './config';
 
 /**
  * Convert viewport units (vh/vw) to pixels
@@ -36,8 +36,10 @@ export const convertPositionToPixels = (
 export const convertSizeToPixels = (
   width: number,
   height: number,
-  units: Units
+  units?: Units
 ): { width: number; height: number } => {
+  units = units ?? config.units;
+
   return {
     width: convertToPixels(width, units),
     height: convertToPixels(height, units),
@@ -49,7 +51,8 @@ export const convertSizeToPixels = (
  */
 export const convertFontSizeToPixels = (
   fontSize: number,
-  units: Units
+  units?: Units
 ): number => {
+  units = units ?? config.units;
   return convertToPixels(fontSize, units);
 };

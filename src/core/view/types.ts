@@ -63,7 +63,7 @@ export type View = {
 };
 
 export type ViewInstance = {
-  view: View;
+  update: () => void;
   events: {
     addEvent: (event: string, callback: (event: Event) => void) => () => void;
     removeEvent: (event: string) => void;

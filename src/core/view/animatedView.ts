@@ -11,6 +11,7 @@ export const createAnimatedView = (props: DeepPartial<ViewRenderProps>) => {
     const animate = () => {
         // demoAnimate();
         screenSaverAnimate();
+        viewInstance.update();
         // console.log(`Frame ${animationFrame++}: X=${currentX.toFixed(1)}, Hue=${hue}`);
     };
 

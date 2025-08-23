@@ -1,36 +1,15 @@
-import { getContext, getCanvas } from '../canvas/canvas';
-import { config, textConfig } from '../config';
-import {
-  convertPositionToPixels,
-  convertSizeToPixels,
-  convertFontSizeToPixels,
-} from '../conversions';
+import { getContext } from '../canvas/canvas';
+import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
 import type { View, ViewRenderProps, ViewInstance } from './types';
 import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
+import { convertFontSizeToPixels, convertSizeToPixels } from '../conversions';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
+  const mergedProps = deepMerge(config, props);
   const events = createEvents();
-
-  // Auto-detect text shape if textProps.text has content and shape isn't explicitly set
-  const hasTextContent = props.textProps?.text !== undefined && 
-                        props.textProps?.text !== null && 
-                        props.textProps?.text !== '';
-  
-  const shouldBeTextShape = props.shape === 'text' || 
-                           (props.shape === undefined && hasTextContent);
-  
-  // Merge with config defaults using deep merge
-  const baseConfig = { ...config, ...(shouldBeTextShape ? textConfig : {}) };
-  const mergedProps = deepMerge(baseConfig, props) as ViewRenderProps;
-  
-  // Ensure shape is set to 'text' if auto-detected
-  if (shouldBeTextShape && mergedProps.shape !== 'text') {
-    mergedProps.shape = 'text';
-  }
-  
   const {
     fill,
     stroke,
@@ -43,8 +22,6 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     textProps,
   } = mergedProps;
 
-  // Create a mutable view state that can be updated
-  let currentView: View | null = null;
   const mutablePosition = { x: position.x, y: position.y };
   
   // Create a unique ID for this view
@@ -64,99 +41,96 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
   };
 
   // Helper function to update the view in state
-  const updateViewInState = () => {
-    currentView = draw();
+  const updateViewInState = (view: View) => {
     const stateViews = getState().views;
     const viewIndex = stateViews.findIndex((v: View) => v.id === viewId);
     if (viewIndex !== -1) {
-      stateViews[viewIndex] = currentView;
+      stateViews[viewIndex] = view;
+    } else {
+      addView(view);
     }
   };
-
-  if (!shape) {
-    throw new Error('Shape is required');
-  }
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: { x: number; y: number }) => {
     mutablePosition.x = newPosition.x;
     mutablePosition.y = newPosition.y;
-    updateViewInState();
-    // Trigger a redraw by dispatching an update event
-    window.dispatchEvent(new Event('update'));
   };
 
   // Function to update fill color
   const updateFillColor = (color: string) => {
     mutableProps.fill.color = color;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
   };
 
   // Function to update stroke color
   const updateStrokeColor = (color: string) => {
     mutableProps.stroke.color = color;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
   };
 
   // Function to update stroke width
   const updateStrokeWidth = (width: number) => {
     mutableProps.stroke.width = width;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
   };
 
   // Function to update shape size
   const updateSize = (width: number, height: number) => {
-    mutableProps.shapeProps.width = width;
-    mutableProps.shapeProps.height = height;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
+    const getConvertedSize = () => {
+      if(shape === "text") {
+        const convertedWidth = convertFontSizeToPixels(width);
+        const convertedHeight = convertFontSizeToPixels(height);
+        return { width: convertedWidth, height: convertedHeight };
+      } else {
+        return convertSizeToPixels(width, height);
+      }
+    }
+    const { width: convertedWidth, height: convertedHeight } = getConvertedSize();
+    mutableProps.shapeProps.width = convertedWidth;
+    mutableProps.shapeProps.height = convertedHeight;
   };
 
   // Function to update text
   const updateText = (text: string | number) => {
     mutableProps.textProps.text = text;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
   };
 
   // Function to update font size
   const updateFontSize = (fontSize: number) => {
     mutableProps.textProps.fontSize = fontSize;
-    updateViewInState();
-    window.dispatchEvent(new Event('update'));
   };
 
   // Debug function to draw anchor point and bounds
-  const drawDebugInfo = (ctx: CanvasRenderingContext2D, view: View) => {
-    // Save current context state
-    ctx.save();
+  // const drawDebugInfo = (view: View) => {
+  //   const ctx = getContext();
+  //   if (!ctx) {
+  //     throw new Error('Context not found');
+  //   }
+
+  //   // Save current context state
+  //   ctx.save();
     
-    // Draw purple dot at anchor point
-    ctx.fillStyle = 'purple';
-    ctx.strokeStyle = 'purple';
-    ctx.lineWidth = 2;
+  //   // Draw purple dot at anchor point
+  //   ctx.fillStyle = 'purple';
+  //   ctx.strokeStyle = 'purple';
+  //   ctx.lineWidth = 2;
     
-    // Draw a small circle at the anchor position
-    const anchorX = view.position.x;
-    const anchorY = view.position.y;
-    ctx.beginPath();
-    ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
-    ctx.fill();
+  //   // Draw a small circle at the anchor position
+  //   const anchorX = view.position.x;
+  //   const anchorY = view.position.y;
+  //   ctx.beginPath();
+  //   ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
+  //   ctx.fill();
     
-    // Draw purple rectangle around the actual rendered bounds
-    ctx.strokeStyle = 'purple';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]); // Dashed line
+  //   // Draw purple rectangle around the actual rendered bounds
+  //   ctx.strokeStyle = 'purple';
+  //   ctx.lineWidth = 1;
+  //   ctx.setLineDash([5, 5]); // Dashed line
     
-    // Draw the bounds rectangle - same as the rendered object
-    ctx.strokeRect(anchorX, anchorY, view.size.width, view.size.height);
+  //   // Draw the bounds rectangle - same as the rendered object
+  //   ctx.strokeRect(anchorX, anchorY, view.size.width, view.size.height);
     
-    // Restore context state
-    ctx.restore();
-  };
+  //   // Restore context state
+  //   ctx.restore();
+  // };
 
   const draw = () => {
     const ctx = getContext();
@@ -169,8 +143,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     ctx.lineWidth = mutableProps.stroke.width;
 
     // Use props directly - no conversion, no anchor calculations
-    const { x, y } = mutablePosition;
     const { width, height } = mutableProps.shapeProps;
+    const { x, y } = mutableProps.position;
 
     const {
       text,
@@ -214,23 +188,17 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
       }
     }
 
-    // Debug rendering: Draw anchor point and bounds
-    drawDebugInfo(ctx, view);
-
     return view;
   };
 
-  currentView = draw();
-  addView(currentView);
-  events.addEvent('resize', () => {
-    currentView = draw();
-  });
-  events.addEvent('update', () => {
-    currentView = draw();
-  });
+  const update = () => {
+    const view = draw();
+    // drawDebugInfo(view);
+    updateViewInState(view);
+  };
 
   return {
-    view: currentView,
+    update,
     events,
     updatePosition,
     updateFillColor,
