@@ -1,7 +1,15 @@
-export const LAYERS = {
-    BACKGROUND: 0,
-    DEFAULT: 1,
-    FOREGROUND: 2,
-    PLAYER: 3,
-    UI: 4,
+export const LAYERS = [
+    'BACKGROUND',
+    'DEFAULT',
+    'PLAYER',
+    'UI',
+] as const;
+
+export type CollisionLayer = (typeof LAYERS)[number];
+
+export const COLLISION_MATRIX: Record<CollisionLayer, CollisionLayer[]> = {
+    BACKGROUND: ['BACKGROUND'],
+    DEFAULT: ['DEFAULT', 'PLAYER'],
+    PLAYER: ['PLAYER', 'DEFAULT'],
+    UI: ['UI'],
 }

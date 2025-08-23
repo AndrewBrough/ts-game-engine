@@ -1,7 +1,7 @@
 import { createEvents } from "../events/events";
 import { doBoundsOverlap } from "../view/collision";
 import type { View } from "../view/types";
-import { getAllViews, getViewsOnLayer } from "./gameState";
+import { getAllViews, getCollisionLayerViews } from "./gameState";
 
 export type Collision = {
     view1: View;
@@ -12,7 +12,6 @@ export type CollisionManager = ReturnType<typeof collisionManager>;
 
 export const collisionManager = () => {
     const events = createEvents();
-    const collisions: Collision[] = [];
     
     events.addEvent('update', () => {
         // Get all views across all layers
@@ -28,33 +27,27 @@ export const collisionManager = () => {
         }
 
         // Only check collisions with views on the same layer
-        const viewsOnSameLayer = getViewsOnLayer(view.layer);
+        const viewsOnSameLayer = getCollisionLayerViews(view.layer);
         for(const v of viewsOnSameLayer) {
             if(v.bounds && v.id !== view.id) {
                 const collision = {
                     view1: view,
                     view2: v,
                 }
+
                 if(doBoundsOverlap(view.bounds, v.bounds)) {
-                    addCollision(collision);
                     console.log('Collision detected', view.id, v.id);
-                } else {
-                    removeCollision(collision);
+                    triggerCollision(collision);
                 }
             }
         }
     }
 
-    const addCollision = (collision: Collision) => {
-        collisions.push(collision);
-    }
-
-    const removeCollision = (collision: Collision) => {
-        collisions.splice(collisions.indexOf(collision), 1);
+    const triggerCollision = (collision: Collision) => {
+        window.dispatchEvent(new CustomEvent('collision', { detail: {collision} }));
     }
 
     return {
         events,
-        addCollision,
     }
 }

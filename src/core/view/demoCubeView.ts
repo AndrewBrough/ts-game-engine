@@ -1,6 +1,5 @@
 import { screenSaver } from "./animations/screenSaver";
 import { createAnimatedView } from "./animatedView";
-import { LAYERS } from "../gameState/collisionLayers";
 
 export const createDemoCubeView = () => {
     // Generate random positions between 0-100
@@ -9,7 +8,6 @@ export const createDemoCubeView = () => {
     
     const animatedView = createAnimatedView({
         id: 'demoCube',
-        layer: LAYERS.DEFAULT,
         position: {
             x: randomX,
             y: randomY,

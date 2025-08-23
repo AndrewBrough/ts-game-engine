@@ -1,5 +1,5 @@
 import type { Units } from '../config';
-import type { LAYERS } from '../gameState/collisionLayers';
+import type { CollisionLayer } from '../gameState/collisionLayers';
 import type { AnimatedViewInstance } from './animatedView';
 import type { Bounds } from './collision';
 import type { InteractiveViewInstance } from './interactiveView';
@@ -7,7 +7,7 @@ import type { ViewInstance } from './view';
 
 export type View = {
   id: string;
-  layer: (typeof LAYERS)[keyof typeof LAYERS];
+  layer: CollisionLayer;
   bounds?: Bounds;
   fill: {
     color: string;

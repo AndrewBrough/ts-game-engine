@@ -1,9 +1,10 @@
 import { createModel } from "../model/model";
 import type { View, InteractiveView } from "../view/types";
+import { COLLISION_MATRIX, type CollisionLayer } from "./collisionLayers";
 
 export type GameState = {
   score: number;
-  views: Record<number, (View | InteractiveView)[]>;
+  views: Record<CollisionLayer, (View | InteractiveView)[]>;
   fps: number;
   isLogicPaused: boolean;
   timeScale: number;
@@ -12,7 +13,7 @@ export type GameState = {
 
 const gameState = createModel<GameState>({
   score: 0,
-  views: {},
+  views: {} as Record<CollisionLayer, (View | InteractiveView)[]>,
   fps: 0,
   isLogicPaused: false,
   timeScale: 1,
@@ -41,8 +42,17 @@ export const getAllViews = (): (View | InteractiveView)[] => {
   return Object.values(gameState.views).flat();
 };
 
+export const updateView = (view: View | InteractiveView) => {
+  const layer = view.layer;
+  const stateViews = getViewsOnLayer(layer);
+  const viewIndex = stateViews.findIndex((v) => v.id === view.id);
+  if (viewIndex !== -1) {
+    stateViews[viewIndex] = view;
+  }
+};
+
 // Helper function to get views on a specific layer
-export const getViewsOnLayer = (layer: number): (View | InteractiveView)[] => {
+export const getViewsOnLayer = (layer: CollisionLayer): (View | InteractiveView)[] => {
   return gameState.views[layer] || [];
 };
 
@@ -57,7 +67,7 @@ export const clearAllViews = () => {
   }
   
   // Clear all layers
-  gameState.views = {};
+  gameState.views = {} as Record<CollisionLayer, (View | InteractiveView)[]>; 
 };
 
 export const updateFPS = (fps: number) => {
@@ -86,4 +96,20 @@ export const setFocusedView = (view: InteractiveView | null) => {
 
 export const getFocusedView = () => {
   return gameState.focusedView;
+};
+
+export const getCollisionLayerViews = (layer: CollisionLayer): (View | InteractiveView)[] => {
+  const collidingViews = [];
+  const layers = COLLISION_MATRIX[layer]
+  
+  if(!layers) {
+    console.warn(`No collision layers found for layer ${layer}`);
+    return [];
+  }
+
+  for(const layer of layers) {
+    collidingViews.push(...getViewsOnLayer(layer));
+  }
+
+  return collidingViews;
 };

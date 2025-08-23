@@ -7,7 +7,6 @@ import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 import { calculateBounds } from './collision';
-import { LAYERS } from '../gameState/collisionLayers';
 import { addViewInstance } from '../renderer/renderer';
 
 export type ViewInstance = ReturnType<typeof createView>;
@@ -19,7 +18,7 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   // Create mutable copies of all props that can be updated
   const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
-    layer: props.layer ?? LAYERS.DEFAULT,
+    layer: props.layer ?? 'DEFAULT',
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
     shapeProps: { ...mergedProps.shapeProps },
@@ -37,7 +36,7 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   // Helper function to update the view in state
   const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
 
-    const stateViews = getViewsOnLayer(mutableProps.layer);
+    const stateViews = getViewsOnLayer(mutableProps?.layer ?? 'DEFAULT');
     const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
     if (viewIndex !== -1) {
       // Override view in state if it already exists
