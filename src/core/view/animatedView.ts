@@ -1,8 +1,8 @@
 import { createView } from "./view";
 import type { DeepPartial } from "../types";
-import type { View } from "./types";
+import type { InteractiveView } from "./types";
 
-export const createAnimatedView = (props: DeepPartial<View>) => {
+export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
     const viewInstance = createView(props);
 
     const animate = () => {

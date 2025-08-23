@@ -46,6 +46,25 @@ export type View = {
   };
 };
 
+export type InteractiveView = View & {
+  /**
+   * Event handlers for interactive functionality
+   */
+  handlers?: {
+    onClick?: (event: MouseEvent, view: View) => void;
+    onMouseMove?: (event: MouseEvent, view: View) => void;
+    onHover?: (event: MouseEvent, view: View) => void;
+    onHoverOut?: (event: MouseEvent, view: View) => void;
+    onTouchStart?: (event: TouchEvent, view: View) => void;
+    onTouchEnd?: (event: TouchEvent, view: View) => void;
+    onDrag?: (event: MouseEvent, view: View) => void;
+  };
+  /**
+   * Indicates if this view is interactive
+   */
+  interactive?: boolean;
+};
+
 export type Position = {
   x: number;
   y: number;
@@ -55,3 +74,6 @@ export type Size = {
   width: number;
   height: number;
 };
+
+// Re-export ViewInstance from view.ts
+export type { ViewInstance } from './view';

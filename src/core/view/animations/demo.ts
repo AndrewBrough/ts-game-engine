@@ -9,12 +9,12 @@ export const demoAnimation = (viewInstance: ViewInstance) => {
         updateText,
         updateFontSize,
         updateSize,
-        view
+        props
     } = viewInstance;
     
     // Track the original position that we want to animate
-    let currentX = view.position.x;
-    const currentY = view.position.y;
+    let currentX = props.position.x;
+    const currentY = props.position.y;
 
     const animate = () => {
         currentX += 0.1;

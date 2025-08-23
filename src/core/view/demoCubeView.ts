@@ -4,6 +4,14 @@ import { createAnimatedView } from "./animatedView";
 export const createDemoCubeView = () => {
     const animatedView = createAnimatedView({
         id: 'demoCube',
+        handlers: {
+          onHover: (e, view) => {
+            console.log("Hovered on view ", view);
+          },
+          onClick: (e, view) => {
+            console.log("Clicked on view ", view);
+          },
+        },
         shapeProps: {
           width: 10,
           height: 10,

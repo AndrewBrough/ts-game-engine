@@ -1,6 +1,6 @@
 import type { ViewInstance } from "../view";
 
-const MIN_SPEED = 0.5;
+const MIN_SPEED = 0.1;
 const SPEED_RANGE = 0.1;
 
 export const screenSaver = (viewInstance: ViewInstance) => {

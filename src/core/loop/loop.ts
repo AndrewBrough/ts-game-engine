@@ -1,8 +1,7 @@
 import { getCanvas, getContext } from "../canvas/canvas";
-import { updateFPS } from "../state/state";
+import { updateFPS, getState } from "../state/state";
 
 export const createLoop = () => {
-  const paused = false;
   let lastFrameTime = 0;
   let frameCount = 0;
   let fpsStartTime = 0;
@@ -10,7 +9,9 @@ export const createLoop = () => {
   const targetFrameTime = 1000 / targetFPS; // 16.67ms for 60 FPS
 
   const loop = () => {
-    if(!paused) {
+    const { isPaused } = getState();
+    
+    if(!isPaused) {
         const currentTime = performance.now();
         const deltaTime = currentTime - lastFrameTime;
         
@@ -39,6 +40,9 @@ export const createLoop = () => {
         }
         
         // Continue the loop
+        window.requestAnimationFrame(loop);
+    } else {
+        // Even when paused, continue the loop to check for unpause
         window.requestAnimationFrame(loop);
     }
   };

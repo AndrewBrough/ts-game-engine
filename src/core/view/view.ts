@@ -2,7 +2,7 @@ import { getContext } from '../canvas/canvas';
 import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
-import type { View } from './types';
+import type { View, InteractiveView } from './types';
 import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
@@ -10,12 +10,12 @@ import { calculateBounds } from './collision';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
-export const createView = (props: DeepPartial<View> = config) => {
+export const createView = (props: DeepPartial<View | InteractiveView> = config) => {
   const mergedProps = deepMerge(config, props);
   const events = createEvents();
   
   // Create mutable copies of all props that can be updated
-  const mutableProps: View = {
+  const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
@@ -27,10 +27,13 @@ export const createView = (props: DeepPartial<View> = config) => {
     relativeTo: mergedProps.relativeTo,
     shape: mergedProps.shape,
     bounds: { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 },
+    // Add interactive properties if they exist
+    ...(('handlers' in mergedProps) && { handlers: mergedProps.handlers }),
+    ...(('interactive' in mergedProps) && { interactive: mergedProps.interactive }),
   };
 
   // Helper function to update the view in state
-  const updateViewInState = (view: DeepRequired<View>) => {
+  const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
     const stateViews = getState().views;
     const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
     if (viewIndex !== -1) {
@@ -192,7 +195,6 @@ export const createView = (props: DeepPartial<View> = config) => {
           mutableProps.shapeProps.width = actualWidth;
           mutableProps.shapeProps.height = actualHeight;
           mutableProps.bounds = calculateBounds({ x, y: y + actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
-          console.log(mutableProps.bounds, mutableProps.anchor);
           return;
         }
       }

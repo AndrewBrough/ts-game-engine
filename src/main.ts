@@ -5,6 +5,7 @@ import { createLoop } from './core/loop/loop';
 import { createFpsView } from './core/loop/fpsView';
 import { createDemoCubeView } from './core/view/demoCubeView';
 import { createAnimatedView } from './core/view/animatedView';
+import { createPauseButton } from './core/view/pauseButton';
 
 window.onload = () => {
   createCanvas('app');
@@ -12,7 +13,8 @@ window.onload = () => {
   createLoop();
   
   createDemoCubeView();
-  createFpsView();
+  // createFpsView();
+  createPauseButton();
 
   // Create static text display
   createAnimatedView({
