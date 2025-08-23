@@ -6,6 +6,7 @@ import { createFpsView } from './core/loop/fpsView';
 import { createDemoCubeView } from './core/view/demoCubeView';
 import { createPauseButton } from './core/view/pauseButton';
 import { bindKeyboard } from './core/input/keyboard';
+import { createPlayerView } from './core/view/player/playerView';
 
 window.onload = () => {
   createCanvas('app');
@@ -16,7 +17,11 @@ window.onload = () => {
   createDemoCubeView();
   createFpsView();
 
+  
   createPauseButton({ 
     relativeTo: 'top-right',
   }, 'both');
+
+  
+  createPlayerView();
 };
