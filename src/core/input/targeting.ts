@@ -3,7 +3,7 @@ import type { InteractiveView, Position } from "../view/types";
 
 // Helper function to get interactive views
 export const getInteractiveViews = () => {
-    return getState().views.filter((view): view is InteractiveView => 
+    return Object.values(getState().views).flat().filter((view): view is InteractiveView => 
       'interactive' in view && view.interactive === true
     );
   };

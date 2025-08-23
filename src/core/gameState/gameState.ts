@@ -3,7 +3,7 @@ import type { View, InteractiveView } from "../view/types";
 
 export type GameState = {
   score: number;
-  views: (View | InteractiveView)[];
+  views: Record<number, (View | InteractiveView)[]>;
   fps: number;
   isLogicPaused: boolean;
   timeScale: number;
@@ -12,7 +12,7 @@ export type GameState = {
 
 const gameState = createModel<GameState>({
   score: 0,
-  views: [],
+  views: {},
   fps: 0,
   isLogicPaused: false,
   timeScale: 1,
@@ -22,11 +22,28 @@ const gameState = createModel<GameState>({
 export const getState = () => gameState;
 
 export const addView = (view: View | InteractiveView) => {
-  gameState.views.push(view);
+  const layer = view.layer;
+  if (!gameState.views[layer]) {
+    gameState.views[layer] = [];
+  }
+  gameState.views[layer].push(view);
 };
 
 export const removeView = (view: View | InteractiveView) => {
-  gameState.views = gameState.views.filter((v) => v !== view);
+  const layer = view.layer;
+  if (gameState.views[layer]) {
+    gameState.views[layer] = gameState.views[layer].filter((v) => v !== view);
+  }
+};
+
+// Helper function to get all views across all layers
+export const getAllViews = (): (View | InteractiveView)[] => {
+  return Object.values(gameState.views).flat();
+};
+
+// Helper function to get views on a specific layer
+export const getViewsOnLayer = (layer: number): (View | InteractiveView)[] => {
+  return gameState.views[layer] || [];
 };
 
 export const updateFPS = (fps: number) => {

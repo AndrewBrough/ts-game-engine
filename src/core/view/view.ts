@@ -3,10 +3,11 @@ import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
 import type { View, InteractiveView } from './types';
-import { addView, getState } from '../gameState/gameState';
+import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 import { calculateBounds } from './collision';
+import { LAYERS } from '../gameState/collisionLayers';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
@@ -17,6 +18,7 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   // Create mutable copies of all props that can be updated
   const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
+    layer: props.layer ?? LAYERS.DEFAULT,
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
     shapeProps: { ...mergedProps.shapeProps },
@@ -33,11 +35,14 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
 
   // Helper function to update the view in state
   const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
-    const stateViews = getState().views;
+
+    const stateViews = getViewsOnLayer(mutableProps.layer);
     const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
     if (viewIndex !== -1) {
-      stateViews[viewIndex] = {...stateViews[viewIndex], ...view} as View;
+      // Override view in state if it already exists
+      stateViews[viewIndex] = {...stateViews[viewIndex], ...view} as View | InteractiveView;
     } else {
+      // Add view to state if it doesn't exist
       addView({...mutableProps, ...view} as View);
     }
   };

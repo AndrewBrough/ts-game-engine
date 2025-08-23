@@ -6,6 +6,7 @@ import { createPlayerView } from "../view/player/playerView";
 import type { View } from "../view/types";
 
 export type Scene = {
+    name: string;
     views: View[];
     events: EventInstance;
     collisions: CollisionManager;
@@ -13,21 +14,28 @@ export type Scene = {
 
 export type SceneInstance = ReturnType<typeof createScene>;
 
-export const createScene = () => {
+export const createScene = (name: string = 'default') => {
+    console.log('Creating scene', name);
     const state = getState();
     const events = createEvents();
     const collisions = collisionManager();
-
-    const scene = {
-        views: state.views,
-        events,
-        collisions,
-    }
     
-    const start = () => {
+    const init = () => {
         createPlayerView();
         createDemoCubeView();
     }
 
-    return {scene, start};
+    /* Override me */
+    const start = () => {
+        init();
+    }
+
+    return {
+        name,
+        views: state.views,
+        events,
+        collisions,
+        init,
+        start,
+    }
 }

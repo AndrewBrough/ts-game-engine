@@ -1,11 +1,11 @@
-import { getState, setFocusedView, getFocusedView } from "../gameState/gameState";
+import { setFocusedView, getFocusedView, getAllViews } from "../gameState/gameState";
 import type { InteractiveView } from "../view/types";
 
 const heldKeys = new Set<string>();
 
 // Helper function to get interactive views with specific handlers
 const getViewsWithHandler = (handlerName: keyof NonNullable<InteractiveView['handlers']>) => {
-  return getState().views.filter((view): view is InteractiveView => {
+  return getAllViews().filter((view): view is InteractiveView => {
     if (!('handlers' in view)) return false;
     if (!view.handlers) return false;
     if (!(handlerName in view.handlers)) return false;
@@ -55,8 +55,6 @@ const handleKeyUp = (e: KeyboardEvent) => {
       view.handlers.onKeyUp(e, view);
     }
   }
-  
-  console.log('Key up:', e.key);
 };
 
 // Helper function to check if a key is currently held

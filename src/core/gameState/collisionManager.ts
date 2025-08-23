@@ -1,7 +1,7 @@
 import { createEvents } from "../events/events";
 import { doBoundsOverlap } from "../view/collision";
 import type { View } from "../view/types";
-import { getState } from "./gameState";
+import { getAllViews, getViewsOnLayer } from "./gameState";
 
 export type Collision = {
     view1: View;
@@ -12,21 +12,24 @@ export type CollisionManager = ReturnType<typeof collisionManager>;
 
 export const collisionManager = () => {
     const events = createEvents();
-    const state = getState();
     const collisions: Collision[] = [];
     
     events.addEvent('update', () => {
-        for(const view of state.views) {
+        // Get all views across all layers
+        const allViews = getAllViews();
+        for(const view of allViews) {
             checkCollisions(view);
         }
     });
 
     const checkCollisions = (view: View) => {
         if(!view.bounds) {
-            throw new Error('View has no bounds');
+            throw new Error(`View ${view.id} has no bounds`);
         }
 
-        for(const v of state.views) {
+        // Only check collisions with views on the same layer
+        const viewsOnSameLayer = getViewsOnLayer(view.layer);
+        for(const v of viewsOnSameLayer) {
             if(v.bounds && v.id !== view.id) {
                 const collision = {
                     view1: view,

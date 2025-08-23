@@ -1,21 +1,20 @@
-import { breakTheGameScene } from "../scene/breakTheGameScene";
-import { createScene } from "../scene/scene";
+import { getSceneManager } from "../scene/sceneManager";
 
 export const devKeyboardShortcuts = () => {
-    let shortcutsBound = false;
 
     const shortcuts: Record<string, () => void> = {
         '1': () => {
-            const scene = createScene();
+            const scene = getSceneManager().loadScene('TEST');
             scene.start();
         },
         '2': () => {
-            const scene = breakTheGameScene();
+            const scene = getSceneManager().loadScene('BREAK_THE_ENGINE');
             scene.start();
         },
     }
 
     const bindShortcuts = () => {
+        console.log('Binding dev shortcuts - use 1 or 2 to load scenes');
         for(const shortcut in shortcuts) {
             window.addEventListener('keydown', (e) => {
                 if(e.key === shortcut) {
@@ -35,17 +34,7 @@ export const devKeyboardShortcuts = () => {
         }
     }
 
-    window.addEventListener('keydown', (e) => {
-        if(e.key === '0') {
-            if(shortcutsBound) {
-                unbindShortcuts();
-                shortcutsBound = false;
-            } else {
-                bindShortcuts();
-                shortcutsBound = true;
-            }
-        }
-    });
+    bindShortcuts();
 
     return { shortcuts, bindShortcuts, unbindShortcuts };
 }
