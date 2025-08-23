@@ -1,6 +1,5 @@
 import { getState } from "../state/state";
 import type { Position } from "../view/types";
-import { isPointInBounds, getViewBounds } from "../view/collision";
 
 export const bindMouse = () => {
   window.addEventListener('click', (e) => {
@@ -20,9 +19,13 @@ export const bindMouse = () => {
 export const locateView = (position: Position) => {
   return getState().views.find((v) => {
     // Use the collision system to get proper bounds for the view
-    // Note: We need to get the anchor from the view instance, but for now we'll use center as default
-    // TODO: Store anchor information in the view state
-    const bounds = getViewBounds(v.position, v.size, 'center');
-    return isPointInBounds(position, bounds);
+    // Since we're now using props directly, we need to get the anchor from the view instance
+    // For now, we'll use the view's position and size directly without anchor calculations
+    return (
+      position.x >= v.position.x &&
+      position.x <= v.position.x + v.size.width &&
+      position.y >= v.position.y &&
+      position.y <= v.position.y + v.size.height
+    );
   });
 };

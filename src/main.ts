@@ -13,8 +13,8 @@ window.onload = () => {
     anchor: 'bottom-left',
     shape: 'rect',
     shapeProps: {
-      width: 5,
-      height: 5,
+      width: 100,
+      height: 100,
     },
     fill: {
       color: 'red',
