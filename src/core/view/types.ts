@@ -1,4 +1,5 @@
 import type { Units } from '../config';
+import type { createEvents } from '../events/events';
 
 export type ViewRenderProps = {
   fill: {
@@ -64,10 +65,7 @@ export type View = {
 
 export type ViewInstance = {
   update: () => void;
-  events: {
-    addEvent: (event: string, callback: (event: Event) => void) => () => void;
-    removeEvent: (event: string) => void;
-  };
+  events: ReturnType<typeof createEvents>;
   updatePosition: (newPosition: Position) => void;
   updateFillColor: (color: string) => void;
   updateStrokeColor: (color: string) => void;
@@ -76,4 +74,9 @@ export type ViewInstance = {
   updateText: (text: string | number) => void;
   updateFontSize: (fontSize: number) => void;
   props: ViewRenderProps;
+};
+
+export type AnimatedViewInstance = ViewInstance & {
+  addAnimation: (callback: () => void) => void;
+  animate: () => void;
 };

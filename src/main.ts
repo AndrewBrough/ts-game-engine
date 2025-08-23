@@ -2,21 +2,15 @@ import { createCanvas } from './core/canvas/canvas';
 
 import { bindMouse } from './core/input/mouse';
 import { createLoop } from './core/loop/loop';
-import { createAnimatedView } from './core/view/animatedView';
 import { createFpsView } from './core/loop/fpsView';
+import { createDemoCubeView } from './core/view/demoCubeView';
 
 window.onload = () => {
   createCanvas('app');
   bindMouse();
   createLoop();
   
-  createAnimatedView({
-    shape: 'rect',
-    fill: {
-      color: 'red',
-    },
-  });
-  
+  createDemoCubeView();
   createFpsView();
 
   // Create FPS display

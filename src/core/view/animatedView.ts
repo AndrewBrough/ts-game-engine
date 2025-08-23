@@ -1,25 +1,21 @@
-import type { ViewRenderProps } from "./types";
+import type { AnimatedViewInstance, ViewRenderProps } from "./types";
 import { createView } from "./view";
 import type { DeepPartial } from "../types";
-import { screenSaver } from "./animations/screenSaver";
 
-export const createAnimatedView = (props: DeepPartial<ViewRenderProps>) => {
+export const createAnimatedView = (props: DeepPartial<ViewRenderProps>): AnimatedViewInstance => {
     const viewInstance = createView(props);
-    const screenSaverAnimate = screenSaver(viewInstance);
-    // const demoAnimate = demoAnimation(viewInstance);
 
     const animate = () => {
-        // demoAnimate();
-        screenSaverAnimate();
         viewInstance.update();
-        // console.log(`Frame ${animationFrame++}: X=${currentX.toFixed(1)}, Hue=${hue}`);
     };
-
-    viewInstance.events.addEvent('animate', () => {
-        animate();
-    });
+    
+    const addAnimation = (callback: EventListener) => {
+        viewInstance.events.addEvent('animate', callback);
+    }
 
     return {
         ...viewInstance,
+        addAnimation,
+        animate
     };
 };

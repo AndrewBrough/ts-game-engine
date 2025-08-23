@@ -1,31 +1,39 @@
 import type { ViewInstance } from "../types";
 
-const MIN_SPEED = 2;
-const SPEED_RANGE = 1;
+const MIN_SPEED = 0.5;
+const SPEED_RANGE = 0.1;
 
 export const screenSaver = (viewInstance: ViewInstance) => {
-    const direction = {x: 1, y: 1};
+    const direction = { x: 1, y: 1 };
+    const speedX = Math.random() * SPEED_RANGE + MIN_SPEED;
+    const speedY = Math.random() * SPEED_RANGE + MIN_SPEED;
     
     const {
         updatePosition,
         props
     } = viewInstance;
-
+    
     
     const animate = () => {
-        const currentX = Math.max(props.position.x, 0);
-        const currentY = Math.max(props.position.y, 0);
-        const speedX = Math.random() * SPEED_RANGE + MIN_SPEED;
-        const speedY = Math.random() * SPEED_RANGE + MIN_SPEED;
-        
-        // Calculate new position
-        const newX = currentX + direction.x * speedX;
-        const newY = currentY + direction.y * speedY;
 
-        if (newX < 0 || newX > window.innerWidth - props.shapeProps.width) {
+        // Calculate new position
+        const newX = props.position.x + direction.x * speedX;
+        const newY = props.position.y + direction.y * speedY;
+
+        // For x-axis: use viewport width boundary
+        if (newX < 0 || newX > 100 - props.shapeProps.width) {
             direction.x = -direction.x;
         }
-        if (newY < 0 || newY > window.innerHeight - props.shapeProps.height) {
+        
+        // For y-axis: calculate proper viewport height boundary
+        // If using vw units, convert to vh equivalent for y-axis
+        let yMax = 100;
+        if (props.units === 'vw') {
+            // Convert vw to vh equivalent: (window.innerHeight / window.innerWidth) * 100
+            yMax = (window.innerHeight / window.innerWidth) * 100;
+        }
+        
+        if (newY < 0 || newY > yMax - props.shapeProps.height) {
             direction.y = -direction.y;
         }
         

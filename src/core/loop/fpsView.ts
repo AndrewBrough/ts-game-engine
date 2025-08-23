@@ -1,12 +1,12 @@
-import { createView } from '../view/view';
 import { getState } from '../state/state';
+import { createAnimatedView } from '../view/animatedView';
+import type { AnimatedViewInstance } from '../view/types';
 
-export const createFpsView = () => {
-  // Create FPS display in top right corner
-  const fpsView = createView({
-    position: { x: 1, y: 20 },
-    // relativeTo: 'top-left',
-    anchor: 'top-left',
+export const createFpsView = (): AnimatedViewInstance => {
+  const animatedView = createAnimatedView({
+    position: { x: 1, y: 5 },
+    relativeTo: 'top-left',
+    // anchor: 'top-left',
     shape: 'text',
     textProps: {
       text: 'FPS: 0',
@@ -19,17 +19,11 @@ export const createFpsView = () => {
     },
   });
 
-  // Update FPS display on each animate event
-  const updateFpsDisplay = () => {
+  animatedView.addAnimation(() => {
     const fps = getState().fps;
-    fpsView.updateText(`FPS: ${fps}`);
-    fpsView.update();
-  };
+    animatedView.updateText(`FPS: ${fps}`);
+    animatedView.animate();
+  });
 
-  window.addEventListener('animate', updateFpsDisplay);
-
-  return {
-    fpsView,
-    updateFpsDisplay,
-  };
+  return animatedView;
 };

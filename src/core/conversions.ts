@@ -22,8 +22,10 @@ export const convertToPixels = (value: number, unit: Units): number => {
 export const convertPositionToPixels = (
   x: number,
   y: number,
-  units: Units
+  units?: Units
 ): { x: number; y: number } => {
+  units = units ?? config.units;
+
   return {
     x: convertToPixels(x, units),
     y: convertToPixels(y, units),

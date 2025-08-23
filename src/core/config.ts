@@ -20,8 +20,8 @@ export const config: Config = {
   shape: 'rect',
   shapeProps: {
     radius: 0,
-    width: 50,
-    height: 50,
+    width: 0,
+    height: 0,
   },
   textProps: {
     text: 'Hello, world!',

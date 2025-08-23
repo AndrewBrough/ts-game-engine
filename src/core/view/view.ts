@@ -5,39 +5,24 @@ import type { DeepPartial } from '../types';
 import type { View, ViewRenderProps, ViewInstance } from './types';
 import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
-import { convertFontSizeToPixels, convertSizeToPixels } from '../conversions';
+import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
   const mergedProps = deepMerge(config, props);
   const events = createEvents();
-  const {
-    fill,
-    stroke,
-    shape,
-    anchor,
-    position,
-    units,
-    relativeTo,
-    shapeProps,
-    textProps,
-  } = mergedProps;
-
-  const mutablePosition = { x: position.x, y: position.y };
-  
-  // Create a unique ID for this view
   const viewId = crypto.randomUUID();
   
   // Create mutable copies of all props that can be updated
   const mutableProps = {
-    fill: { ...fill },
-    stroke: { ...stroke },
-    shapeProps: { ...shapeProps },
-    textProps: { ...textProps },
-    position: mutablePosition,
-    anchor,
-    units,
-    relativeTo,
-    shape
+    fill: { ...mergedProps.fill },
+    stroke: { ...mergedProps.stroke },
+    shapeProps: { ...mergedProps.shapeProps },
+    textProps: { ...mergedProps.textProps },
+    position: { x: mergedProps.position.x, y: mergedProps.position.y },
+    anchor: mergedProps.anchor,
+    units: mergedProps.units,
+    relativeTo: mergedProps.relativeTo,
+    shape: mergedProps.shape
   };
 
   // Helper function to update the view in state
@@ -53,8 +38,8 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: { x: number; y: number }) => {
-    mutablePosition.x = newPosition.x;
-    mutablePosition.y = newPosition.y;
+    mutableProps.position.x = newPosition.x;
+    mutableProps.position.y = newPosition.y;
   };
 
   // Function to update fill color
@@ -74,18 +59,37 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
 
   // Function to update shape size
   const updateSize = (width: number, height: number) => {
-    const getConvertedSize = () => {
-      if(shape === "text") {
-        const convertedWidth = convertFontSizeToPixels(width);
-        const convertedHeight = convertFontSizeToPixels(height);
-        return { width: convertedWidth, height: convertedHeight };
-      } else {
-        return convertSizeToPixels(width, height);
-      }
-    }
-    const { width: convertedWidth, height: convertedHeight } = getConvertedSize();
-    mutableProps.shapeProps.width = convertedWidth;
-    mutableProps.shapeProps.height = convertedHeight;
+    mutableProps.shapeProps.width = width;
+    mutableProps.shapeProps.height = height;
+      
+    // if(mutableProps.shape === "text") {
+    //   // For text, calculate actual rendered dimensions using canvas metrics
+    //   const ctx = getContext();
+    //   if (!ctx) {
+    //     throw new Error('Context not found');
+    //   }
+      
+    //   const textStr = mutableProps.textProps.text.toString();
+    //   const { fontSize, fontFamily, fontWeight, fontStyle } = mutableProps.textProps;
+      
+    //   // Set the font to measure text metrics
+    //   ctx.font = `${fontWeight} ${fontStyle} ${fontSize}px ${fontFamily}`;
+    //   const metrics = ctx.measureText(textStr);
+      
+    //   // Calculate actual text dimensions
+    //   const textWidth = metrics.width;
+    //   const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
+    //   const descent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
+    //   const textHeight = ascent + descent;
+      
+    //   mutableProps.shapeProps.width = textWidth;
+    //   mutableProps.shapeProps.height = textHeight;
+    // } else {
+    //   // For non-text shapes, use regular size conversion
+    //   const { width: convertedWidth, height: convertedHeight } = convertSizeToPixels(width, height);
+    //   mutableProps.shapeProps.width = convertedWidth;
+    //   mutableProps.shapeProps.height = convertedHeight;
+    // }
   };
 
   // Function to update text
@@ -143,16 +147,16 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     ctx.lineWidth = mutableProps.stroke.width;
 
     // Use props directly - no conversion, no anchor calculations
-    const { width, height } = mutableProps.shapeProps;
-    const { x, y } = mutableProps.position;
-
+    const { width, height } = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
+    const { x, y } = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
     const {
       text,
-      fontSize,
       fontFamily,
       fontWeight,
       fontStyle,
     } = mutableProps.textProps;
+
+    const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
     const view: View = {
       id: viewId,
@@ -160,7 +164,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
       size: { width, height },
     };
 
-    switch (shape) {
+    switch (mutableProps.shape) {
       case 'rect':
         ctx.fillRect(x, y, width, height);
         ctx.strokeRect(x, y, width, height);
@@ -175,13 +179,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
         break;
       case 'text': {
         const textStr = text.toString();
-        ctx.font = `${fontWeight} ${fontStyle} ${fontSize}px ${fontFamily}`;
-        const metrics = ctx.measureText(textStr);
-        const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
-        
-        view.size.width = metrics.width;
-        view.size.height = ascent;
-        
+        ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
         ctx.fillText(textStr, x, y);
         ctx.strokeText(textStr, x, y);
         break;
