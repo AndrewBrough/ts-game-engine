@@ -307,6 +307,75 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     window.dispatchEvent(new Event('update'));
   };
 
+  // Debug function to draw anchor point and bounds
+  const drawDebugInfo = (ctx: CanvasRenderingContext2D, view: View, anchor: string) => {
+    // Save current context state
+    ctx.save();
+    
+    // Draw purple dot at anchor point
+    ctx.fillStyle = 'purple';
+    ctx.strokeStyle = 'purple';
+    ctx.lineWidth = 2;
+    
+    // Draw a small circle at the anchor position
+    const anchorX = view.position.x;
+    const anchorY = view.position.y;
+    ctx.beginPath();
+    ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Draw purple rectangle around calculated bounds
+    ctx.strokeStyle = 'purple';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]); // Dashed line
+    
+    // Calculate bounds based on anchor
+    let left, right, top, bottom;
+    let halfWidth, halfHeight;
+    
+    switch (anchor) {
+      case 'top-left':
+        left = anchorX;
+        right = anchorX + view.size.width;
+        top = anchorY;
+        bottom = anchorY + view.size.height;
+        break;
+      case 'top-right':
+        left = anchorX - view.size.width;
+        right = anchorX;
+        top = anchorY;
+        bottom = anchorY + view.size.height;
+        break;
+      case 'bottom-left':
+        left = anchorX;
+        right = anchorX + view.size.width;
+        top = anchorY - view.size.height;
+        bottom = anchorY;
+        break;
+      case 'bottom-right':
+        left = anchorX - view.size.width;
+        right = anchorX;
+        top = anchorY - view.size.height;
+        bottom = anchorY;
+        break;
+      case 'center':
+      default:
+        halfWidth = view.size.width / 2;
+        halfHeight = view.size.height / 2;
+        left = anchorX - halfWidth;
+        right = anchorX + halfWidth;
+        top = anchorY - halfHeight;
+        bottom = anchorY + halfHeight;
+        break;
+    }
+    
+    // Draw the bounds rectangle
+    ctx.strokeRect(left, top, right - left, bottom - top);
+    
+    // Restore context state
+    ctx.restore();
+  };
+
   const draw = () => {
     const ctx = getContext();
     if (!ctx) {
@@ -365,6 +434,9 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
         break;
       }
     }
+
+    // Debug rendering: Draw anchor point and bounds
+    drawDebugInfo(ctx, view, anchor);
 
     return view;
   };

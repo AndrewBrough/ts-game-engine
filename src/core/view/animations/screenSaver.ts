@@ -1,7 +1,8 @@
 import { getCanvas } from "../../canvas/canvas";
 import type { ViewInstance } from "../types";
+import { getViewBounds } from "../collision";
 
-const MIN_SPEED = 0.5;
+const MIN_SPEED = 0.1;
 const SPEED_RANGE = 0.5;
 
 export const screenSaver = (viewInstance: ViewInstance) => {
@@ -15,8 +16,9 @@ export const screenSaver = (viewInstance: ViewInstance) => {
     } = viewInstance;
 
     // Track the current position in the original units (not converted pixels)
-    let currentX = props.position.x;
-    let currentY = props.position.y;
+    // Ensure we start in a valid position within bounds
+    let currentX = Math.max(props.position.x, 0);
+    let currentY = Math.max(props.position.y, 0);
 
     const animate = () => {
         const canvas = getCanvas();
@@ -26,6 +28,7 @@ export const screenSaver = (viewInstance: ViewInstance) => {
         const newY = currentY + direction.y * speedY;
         
         // Get view size in the same units as our position
+        // Use the original shape properties which are in the correct units
         const viewWidth = props.shapeProps.width;
         const viewHeight = props.shapeProps.height;
         
@@ -42,28 +45,52 @@ export const screenSaver = (viewInstance: ViewInstance) => {
             maxY = canvas.height; // pixels
         }
         
+        // Calculate bounds once for the new position
+        const newBounds = getViewBounds(
+            { x: newX, y: newY },
+            { width: viewWidth, height: viewHeight },
+            props.anchor
+        );
+        
         // Check for edge collisions and update direction if needed
-        // Account for the view's width and height
-        if (newX + viewWidth > maxX || newX < 0) {
+        if (newBounds.right > maxX || newBounds.left < 0) {
             direction.x = -direction.x;
             // Randomly change speed when bouncing off horizontal edges
             speedX = Math.random() * SPEED_RANGE + MIN_SPEED;
+            console.log(`X bounce: left=${newBounds.left.toFixed(1)}, right=${newBounds.right.toFixed(1)}, maxX=${maxX}, anchor=${props.anchor}`);
         }
-        if (newY + viewHeight > maxY || newY < 0) {
+        if (newBounds.bottom > maxY || newBounds.top < 0) {
             direction.y = -direction.y;
             // Randomly change speed when bouncing off vertical edges
             speedY = Math.random() * SPEED_RANGE + MIN_SPEED;
+            console.log(`Y bounce: top=${newBounds.top.toFixed(1)}, bottom=${newBounds.bottom.toFixed(1)}, maxY=${maxY}, anchor=${props.anchor}`);
         }
         
         // Update our tracked position with corrected direction
         currentX += direction.x * speedX;
-        currentY += direction.y * speedY;    
+        currentY += direction.y * speedY;
+        
+        // Clamp the position to keep the object within bounds using the same bounds calculation
+        if (newBounds.left < 0) {
+            currentX += Math.abs(newBounds.left);
+        } else if (newBounds.right > maxX) {
+            currentX -= (newBounds.right - maxX);
+        }
+        
+        if (newBounds.top < 0) {
+            console.log('top', newBounds.top);
+            currentY += Math.abs(newBounds.top);
+        } else if (newBounds.bottom > maxY) {
+            console.log('bottom', newBounds.bottom);
+            currentY -= (newBounds.bottom - maxY);
+        }
         
         // Update the view position
         updatePosition({ x: currentX, y: currentY });
         
         // Debug logging
-        console.log(`Screen saver: x=${currentX.toFixed(1)}, y=${currentY.toFixed(1)}, direction=(${direction.x}, ${direction.y})`);
+        // console.log(`Screen saver: x=${currentX.toFixed(1)}, y=${currentY.toFixed(1)}, direction=(${direction.x}, ${direction.y}), viewSize=(${viewWidth}, ${viewHeight}), max=(${maxX}, ${maxY}), anchor=${props.anchor}`);
+        // console.log(`Bounds: left=${newBounds.left.toFixed(1)}, right=${newBounds.right.toFixed(1)}, top=${newBounds.top.toFixed(1)}, bottom=${newBounds.bottom.toFixed(1)}`);
     }
 
     return animate;

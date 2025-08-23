@@ -10,29 +10,14 @@ window.onload = () => {
   createLoop();
   
   createAnimatedView({
-    position: {
-      x: 1,
-      y: 1,
-    },
+    anchor: 'bottom-left',
     shape: 'rect',
     shapeProps: {
       width: 5,
       height: 5,
-      radius: 0,
     },
     fill: {
       color: 'red',
-    },
-    stroke: {
-      color: 'blue',
-      width: 2,
-    },
-    textProps: {
-      text: 'Hello',
-      fontSize: 16,
-      fontFamily: 'Arial',
-      fontWeight: 'normal',
-      fontStyle: 'normal',
     },
   });
 

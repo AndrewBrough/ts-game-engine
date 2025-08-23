@@ -1,0 +1,133 @@
+import type { Position, Size } from './types';
+
+export interface Bounds {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  width: number;
+  height: number;
+}
+
+export type Anchor = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+
+/**
+ * Calculate the bounds of an object based on its position, size, and anchor point
+ */
+export const calculateBounds = (
+  position: Position,
+  size: Size,
+  anchor: Anchor
+): Bounds => {
+  const { x, y } = position;
+  const { width, height } = size;
+
+  switch (anchor) {
+    case 'top-left':
+      return {
+        left: x,
+        right: x + width,
+        top: y,
+        bottom: y + height,
+        width,
+        height
+      };
+
+    case 'top-right':
+      return {
+        left: x - width,
+        right: x,
+        top: y,
+        bottom: y + height,
+        width,
+        height
+      };
+
+    case 'bottom-left':
+      return {
+        left: x,
+        right: x + width,
+        top: y - height,
+        bottom: y,
+        width,
+        height
+      };
+
+    case 'bottom-right':
+      return {
+        left: x - width,
+        right: x,
+        top: y - height,
+        bottom: y,
+        width,
+        height
+      };
+
+    case 'center':
+    default:
+      const halfWidth = width / 2;
+      const halfHeight = height / 2;
+      return {
+        left: x - halfWidth,
+        right: x + halfWidth,
+        top: y - halfHeight,
+        bottom: y + halfHeight,
+        width,
+        height
+      };
+  }
+};
+
+/**
+ * Check if a point is within the bounds of an object
+ */
+export const isPointInBounds = (
+  point: Position,
+  bounds: Bounds
+): boolean => {
+  return (
+    point.x >= bounds.left &&
+    point.x <= bounds.right &&
+    point.y >= bounds.top &&
+    point.y <= bounds.bottom
+  );
+};
+
+/**
+ * Check if two bounds overlap (collision detection)
+ */
+export const doBoundsOverlap = (bounds1: Bounds, bounds2: Bounds): boolean => {
+  return !(
+    bounds1.right < bounds2.left ||
+    bounds1.left > bounds2.right ||
+    bounds1.bottom < bounds2.top ||
+    bounds1.top > bounds2.bottom
+  );
+};
+
+/**
+ * Check if bounds are within screen boundaries
+ */
+export const isBoundsInScreen = (
+  bounds: Bounds,
+  screenWidth: number,
+  screenHeight: number
+): boolean => {
+  return (
+    bounds.left >= 0 &&
+    bounds.right <= screenWidth &&
+    bounds.top >= 0 &&
+    bounds.bottom <= screenHeight
+  );
+};
+
+/**
+ * Get the collision bounds for a view with proper anchor point handling
+ */
+export const getViewBounds = (
+  position: Position,
+  size: Size,
+  anchor: Anchor
+): Bounds => {
+  return calculateBounds(position, size, anchor);
+};

@@ -11,12 +11,10 @@ export const demoAnimation = (viewInstance: ViewInstance) => {
         updateSize,
         view
     } = viewInstance;
-
     
     // Track the original position that we want to animate
     let currentX = view.position.x;
     const currentY = view.position.y;
-
 
     const animate = () => {
         currentX += 0.1;
