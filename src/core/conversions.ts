@@ -3,7 +3,8 @@ import { config, type Units } from './config';
 /**
  * Convert viewport units (vh/vw) to pixels
  */
-export const convertToPixels = (value: number, unit: Units): number => {
+export const convertToPixels = (value: number, unit?: Units): number => {
+  unit = unit ?? config.units;
   switch (unit) {
     case 'px':
       return value;

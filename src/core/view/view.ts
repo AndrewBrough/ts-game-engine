@@ -1,18 +1,20 @@
 import { getContext } from '../canvas/canvas';
 import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
-import type { DeepPartial } from '../types';
-import type { View, ViewRenderProps, ViewInstance } from './types';
+import type { DeepPartial, DeepRequired } from '../types';
+import type { View } from './types';
 import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 
-export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
+export type ViewInstance = ReturnType<typeof createView>;
+
+export const createView = (props: DeepPartial<View> = config) => {
   const mergedProps = deepMerge(config, props);
   const events = createEvents();
   
   // Create mutable copies of all props that can be updated
-  const mutableProps = {
+  const mutableProps: View = {
     id: props.id ?? crypto.randomUUID(),
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
@@ -26,13 +28,13 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
   };
 
   // Helper function to update the view in state
-  const updateViewInState = (view: View) => {
+  const updateViewInState = (view: DeepRequired<View>) => {
     const stateViews = getState().views;
     const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
     if (viewIndex !== -1) {
-      stateViews[viewIndex] = view;
+      stateViews[viewIndex] = {...stateViews[viewIndex], ...view} as View;
     } else {
-      addView(view);
+      addView({...mutableProps, ...view} as View);
     }
   };
 
@@ -158,12 +160,6 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
 
     const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
-    const view: View = {
-      id: mutableProps.id,
-      position: { x, y },
-      size: { width, height },
-    };
-
     switch (mutableProps.shape) {
       case 'rect':
         ctx.fillRect(x, y, width, height);
@@ -185,14 +181,12 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
         break;
       }
     }
-
-    return view;
   };
 
   const update = () => {
-    const view = draw();
+    draw();
     // drawDebugInfo(view);
-    updateViewInState(view);
+    updateViewInState(mutableProps);
   };
 
   return {

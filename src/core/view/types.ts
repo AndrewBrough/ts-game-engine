@@ -1,7 +1,6 @@
 import type { Units } from '../config';
-import type { createEvents } from '../events/events';
 
-export type ViewRenderProps = {
+export type View = {
   id: string;
   fill: {
     color: string;
@@ -44,40 +43,4 @@ export type ViewRenderProps = {
 export type Position = {
   x: number;
   y: number;
-};
-
-export type View = {
-  /**
-   * Unique identifier for the view
-   */
-  id: string;
-  /**
-   * The anchor position of the view (where it's positioned based on anchor setting)
-   */
-  position: Position;
-  /**
-   * Width and height of the view in pixels
-   */
-  size: {
-    width: number;
-    height: number;
-  };
-};
-
-export type ViewInstance = {
-  update: () => void;
-  events: ReturnType<typeof createEvents>;
-  updatePosition: (newPosition: Position) => void;
-  updateFillColor: (color: string) => void;
-  updateStrokeColor: (color: string) => void;
-  updateStrokeWidth: (width: number) => void;
-  updateSize: (width: number, height: number) => void;
-  updateText: (text: string | number) => void;
-  updateFontSize: (fontSize: number) => void;
-  props: ViewRenderProps;
-};
-
-export type AnimatedViewInstance = ViewInstance & {
-  addAnimation: (callback: () => void) => void;
-  animate: () => void;
 };

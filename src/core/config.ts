@@ -1,17 +1,17 @@
-import type { ViewRenderProps } from './view/types';
+import type { View } from './view/types';
 
 export type Units = 'px' | 'vh' | 'vw';
 
-export type Config = ViewRenderProps & {
+export type Config = View & {
   units: Units;
 };
 
-export const config: Config = {
+export const config: Omit<Config, 'id'> = {
   units: 'vw',
   anchor: 'top-left',
   position: { x: 0, y: 0 },
   fill: {
-    color: 'white',
+    color: 'transparent',
   },
   stroke: {
     color: 'transparent',

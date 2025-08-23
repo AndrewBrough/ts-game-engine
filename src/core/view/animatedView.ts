@@ -1,8 +1,8 @@
-import type { AnimatedViewInstance, ViewRenderProps } from "./types";
 import { createView } from "./view";
 import type { DeepPartial } from "../types";
+import type { View } from "./types";
 
-export const createAnimatedView = (props: DeepPartial<ViewRenderProps>): AnimatedViewInstance => {
+export const createAnimatedView = (props: DeepPartial<View>) => {
     const viewInstance = createView(props);
 
     const animate = () => {

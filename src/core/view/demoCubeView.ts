@@ -1,11 +1,9 @@
-import type { AnimatedViewInstance } from "./types";
 import { screenSaver } from "./animations/screenSaver";
 import { createAnimatedView } from "./animatedView";
 
-export const createDemoCubeView = (): AnimatedViewInstance => {
-    const animatedViewInstance = createAnimatedView({
+export const createDemoCubeView = () => {
+    const animatedView = createAnimatedView({
         id: 'demoCube',
-        position: { x: 1, y: 1 },
         shapeProps: {
           width: 10,
           height: 10,
@@ -15,11 +13,11 @@ export const createDemoCubeView = (): AnimatedViewInstance => {
           color: 'red',
         },
       });
-    const screenSaverAnimate = screenSaver(animatedViewInstance);
+    const screenSaverAnimate = screenSaver(animatedView);
 
-    animatedViewInstance.addAnimation(() => {
+    animatedView.addAnimation(() => {
         screenSaverAnimate();
     });
 
-    return animatedViewInstance;
+    return animatedView;
 };

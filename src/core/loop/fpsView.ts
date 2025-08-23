@@ -1,8 +1,7 @@
 import { getState } from '../state/state';
 import { createAnimatedView } from '../view/animatedView';
-import type { AnimatedViewInstance } from '../view/types';
 
-export const createFpsView = (): AnimatedViewInstance => {
+export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
     position: { x: 1, y: 5 },
