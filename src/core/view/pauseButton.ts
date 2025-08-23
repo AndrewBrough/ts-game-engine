@@ -4,18 +4,15 @@ import type { InteractiveView } from "./types";
 import { createInteractiveView } from "./interactiveView";
 import { config } from "../config";
 
-export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logicOrAnimation: 'logic' | 'animation' = 'logic') => {
+export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logicOrAnimation: 'logic' | 'animation' | 'both' = 'both') => {
     const defaultProps: DeepPartial<InteractiveView> = {
-        id: `pause-button-${logicOrAnimation}`,
-        position: { x: 1, y: 1 },
-        relativeTo: 'top-right',
+        id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
         shape: 'text',
         fill: {
             color: 'white',
         },
         handlers: {
             onClick: () => {
-                console.log('onClick', logicOrAnimation);
                 handlePause();
             },
         },
@@ -25,11 +22,11 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logi
     const viewInstance = createInteractiveView(mergedProps);
 
     const handlePause = () => {
-        console.log('handlePause', logicOrAnimation);
         const { timeScale } = getState();
-        if(logicOrAnimation === 'logic') {
+        if (logicOrAnimation === 'logic' || logicOrAnimation === 'both') {
             toggleLogicPaused();
-        } else {
+        }
+        if (logicOrAnimation === 'animation' || logicOrAnimation === 'both') {
             setTimeScale(timeScale > 0 ? 0 : 1);
         }
         updateText();
@@ -37,7 +34,15 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logi
 
     const updateText = () => {
         const { timeScale, isLogicPaused } = getState();
-        viewInstance.updateText(logicOrAnimation === 'logic' ? (isLogicPaused ? 'Logic Resume' : 'Logic Pause') : (timeScale === 0 ? 'Animation Resume' : 'Animation Pause'));
+        if(logicOrAnimation === 'both') {
+            viewInstance.updateText(isLogicPaused ? 'Resume' : 'Pause');
+        }
+        if (logicOrAnimation === 'logic') {
+            viewInstance.updateText(isLogicPaused ? 'Resume Updates' : 'Pause Updates');
+        }
+        if (logicOrAnimation === 'animation') {
+            viewInstance.updateText(timeScale === 0 ? 'Resume Time' : 'Pause Time');
+        }
     }
 
     updateText();

@@ -32,8 +32,6 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     ...(('interactive' in mergedProps) && { interactive: mergedProps.interactive }),
   };
 
-  console.log(mutableProps.relativeTo);
-
   // Helper function to update the view in state
   const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
     const stateViews = getState().views;
@@ -153,10 +151,52 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     ctx.strokeStyle = mutableProps.stroke.color;
     ctx.lineWidth = mutableProps.stroke.width;
 
-    // Use props directly - no conversion, no anchor calculations
-    const { width: w, height: h } = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
+    const sizeInPixels = convertSizeToPixels(
+      mutableProps.shapeProps.width ?? mutableProps.bounds.width,
+      mutableProps.shapeProps.height ?? mutableProps.bounds.height);
+
     const positionInPixels = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
-    const { x, y } = positionInPixels;
+    console.log({mutableProps, sizeInPixels, positionInPixels});
+    const relativeTo = mutableProps.relativeTo;
+    const relativeAnchor = {
+      x: 0,
+      y: 0,
+    }
+    const { width: w, height: h } = mutableProps.bounds || sizeInPixels;
+    switch(relativeTo) {
+      case 'top-right':
+        relativeAnchor.x = window.innerWidth - w;
+        relativeAnchor.y = 0;
+        break;
+      case 'top-left':
+        relativeAnchor.x = 0;
+        relativeAnchor.y = 0;
+        break;
+      case 'bottom-right':
+        relativeAnchor.x = window.innerWidth - w;
+        relativeAnchor.y = window.innerHeight - h * 2;
+        break;
+      case 'bottom-left':
+        relativeAnchor.x = 0;
+        relativeAnchor.y = window.innerHeight - h * 2;
+        break;
+    }
+    // const relativeToPositionInPixels = convertPositionToPixels(relativeAnchor.x, relativeAnchor.y);
+    // console.log({relativeAnchor});
+    // const { x, y } = {
+    //   x: relativeAnchor.x - positionInPixels.x - sizeInPixels.width,
+    //   y: relativeAnchor.y - positionInPixels.y - sizeInPixels.height,
+    // };
+    console.log(mutableProps.bounds);
+    
+    const { x, y } = {
+      x: relativeAnchor.x,
+      y: relativeAnchor.y,
+    };
+    console.log({
+      x,y,w,h
+    });
+    console.log();
     const {
       text,
       fontSize,
@@ -164,9 +204,10 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
       fontWeight,
       fontStyle,
     } = mutableProps.textProps;
-    mutableProps.bounds = { left: x, right: x + w, top: y, bottom: y + h, width: w, height: h };
     
-
+    // TODO keep this because it worked for square shapes
+    // mutableProps.bounds = { left: x, right: x + w, top: y, bottom: y + h, width: w, height: h };
+    // console.log(mutableProps.bounds);
     const fontSizePx = convertFontSizeToPixels(fontSize);
 
     const renderShape = () => {
@@ -194,9 +235,15 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
           const actualWidth = metrics.width;
           const actualHeight = (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) + 
           (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
-          mutableProps.shapeProps.width = actualWidth;
-          mutableProps.shapeProps.height = actualHeight;
+          // mutableProps.shapeProps.width = actualWidth;
+          // mutableProps.shapeProps.height = actualHeight;
           mutableProps.bounds = calculateBounds({ x, y: y + actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
+          console.log({
+            x,y,w,h,
+            actualWidth,
+            actualHeight,
+            bounds: mutableProps.bounds,
+          });
           return;
         }
       }
