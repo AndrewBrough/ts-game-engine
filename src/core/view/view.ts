@@ -109,36 +109,36 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   };
 
   // Debug function to draw anchor point and bounds
-  const drawDebugInfo = () => {
-    const ctx = getContext();
-    if (!ctx) {
-      throw new Error('Context not found');
-    }
+  // const drawDebugInfo = () => {
+  //   const ctx = getContext();
+  //   if (!ctx) {
+  //     throw new Error('Context not found');
+  //   }
 
-    // Save current context state
-    ctx.save();
+  //   // Save current context state
+  //   ctx.save();
     
-    // Draw purple dot at anchor point
-    ctx.fillStyle = 'yellow';
-    ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 5;
+  //   // Draw purple dot at anchor point
+  //   ctx.fillStyle = 'yellow';
+  //   ctx.strokeStyle = 'yellow';
+  //   ctx.lineWidth = 5;
     
-    const { left, right, top, bottom } = mutableProps.bounds || {left: 0, right: 0, top: 0, bottom: 0};
-    // Draw a small circle at the anchor position
-    ctx.beginPath();
-    ctx.arc(left, top, 3, 0, 2 * Math.PI);
-    ctx.fill();
+  //   const { left, right, top, bottom } = mutableProps.bounds || {left: 0, right: 0, top: 0, bottom: 0};
+  //   // Draw a small circle at the anchor position
+  //   ctx.beginPath();
+  //   ctx.arc(left, top, 3, 0, 2 * Math.PI);
+  //   ctx.fill();
     
-    // Draw purple rectangle around the actual rendered bounds
-    ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 2;
+  //   // Draw purple rectangle around the actual rendered bounds
+  //   ctx.strokeStyle = 'yellow';
+  //   ctx.lineWidth = 2;
     
-    // Draw the bounds rectangle - same as the rendered object
-    ctx.strokeRect(left, top, right - left, bottom - top);
+  //   // Draw the bounds rectangle - same as the rendered object
+  //   ctx.strokeRect(left, top, right - left, bottom - top);
     
-    // Restore context state
-    ctx.restore();
-  };
+  //   // Restore context state
+  //   ctx.restore();
+  // };
 
   const draw = () => {
     const ctx = getContext();
@@ -234,7 +234,7 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   }
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

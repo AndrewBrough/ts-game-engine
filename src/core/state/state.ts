@@ -7,6 +7,7 @@ export type State = {
   fps: number;
   isLogicPaused: boolean;
   timeScale: number;
+  focusedView: InteractiveView | null;
 };
 
 const state = createModel<State>({
@@ -15,6 +16,7 @@ const state = createModel<State>({
   fps: 0,
   isLogicPaused: false,
   timeScale: 1,
+  focusedView: null,
 });
 
 export const getState = () => state;
@@ -45,4 +47,12 @@ export const setTimeScale = (timeScale: number) => {
 
 export const toggleTimeScale = () => {
   setTimeScale(state.timeScale === 1 ? 0 : 1);
+};
+
+export const setFocusedView = (view: InteractiveView | null) => {
+  state.focusedView = view;
+};
+
+export const getFocusedView = () => {
+  return state.focusedView;
 };

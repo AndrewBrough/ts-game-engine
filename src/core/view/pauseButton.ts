@@ -15,6 +15,12 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logi
             onClick: () => {
                 handlePause();
             },
+            onKeyDown: (event) => {
+                const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
+                if(keys.includes(event.key)) {
+                    handlePause();
+                }
+            },
         },
     };
 

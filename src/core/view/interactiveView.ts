@@ -17,6 +17,12 @@ export const createInteractiveView = (props: DeepPartial<InteractiveView>) => {
         window.addEventListener('mouseout', (event) => {
             view.events.events.get('onHoverOut')?.(event);
         });
+        window.addEventListener('keydown', (event) => {
+            view.events.events.get('onKeyDown')?.(event);
+        });
+        window.addEventListener('keyup', (event) => {
+            view.events.events.get('onKeyUp')?.(event);
+        });
     }
 
     const clearHandlers = () => {
@@ -28,6 +34,12 @@ export const createInteractiveView = (props: DeepPartial<InteractiveView>) => {
         });
         window.removeEventListener('mouseout', (event) => {
             view.events.events.get('onHoverOut')?.(event);
+        });
+        window.removeEventListener('keydown', (event) => {
+            view.events.events.get('onKeyDown')?.(event);
+        });
+        window.removeEventListener('keyup', (event) => {
+            view.events.events.get('onKeyUp')?.(event);
         });
     }
 

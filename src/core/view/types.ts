@@ -61,6 +61,8 @@ export type InteractiveView = AnimatedView & {
     onTouchStart?: (event: TouchEvent, view: AnyView | AnyViewInstance) => void;
     onTouchEnd?: (event: TouchEvent, view: AnyView | AnyViewInstance) => void;
     onDrag?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
+    onKeyDown?: (event: KeyboardEvent, view: AnyView | AnyViewInstance) => void;
+    onKeyUp?: (event: KeyboardEvent, view: AnyView | AnyViewInstance) => void;
   };
 };
 

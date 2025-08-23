@@ -1,5 +1,6 @@
-import { getState } from "../state/state";
-import type { Position, InteractiveView } from "../view/types";
+import { getState, setFocusedView } from "../state/state";
+import type { InteractiveView } from "../view/types";
+import { getInteractiveViews, locateView } from "./targeting";
 
 let hoveredView: InteractiveView | null = null;
 
@@ -13,35 +14,17 @@ const getViewsWithHandler = (handlerName: keyof NonNullable<InteractiveView['han
   });
 };
 
-// Helper function to get interactive views
-const getInteractiveViews = () => {
-  return getState().views.filter((view): view is InteractiveView => 
-    'interactive' in view && view.interactive === true
-  );
-};
 
-export const locateView = (inputPosition: Position, viewsToCheck: InteractiveView[] = getInteractiveViews()) => {
-  return viewsToCheck.find((v) => {
-    const { left, right, top, bottom } = v.bounds;
-    
-    return (
-      inputPosition.x >= left &&
-      inputPosition.x <= right &&
-      inputPosition.y >= top &&
-      inputPosition.y <= bottom
-    );
-  });
-};
 
 // Click handler
 const handleClick = (e: MouseEvent) => {
   const viewsWithClick = getViewsWithHandler('onClick');
   const view = locateView({ x: e.clientX, y: e.clientY }, viewsWithClick);
-
-  console.log('clicked', view);
   
   if (view && view.handlers?.onClick) {
     view.handlers.onClick(e, view);
+    // Focus the clicked view for keyboard events
+    setFocusedView(view);
   }
 };
 
