@@ -1,7 +1,7 @@
 import type { ViewInstance } from "../view";
 
-const MIN_SPEED = 0.1;
-const SPEED_RANGE = 0.1;
+const MIN_SPEED = 0.2;
+const SPEED_RANGE = 0.5;
 
 export const screenSaver = (viewInstance: ViewInstance) => {
     const direction = { x: 1, y: 1 };
@@ -9,19 +9,18 @@ export const screenSaver = (viewInstance: ViewInstance) => {
     const speedY = Math.random() * SPEED_RANGE + MIN_SPEED;
     const { props: {
         position,
-        shapeProps,
-        units
+        units,
+        shapeProps
     } } = viewInstance;
     
     
-    const animate = () => {
-
+    const animate = () => {        
         // Calculate new position
         const newX = position.x + direction.x * speedX;
         const newY = position.y + direction.y * speedY;
 
         // For x-axis: use viewport width boundary
-        if (newX < 0 || newX > 100 - shapeProps.width) {
+        if (newX < 0 || newX > 100 - shapeProps.width * 2) {
             direction.x = -direction.x;
         }
         
@@ -33,7 +32,7 @@ export const screenSaver = (viewInstance: ViewInstance) => {
             yMax = (window.innerHeight / window.innerWidth) * 100;
         }
         
-        if (newY < 0 || newY > yMax - shapeProps.height) {
+        if (newY < 0 || newY > yMax - shapeProps.height * 2) {
             direction.y = -direction.y;
         }
         

@@ -11,22 +11,20 @@ window.onload = () => {
   bindMouse();
   createLoop();
   
-  // createDemoCubeView();
-  // createFpsView();
+  createDemoCubeView();
+  createFpsView();
   
-  // createPauseButton({
-  //   position: {
-  //     x: 1,
-  //     y: 10,
-  //   },
-  //   textProps: {
-  //     text: 'Animation Pause',
-  //   },
-  // }, 'animation');
+  createPauseButton({
+    position: {
+      x: 50,
+      y: 1,
+    },
+    anchor: 'center',
+    textProps: {
+      text: 'Animation Pause',
+    },
+  }, 'animation');
 
-  // createPauseButton({
-  //   relativeTo: 'top-left',
-  // }, 'both');
   createPauseButton({
     relativeTo: 'top-left',
   }, 'both');

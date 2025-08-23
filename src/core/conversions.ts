@@ -59,3 +59,17 @@ export const convertFontSizeToPixels = (
   units = units ?? config.units;
   return convertToPixels(fontSize, units);
 };
+
+export const convertSizeToViewports = (
+  width: number,
+  height: number,
+  units?: Units
+): { width: number; height: number } => {
+  if(units === 'px') {
+    return {
+      width: width / 100,
+      height: height / 100,
+    };
+  }
+  return convertSizeToPixels(width, height, units);
+};

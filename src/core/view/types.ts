@@ -6,7 +6,7 @@ import type { ViewInstance } from './view';
 
 export type View = {
   id: string;
-  bounds: Bounds;
+  bounds?: Bounds;
   fill: {
     color: string;
   };
