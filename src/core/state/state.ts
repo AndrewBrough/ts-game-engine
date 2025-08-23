@@ -8,7 +8,7 @@ export type State = {
 };
 
 const state = createModel<State>({
-  score: 100,
+  score: 0,
   views: [],
   fps: 0,
 });

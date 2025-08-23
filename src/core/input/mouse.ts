@@ -11,7 +11,7 @@ export const bindMouse = () => {
   window.addEventListener('mousemove', (e) => {
     const view = locateView({ x: e.clientX, y: e.clientY });
     if (view) {
-      // console.log(view);
+      console.log(view);
     }
   });
 };

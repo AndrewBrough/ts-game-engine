@@ -4,6 +4,8 @@ import { bindMouse } from './core/input/mouse';
 import { createLoop } from './core/loop/loop';
 import { createFpsView } from './core/loop/fpsView';
 import { createDemoCubeView } from './core/view/demoCubeView';
+import { createAnimatedView } from './core/view/animatedView';
+// import { createAnimatedView } from './core/view/animatedView';
 
 window.onload = () => {
   createCanvas('app');
@@ -14,14 +16,21 @@ window.onload = () => {
   createFpsView();
 
   // Create FPS display
-
-  // createView({
-  //   position: { x: 1, y: 1 },
-  //   relativeTo: 'top-right',
-  //   textProps: {
-  //     text: "Hello World",
-  //   },
-  // });
+  createAnimatedView({
+    position: { x: 1, y: 10 },
+    relativeTo: 'top-right',
+    anchor: 'top-right',
+    shape: 'text',
+    textProps: {
+      text: 'Hilo',
+      fontFamily: 'Arial',
+      fontWeight: 'bold',
+      fontStyle: 'normal',
+    },
+    fill: {
+      color: 'white',
+    },
+  });
   // createView({
   //   position: { x: 1, y: 1 },
   //   relativeTo: 'bottom-left',

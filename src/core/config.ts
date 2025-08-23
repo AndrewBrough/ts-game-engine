@@ -11,7 +11,7 @@ export const config: Config = {
   anchor: 'top-left',
   position: { x: 0, y: 0 },
   fill: {
-    color: 'transparent',
+    color: 'white',
   },
   stroke: {
     color: 'transparent',

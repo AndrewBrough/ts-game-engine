@@ -13,6 +13,10 @@ export const createAnimatedView = (props: DeepPartial<ViewRenderProps>): Animate
         viewInstance.events.addEvent('animate', callback);
     }
 
+    addAnimation(() => {
+        animate();
+    });
+
     return {
         ...viewInstance,
         addAnimation,
