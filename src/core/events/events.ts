@@ -5,7 +5,6 @@ export const createEvents = () => {
     events.set(event, callback);
     window.addEventListener(event, (e) => {
       callback(e);
-      events.get(event)?.(e);
     });
   };
 
