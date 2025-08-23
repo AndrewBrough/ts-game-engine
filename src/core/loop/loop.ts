@@ -9,8 +9,6 @@ export const createLoop = () => {
   const targetFPS = -1;
   const targetFrameTime = 1000 / targetFPS; // 16.67ms for 60 FPS
 
-  console.log('targetFrameTime', targetFrameTime, targetFPS);
-
   const loop = () => {
     if(!paused) {
         const currentTime = performance.now();
@@ -18,7 +16,7 @@ export const createLoop = () => {
         
         // Initialize FPS tracking on first frame
         if (fpsStartTime === 0) {
-            fpsStartTime = currentTime;
+          fpsStartTime = currentTime;
         }
         
         // Only execute game logic if enough time has passed
@@ -36,7 +34,6 @@ export const createLoop = () => {
                 fpsStartTime = currentTime;
             }
             
-            // console.log("Loop");
             getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
             window.dispatchEvent(new CustomEvent('animate', { detail: { time: currentTime } }));
         }

@@ -2,6 +2,7 @@ import type { Units } from '../config';
 import type { createEvents } from '../events/events';
 
 export type ViewRenderProps = {
+  id: string;
   fill: {
     color: string;
   };

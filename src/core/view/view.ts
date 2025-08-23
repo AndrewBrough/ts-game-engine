@@ -10,10 +10,10 @@ import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels }
 export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
   const mergedProps = deepMerge(config, props);
   const events = createEvents();
-  const viewId = crypto.randomUUID();
   
   // Create mutable copies of all props that can be updated
   const mutableProps = {
+    id: props.id ?? crypto.randomUUID(),
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
     shapeProps: { ...mergedProps.shapeProps },
@@ -28,7 +28,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
   // Helper function to update the view in state
   const updateViewInState = (view: View) => {
     const stateViews = getState().views;
-    const viewIndex = stateViews.findIndex((v: View) => v.id === viewId);
+    const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
     if (viewIndex !== -1) {
       stateViews[viewIndex] = view;
     } else {
@@ -159,7 +159,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
     const view: View = {
-      id: viewId,
+      id: mutableProps.id,
       position: { x, y },
       size: { width, height },
     };

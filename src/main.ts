@@ -5,7 +5,6 @@ import { createLoop } from './core/loop/loop';
 import { createFpsView } from './core/loop/fpsView';
 import { createDemoCubeView } from './core/view/demoCubeView';
 import { createAnimatedView } from './core/view/animatedView';
-// import { createAnimatedView } from './core/view/animatedView';
 
 window.onload = () => {
   createCanvas('app');
@@ -15,8 +14,9 @@ window.onload = () => {
   createDemoCubeView();
   createFpsView();
 
-  // Create FPS display
+  // Create static text display
   createAnimatedView({
+    id: 'test-hilo-text-view',
     position: { x: 1, y: 10 },
     relativeTo: 'top-right',
     anchor: 'top-right',
