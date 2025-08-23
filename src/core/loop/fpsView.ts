@@ -4,9 +4,6 @@ import { createAnimatedView } from '../view/animatedView';
 export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
-    position: { x: 1, y: 5 },
-    relativeTo: 'top-left',
-    // anchor: 'top-left',
     shape: 'text',
     textProps: {
       text: 'FPS: 0',

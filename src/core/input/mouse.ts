@@ -1,4 +1,3 @@
-import { convertPositionToPixels } from "../conversions";
 import { getState } from "../state/state";
 import type { Position } from "../view/types";
 

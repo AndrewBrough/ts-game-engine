@@ -121,25 +121,10 @@ export const createView = (props: DeepPartial<View> = config) => {
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 5;
     
-    // Handle text vs other shapes differently for bounds calculation
-    let w, h;
-    if (mutableProps.shape === 'text') {
-      // For text, shapeProps are already in pixels (set by measureText)
-      w = mutableProps.shapeProps.width;
-      h = mutableProps.shapeProps.height;
-    } else {
-      // For other shapes, convert to pixels
-      const sizeInPixels = convertSizeToPixels(mutableProps.shapeProps.width, mutableProps.shapeProps.height);
-      w = sizeInPixels.width;
-      h = sizeInPixels.height;
-    }
-    
-    const positionInPixels = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
-    const { x: anchorX, y: anchorY } = positionInPixels;
-    
+    const { left, right, top, bottom } = mutableProps.bounds;
     // Draw a small circle at the anchor position
     ctx.beginPath();
-    ctx.arc(anchorX, anchorY, 3, 0, 2 * Math.PI);
+    ctx.arc(left, top, 3, 0, 2 * Math.PI);
     ctx.fill();
     
     // Draw purple rectangle around the actual rendered bounds
@@ -147,9 +132,7 @@ export const createView = (props: DeepPartial<View> = config) => {
     ctx.lineWidth = 2;
     
     // Draw the bounds rectangle - same as the rendered object
-    ctx.strokeRect(anchorX, anchorY, w, h);
-    
-    mutableProps.bounds = calculateBounds({ x: anchorX, y: anchorY }, { width: w, height: h }, mutableProps.anchor);
+    ctx.strokeRect(left, top, right - left, bottom - top);
     
     // Restore context state
     ctx.restore();
@@ -176,6 +159,8 @@ export const createView = (props: DeepPartial<View> = config) => {
       fontWeight,
       fontStyle,
     } = mutableProps.textProps;
+    mutableProps.bounds = { left: x, right: x + w, top: y, bottom: y + h, width: w, height: h };
+    
 
     const fontSizePx = convertFontSizeToPixels(fontSize);
 
@@ -196,8 +181,8 @@ export const createView = (props: DeepPartial<View> = config) => {
         case 'text': {
           const textStr = text.toString();
           ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
-          ctx.fillText(textStr, x, y);
-          ctx.strokeText(textStr, x, y);
+          ctx.fillText(textStr, x, y + fontSizePx);
+          ctx.strokeText(textStr, x, y + fontSizePx);
           
           // Calculate actual text dimensions
           const metrics = ctx.measureText(textStr);
@@ -206,6 +191,8 @@ export const createView = (props: DeepPartial<View> = config) => {
           (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
           mutableProps.shapeProps.width = actualWidth;
           mutableProps.shapeProps.height = actualHeight;
+          mutableProps.bounds = calculateBounds({ x, y: actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
+          return;
         }
       }
     }
