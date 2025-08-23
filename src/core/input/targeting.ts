@@ -1,4 +1,4 @@
-import { getState } from "../state/state";
+import { getState } from "../gameState/gameState";
 import type { InteractiveView, Position } from "../view/types";
 
 // Helper function to get interactive views

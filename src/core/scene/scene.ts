@@ -1,6 +1,6 @@
 import { createEvents, type EventInstance } from "../events/events";
-import { collisionManager, type CollisionManager } from "../state/collisionManager";
-import { getState } from "../state/state";
+import { collisionManager, type CollisionManager } from "../gameState/collisionManager";
+import { getState } from "../gameState/gameState";
 import { createDemoCubeView } from "../view/demoCubeView";
 import { createPlayerView } from "../view/player/playerView";
 import type { View } from "../view/types";

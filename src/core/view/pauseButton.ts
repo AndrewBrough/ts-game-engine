@@ -1,4 +1,4 @@
-import { getState, setTimeScale, toggleLogicPaused } from "../state/state";
+import { getState, setTimeScale, toggleLogicPaused } from "../gameState/gameState";
 import type { DeepPartial } from "../types";
 import type { InteractiveView } from "./types";
 import { createInteractiveView } from "./interactiveView";

@@ -1,5 +1,5 @@
 import { getCanvas, getContext } from "../canvas/canvas";
-import { updateFPS, getState } from "../state/state";
+import { updateFPS, getState } from "../gameState/gameState";
 
 export const createLoop = () => {
   let lastFrameTime = 0;

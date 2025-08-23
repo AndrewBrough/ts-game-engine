@@ -1,4 +1,4 @@
-import { getState, setFocusedView } from "../state/state";
+import { getState, setFocusedView } from "../gameState/gameState";
 import type { InteractiveView } from "../view/types";
 import { getInteractiveViews, locateView } from "./targeting";
 

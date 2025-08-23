@@ -1,7 +1,7 @@
 import { createEvents } from "../events/events";
 import { doBoundsOverlap } from "../view/collision";
 import type { View } from "../view/types";
-import { getState } from "./state";
+import { getState } from "./gameState";
 
 export type Collision = {
     view1: View;

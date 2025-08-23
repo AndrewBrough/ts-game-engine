@@ -3,7 +3,7 @@ import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
 import type { View, InteractiveView } from './types';
-import { addView, getState } from '../state/state';
+import { addView, getState } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 import { calculateBounds } from './collision';

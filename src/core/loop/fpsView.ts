@@ -1,4 +1,4 @@
-import { getState } from '../state/state';
+import { getState } from '../gameState/gameState';
 import { createAnimatedView } from '../view/animatedView';
 
 export const createFpsView = () => {

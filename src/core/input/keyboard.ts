@@ -1,4 +1,4 @@
-import { getState, setFocusedView, getFocusedView } from "../state/state";
+import { getState, setFocusedView, getFocusedView } from "../gameState/gameState";
 import type { InteractiveView } from "../view/types";
 
 const heldKeys = new Set<string>();
