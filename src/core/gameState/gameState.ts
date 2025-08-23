@@ -46,6 +46,20 @@ export const getViewsOnLayer = (layer: number): (View | InteractiveView)[] => {
   return gameState.views[layer] || [];
 };
 
+// Clear all views and clean up their resources
+export const clearAllViews = () => {
+  const allViews = getAllViews();
+  
+  // Clean up all views
+  for (const view of allViews) {
+    // Remove view from game state
+    removeView(view);
+  }
+  
+  // Clear all layers
+  gameState.views = {};
+};
+
 export const updateFPS = (fps: number) => {
   gameState.fps = fps;
 };
