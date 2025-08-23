@@ -8,9 +8,10 @@ export const breakTheGameScene = (): SceneInstance => {
     scene.start = () => {
         scene.init();
         for(let i = 0; i < 10; i++) {
-            createDemoCubeView();
+            createDemoCubeView(`demoCube-${i}`);
         }
         createPlayerView();
+        console.log(scene.state);
     }
 
     return scene;

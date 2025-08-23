@@ -28,7 +28,7 @@ export const devKeyboardShortcuts = () => {
     }
 
     const bindShortcuts = () => {
-        console.log('Binding dev shortcuts - use 1 or 2 to load scenes');
+        // console.log('Binding dev shortcuts - use 1 or 2 to load scenes');
         for(const shortcut in shortcuts) {
             window.addEventListener('keydown', (e) => {
                 if(e.key === shortcut) {

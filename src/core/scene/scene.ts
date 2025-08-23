@@ -22,12 +22,14 @@ export const createScene = (name: string = 'default') => {
     const collisions = collisionManager();
     
     const init = () => {
+        console.log('Initializing scene', name);
         createPlayerView();
         createDemoCubeView();
     }
 
     /* Override me */
     const start = () => {
+        console.log('Starting scene', name);
         init();
     }
 
@@ -44,7 +46,7 @@ export const createScene = (name: string = 'default') => {
 
     return {
         name,
-        views: state.views,
+        state,
         events,
         collisions,
         init,

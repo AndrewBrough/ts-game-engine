@@ -5,7 +5,7 @@ export const createLoop = () => {
   let lastFrameTime = 0;
   let frameCount = 0;
   let fpsStartTime = 0;
-  const targetFPS = -1;
+  const targetFPS = 200;
   const targetFrameTime = 1000 / targetFPS; // 16.67ms for 60 FPS
 
   const loop = () => {
@@ -26,6 +26,9 @@ export const createLoop = () => {
        */
       if(!isLogicPaused && timeScale > 0) {  
         window.dispatchEvent(new CustomEvent('update', { detail: { time: currentTime } }));
+        if(deltaTime >= targetFrameTime) {
+          window.dispatchEvent(new CustomEvent('collisions', { detail: { time: currentTime } }));
+        }
       }
       
       // Only execute animations if enough time has passed
@@ -45,6 +48,7 @@ export const createLoop = () => {
           
           getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
           window.dispatchEvent(new CustomEvent('render', { detail: { time: currentTime } }));
+          
           if(timeScale > 0) {
             window.dispatchEvent(new CustomEvent('animate', { detail: { time: currentTime } }));
           }

@@ -13,7 +13,7 @@ export type CollisionManager = ReturnType<typeof collisionManager>;
 export const collisionManager = () => {
     const events = createEvents();
     
-    events.addEvent('update', () => {
+    events.addEvent('collisions', () => {
         // Get all views across all layers
         const allViews = getAllCollidableViews();
         for(const view of allViews) {
@@ -27,8 +27,9 @@ export const collisionManager = () => {
         }
 
         // Only check for collisions for views on layers that are in the collision matrix
-        const viewsOnSameLayer = getCollisionLayerViews(view.layer);
-        for(const v of viewsOnSameLayer) {
+        const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
+        for(const v of viewsOnMatrixLayers) {
+            // console.log('Checking collision', view.id, v.id);
             if(v.bounds && v.id !== view.id) {
                 const collision = {
                     view1: view,
@@ -36,7 +37,7 @@ export const collisionManager = () => {
                 }
 
                 if(doBoundsOverlap(view.bounds, v.bounds)) {
-                    console.log('Collision detected', view.id, v.id);
+                    // console.log('Collision detected', view.id, v.id);
                     triggerCollision(collision);
                 }
             }

@@ -1,14 +1,14 @@
-import { getAllViews } from "../gameState/gameState";
-import type { ViewInstance, AnimatedViewInstance, InteractiveViewInstance } from "../view/types";
+
+import type { ViewInstance } from "../view/types";
 
 // Store view instances for rendering
-const viewInstances: (ViewInstance | AnimatedViewInstance | InteractiveViewInstance)[] = [];
+const viewInstances: ViewInstance[] = [];
 
-export const addViewInstance = (viewInstance: ViewInstance | AnimatedViewInstance | InteractiveViewInstance) => {
+export const addViewInstance = (viewInstance: ViewInstance) => {
   viewInstances.push(viewInstance);
 };
 
-export const removeViewInstance = (viewInstance: ViewInstance | AnimatedViewInstance | InteractiveViewInstance) => {
+export const removeViewInstance = (viewInstance: ViewInstance) => {
   const index = viewInstances.indexOf(viewInstance);
   if (index > -1) {
     viewInstances.splice(index, 1);
@@ -34,19 +34,19 @@ export const clearAllViewInstances = () => {
 };
 
 // Render all view instances
-const renderAllViews = () => {
+const renderAllViews = (e: Event) => {
   for (const viewInstance of viewInstances) {
     if (viewInstance.events) {
-      viewInstance.events.events.get('render')?.();
+        viewInstance.events.events.get('render')?.(e);
     }
   }
 };
 
 // Update all view instances
-const updateAllViews = () => {
+const updateAllViews = (e: Event) => {
   for (const viewInstance of viewInstances) {
     if (viewInstance.events) {
-      viewInstance.events.events.get('update')?.();
+      viewInstance.events.events.get('update')?.(e);
     }
   }
 };
@@ -58,7 +58,7 @@ export const initializeRenderer = () => {
 };
 
 export const cleanupRenderer = () => {
-  window.removeEventListener('render', renderAllViews);
-  window.removeEventListener('update', updateAllViews);
+  window.removeEventListener('render', (e) => renderAllViews(e));
+  window.removeEventListener('update', (e) => updateAllViews(e));
   clearAllViewInstances();
 };

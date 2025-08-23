@@ -107,7 +107,7 @@ export const getCollisionLayerViews = (layer: CollisionLayer, excludeEmptyBounds
   const layers = COLLISION_MATRIX[layer]
   
   if(!layers) {
-    console.warn(`No collision layers found for layer ${layer}`);
+    // console.warn(`No collision layers found for layer ${layer}`);
     return [];
   }
 
