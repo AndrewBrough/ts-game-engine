@@ -6,8 +6,10 @@ export const createLoop = () => {
   let lastFrameTime = 0;
   let frameCount = 0;
   let fpsStartTime = 0;
-  const targetFPS = 60;
+  const targetFPS = -1;
   const targetFrameTime = 1000 / targetFPS; // 16.67ms for 60 FPS
+
+  console.log('targetFrameTime', targetFrameTime, targetFPS);
 
   const loop = () => {
     if(!paused) {
