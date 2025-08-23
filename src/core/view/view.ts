@@ -8,7 +8,7 @@ import {
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
 import type { View, ViewRenderProps, ViewInstance } from './types';
-import { addView } from '../state/state';
+import { addView, getState } from '../state/state';
 import { createEvents } from '../events/events';
 
 export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewInstance => {
@@ -45,7 +45,33 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
 
   // Create a mutable view state that can be updated
   let currentView: View | null = null;
-  let mutablePosition = { ...position };
+  const mutablePosition = { x: position.x, y: position.y };
+  
+  // Create a unique ID for this view
+  const viewId = crypto.randomUUID();
+  
+  // Create mutable copies of all props that can be updated
+  const mutableProps = {
+    fill: { ...fill },
+    stroke: { ...stroke },
+    shapeProps: { ...shapeProps },
+    textProps: { ...textProps },
+    position: mutablePosition,
+    anchor,
+    units,
+    relativeTo,
+    shape
+  };
+
+  // Helper function to update the view in state
+  const updateViewInState = () => {
+    currentView = draw();
+    const stateViews = getState().views;
+    const viewIndex = stateViews.findIndex((v: View) => v.id === viewId);
+    if (viewIndex !== -1) {
+      stateViews[viewIndex] = currentView;
+    }
+  };
   const { width, height } = shapeProps;
 
   const getScreenRelativePosition = (): { x: number; y: number } => {
@@ -141,6 +167,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
       switch (relativeTo) {
         case 'top-right':
           return {
+            id: viewId,
             position: {
               x: screenPos.x - metrics.width,
               y: screenPos.y + ascent,
@@ -151,13 +178,14 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
             },
           };
         case 'top-left':
-          return { position: { x: screenPos.x, y: screenPos.y + ascent }, size: { width: metrics.width, height: ascent } };
+          return { id: viewId, position: { x: screenPos.x, y: screenPos.y + ascent }, size: { width: metrics.width, height: ascent } };
         case 'bottom-right':
-          return { position: { x: screenPos.x - metrics.width, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
+          return { id: viewId, position: { x: screenPos.x - metrics.width, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
         case 'bottom-left':
-          return { position: { x: screenPos.x, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
+          return { id: viewId, position: { x: screenPos.x, y: screenPos.y }, size: { width: metrics.width, height: ascent } };
         case 'center':
           return {
+            id: viewId,
             position: {
               x: screenPos.x - metrics.width / 2,
               y: screenPos.y + ascent / 2,
@@ -168,7 +196,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
             },
           };
         default:
-          return { position: screenPos, size: { width: metrics.width, height: ascent } };
+          return { id: viewId, position: screenPos, size: { width: metrics.width, height: ascent } };
       }
     }
     
@@ -191,6 +219,7 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     switch (anchor) {
       case 'top-right':
         return {
+          id: viewId,
           position: {
             x: pixelPosition.x + pixelSize.width,
             y: pixelPosition.y + ascent,
@@ -201,14 +230,15 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
           },
         };
       case 'top-left':
-        return { position: { x: pixelPosition.x, y: pixelPosition.y + ascent }, size: { width: metrics.width, height: ascent } };
+        return { id: viewId, position: { x: pixelPosition.x, y: pixelPosition.y + ascent }, size: { width: metrics.width, height: ascent } };
       case 'bottom-right':
-        return { position: { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
+        return { id: viewId, position: { x: pixelPosition.x + pixelSize.width, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
       case 'bottom-left':
-        return { position: { x: pixelPosition.x, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
+        return { id: viewId, position: { x: pixelPosition.x, y: pixelPosition.y }, size: { width: metrics.width, height: ascent } };
       default:
         // For center anchor, position text so it's centered vertically
         return {
+          id: viewId,
           position: {
             x: pixelPosition.x + pixelSize.width / 2,
             y: pixelPosition.y + ascent / 2,
@@ -227,9 +257,53 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: { x: number; y: number }) => {
-    currentPosition.x = newPosition.x;
-    currentPosition.y = newPosition.y;
+    mutablePosition.x = newPosition.x;
+    mutablePosition.y = newPosition.y;
+    updateViewInState();
     // Trigger a redraw by dispatching an update event
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update fill color
+  const updateFillColor = (color: string) => {
+    mutableProps.fill.color = color;
+    updateViewInState();
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update stroke color
+  const updateStrokeColor = (color: string) => {
+    mutableProps.stroke.color = color;
+    updateViewInState();
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update stroke width
+  const updateStrokeWidth = (width: number) => {
+    mutableProps.stroke.width = width;
+    updateViewInState();
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update shape size
+  const updateSize = (width: number, height: number) => {
+    mutableProps.shapeProps.width = width;
+    mutableProps.shapeProps.height = height;
+    updateViewInState();
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update text
+  const updateText = (text: string | number) => {
+    mutableProps.textProps.text = text;
+    updateViewInState();
+    window.dispatchEvent(new Event('update'));
+  };
+
+  // Function to update font size
+  const updateFontSize = (fontSize: number) => {
+    mutableProps.textProps.fontSize = fontSize;
+    updateViewInState();
     window.dispatchEvent(new Event('update'));
   };
 
@@ -239,9 +313,9 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
       throw new Error('Context not found');
     }
 
-    ctx.fillStyle = fill.color;
-    ctx.strokeStyle = stroke.color;
-    ctx.lineWidth = stroke.width;
+    ctx.fillStyle = mutableProps.fill.color;
+    ctx.strokeStyle = mutableProps.stroke.color;
+    ctx.lineWidth = mutableProps.stroke.width;
 
     const { x, y } = getAnchorPosition();
     const pixelSize = convertSizeToPixels(width, height, units);
@@ -252,9 +326,10 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
       fontFamily,
       fontWeight,
       fontStyle,
-    } = textProps;
+    } = mutableProps.textProps;
 
     const view: View = {
+      id: viewId,
       position: {
         x,
         y,
@@ -307,5 +382,12 @@ export const createView = (props: DeepPartial<ViewRenderProps> = config): ViewIn
     view: currentView,
     events,
     updatePosition,
+    updateFillColor,
+    updateStrokeColor,
+    updateStrokeWidth,
+    updateSize,
+    updateText,
+    updateFontSize,
+    props: mutableProps,
   }
 };

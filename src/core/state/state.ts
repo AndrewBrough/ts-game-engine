@@ -1,5 +1,5 @@
 import { createModel } from "../model/model";
-import type { Position, View } from "../view/types";
+import type { View } from "../view/types";
 
 export type State = {
   score: number;
@@ -19,8 +19,4 @@ export const addView = (view: View) => {
 
 export const removeView = (view: View) => {
   state.views = state.views.filter((v) => v !== view);
-};
-
-export const locateView = (position: Position) => {
-  return getState().views.find((v) => position.x >= v.position.x && position.x <= v.position.x + v.size.width && position.y >= v.position.y && position.y <= v.position.y + v.size.height);
 };

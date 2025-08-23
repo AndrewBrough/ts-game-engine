@@ -1,6 +1,5 @@
 import { createCanvas } from './core/canvas/canvas';
 
-import { getState } from './core/state/state';
 import { bindMouse } from './core/input/mouse';
 import { createLoop } from './core/loop/loop';
 import { createAnimatedView } from './core/view/animatedView';
@@ -15,8 +14,25 @@ window.onload = () => {
       x: 1,
       y: 1,
     },
+    shape: 'rect',
+    shapeProps: {
+      width: 5,
+      height: 5,
+      radius: 0,
+    },
+    fill: {
+      color: 'red',
+    },
+    stroke: {
+      color: 'blue',
+      width: 2,
+    },
     textProps: {
-      text: getState().score,
+      text: 'Hello',
+      fontSize: 16,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      fontStyle: 'normal',
     },
   });
 

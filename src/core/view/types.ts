@@ -46,6 +46,10 @@ export type Position = {
 
 export type View = {
   /**
+   * Unique identifier for the view
+   */
+  id: string;
+  /**
    * The anchor position of the view (where it's positioned based on anchor setting)
    */
   position: Position;
@@ -65,4 +69,11 @@ export type ViewInstance = {
     removeEvent: (event: string) => void;
   };
   updatePosition: (newPosition: Position) => void;
+  updateFillColor: (color: string) => void;
+  updateStrokeColor: (color: string) => void;
+  updateStrokeWidth: (width: number) => void;
+  updateSize: (width: number, height: number) => void;
+  updateText: (text: string | number) => void;
+  updateFontSize: (fontSize: number) => void;
+  props: ViewRenderProps;
 };

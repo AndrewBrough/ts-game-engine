@@ -1,28 +1,24 @@
 import type { ViewRenderProps } from "./types";
 import { createView } from "./view";
 import type { DeepPartial } from "../types";
+import { screenSaver } from "./animations/screenSaver";
 
 export const createAnimatedView = (props: DeepPartial<ViewRenderProps>) => {
-    const {view: viewData, events: viewEvents, updatePosition} = createView(props);
-    
-    // Track the original position that we want to animate
-    let originalPosition = { 
-        x: props.position?.x ?? 0, 
-        y: props.position?.y ?? 0 
-    };
+    const viewInstance = createView(props);
+    const screenSaverAnimate = screenSaver(viewInstance);
+    // const demoAnimate = demoAnimation(viewInstance);
 
     const animate = () => {
-        originalPosition.x += 0.1;
-        updatePosition(originalPosition);
-        console.log(originalPosition.x);
+        // demoAnimate();
+        screenSaverAnimate();
+        // console.log(`Frame ${animationFrame++}: X=${currentX.toFixed(1)}, Hue=${hue}`);
     };
 
-    viewEvents.addEvent('animate', () => {
+    viewInstance.events.addEvent('animate', () => {
         animate();
     });
 
     return {
-        ...viewData,
-        events: viewEvents
+        ...viewInstance,
     };
 };

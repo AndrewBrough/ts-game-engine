@@ -5,7 +5,7 @@ export const createLoop = () => {
 
   const loop = () => {
     if(!paused) {
-        console.log("Loop");
+        // console.log("Loop");
         getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
         window.dispatchEvent(new Event('animate'));
         window.requestAnimationFrame(loop);
