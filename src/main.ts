@@ -4,7 +4,6 @@ import { bindMouse } from './core/input/mouse';
 import { createLoop } from './core/loop/loop';
 import { createFpsView } from './core/loop/fpsView';
 import { createDemoCubeView } from './core/view/demoCubeView';
-import { createAnimatedView } from './core/view/animatedView';
 import { createPauseButton } from './core/view/pauseButton';
 
 window.onload = () => {
@@ -13,24 +12,28 @@ window.onload = () => {
   createLoop();
   
   createDemoCubeView();
-  // createFpsView();
-  createPauseButton();
-
-  // Create static text display
-  createAnimatedView({
-    id: 'test-hilo-text-view',
-    position: { x: 10, y: 10 },
-    shape: 'text',
+  createFpsView();
+  
+  createPauseButton({
+    position: {
+      x: 1,
+      y: 10,
+    },
     textProps: {
-      text: 'Hilo',
-      fontFamily: 'Arial',
-      fontWeight: 'bold',
-      fontStyle: 'normal',
+      text: 'Animation Pause',
     },
-    fill: {
-      color: 'white',
+  }, 'animation');
+
+  createPauseButton({
+    position: {
+      x: 1,
+      y: 50,
     },
-  });
+    textProps: {
+      text: 'Logic Pause',
+    },
+  }, 'logic');
+
   // createView({
   //   position: { x: 1, y: 1 },
   //   relativeTo: 'bottom-left',

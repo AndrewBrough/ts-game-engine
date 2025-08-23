@@ -5,14 +5,16 @@ export type State = {
   score: number;
   views: (View | InteractiveView)[];
   fps: number;
-  isPaused: boolean;
+  isLogicPaused: boolean;
+  timeScale: number;
 };
 
 const state = createModel<State>({
   score: 0,
   views: [],
   fps: 0,
-  isPaused: false,
+  isLogicPaused: false,
+  timeScale: 1,
 });
 
 export const getState = () => state;
@@ -29,10 +31,18 @@ export const updateFPS = (fps: number) => {
   state.fps = fps;
 };
 
-export const setPaused = (paused: boolean) => {
-  state.isPaused = paused;
+export const setLogicPaused = (paused: boolean) => {
+  state.isLogicPaused = paused;
 };
 
-export const togglePaused = () => {
-  state.isPaused = !state.isPaused;
+export const toggleLogicPaused = () => {
+  setLogicPaused(!state.isLogicPaused);
+};
+
+export const setTimeScale = (timeScale: number) => {
+  state.timeScale = timeScale;
+};
+
+export const toggleTimeScale = () => {
+  setTimeScale(state.timeScale === 1 ? 0 : 1);
 };

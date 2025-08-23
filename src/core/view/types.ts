@@ -1,5 +1,8 @@
 import type { Units } from '../config';
+import type { AnimatedViewInstance } from './animatedView';
 import type { Bounds } from './collision';
+import type { InteractiveViewInstance } from './interactiveView';
+import type { ViewInstance } from './view';
 
 export type View = {
   id: string;
@@ -46,24 +49,27 @@ export type View = {
   };
 };
 
-export type InteractiveView = View & {
+export type InteractiveView = AnimatedView & {
   /**
    * Event handlers for interactive functionality
    */
   handlers?: {
-    onClick?: (event: MouseEvent, view: View) => void;
-    onMouseMove?: (event: MouseEvent, view: View) => void;
-    onHover?: (event: MouseEvent, view: View) => void;
-    onHoverOut?: (event: MouseEvent, view: View) => void;
-    onTouchStart?: (event: TouchEvent, view: View) => void;
-    onTouchEnd?: (event: TouchEvent, view: View) => void;
-    onDrag?: (event: MouseEvent, view: View) => void;
+    onClick?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
+    onMouseMove?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
+    onHover?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
+    onHoverOut?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
+    onTouchStart?: (event: TouchEvent, view: AnyView | AnyViewInstance) => void;
+    onTouchEnd?: (event: TouchEvent, view: AnyView | AnyViewInstance) => void;
+    onDrag?: (event: MouseEvent, view: AnyView | AnyViewInstance) => void;
   };
-  /**
-   * Indicates if this view is interactive
-   */
-  interactive?: boolean;
 };
+
+export type AnimatedView = View & {
+  addAnimation: (callback: EventListener) => void;
+  animate: () => void;
+};
+
+export type AnyView = View | InteractiveView | AnimatedView;
 
 export type Position = {
   x: number;
@@ -77,3 +83,5 @@ export type Size = {
 
 // Re-export ViewInstance from view.ts
 export type { ViewInstance } from './view';
+
+export type AnyViewInstance = ViewInstance | InteractiveViewInstance | AnimatedViewInstance;

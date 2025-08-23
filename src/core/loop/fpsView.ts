@@ -7,6 +7,7 @@ export const createFpsView = () => {
     shape: 'text',
     textProps: {
       text: 'FPS: 0',
+      fontSize: 2,
       fontFamily: 'Arial',
       fontWeight: 'bold',
       fontStyle: 'normal',

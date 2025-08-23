@@ -1,40 +1,47 @@
-import { togglePaused, getState } from "../state/state";
+import { getState, setTimeScale, toggleLogicPaused } from "../state/state";
 import type { DeepPartial } from "../types";
 import type { InteractiveView } from "./types";
-import { createAnimatedView } from "./animatedView";
+import { createInteractiveView } from "./interactiveView";
+import { config } from "../config";
 
-export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
+export const createPauseButton = (props: DeepPartial<InteractiveView> = {}, logicOrAnimation: 'logic' | 'animation' = 'logic') => {
     const defaultProps: DeepPartial<InteractiveView> = {
-        id: 'pause-button',
+        id: `pause-button-${logicOrAnimation}`,
+        position: { x: 1, y: 1 },
         relativeTo: 'top-right',
         shape: 'text',
-        textProps: {
-            text: 'Pause',
-        },
         fill: {
             color: 'white',
         },
         handlers: {
-            onClick: (_event: MouseEvent, view: InteractiveView) => {
-                console.log("Clicked pause");
-                togglePaused();
-                // Update the button text based on pause state
-                const { isPaused } = getState();
-                view.textProps.text = isPaused ? 'Resume' : 'Pause';
+            onClick: () => {
+                console.log('onClick', logicOrAnimation);
+                handlePause();
             },
-            // onHover: (_event: MouseEvent, view: InteractiveView) => {
-            //     // Change color on hover
-            //     view.fill.color = '#ffff00'; // Yellow
-            // },
-            // onHoverOut: (_event: MouseEvent, view: InteractiveView) => {
-            //     // Restore original color
-            //     view.fill.color = 'white';
-            // },
         },
     };
 
-    const mergedProps = { ...defaultProps, ...props };
-    const viewInstance = createAnimatedView(mergedProps);
+    const mergedProps = { ...config, ...defaultProps, ...props } as InteractiveView;
+    const viewInstance = createInteractiveView(mergedProps);
+
+    const handlePause = () => {
+        console.log('handlePause', logicOrAnimation);
+        const { timeScale } = getState();
+        if(logicOrAnimation === 'logic') {
+            toggleLogicPaused();
+        } else {
+            setTimeScale(timeScale > 0 ? 0 : 1);
+        }
+        updateText();
+    }
+
+    const updateText = () => {
+        const { timeScale, isLogicPaused } = getState();
+        viewInstance.updateText(logicOrAnimation === 'logic' ? (isLogicPaused ? 'Logic Resume' : 'Logic Pause') : (timeScale === 0 ? 'Animation Resume' : 'Animation Pause'));
+    }
+
+    updateText();
+    viewInstance.update();
 
     return viewInstance;
 };

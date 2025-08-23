@@ -202,11 +202,17 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     renderShape();
   };
 
-  const update = () => {
+  const render = () => {
     draw();
+  }
+
+  const update = () => {
     drawDebugInfo();
     updateViewInState(mutableProps);
   };
+
+  events.addEvent('update', update);
+  events.addEvent('render', render);
 
   return {
     update,

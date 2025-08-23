@@ -37,9 +37,10 @@ export const locateView = (inputPosition: Position, viewsToCheck: InteractiveVie
 const handleClick = (e: MouseEvent) => {
   const viewsWithClick = getViewsWithHandler('onClick');
   const view = locateView({ x: e.clientX, y: e.clientY }, viewsWithClick);
+
+  console.log('clicked', view);
   
   if (view && view.handlers?.onClick) {
-    console.log("Clicked");
     view.handlers.onClick(e, view);
   }
 };
