@@ -8,6 +8,7 @@ import { createEvents } from '../events/events';
 import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
 import { calculateBounds } from './collision';
 import { LAYERS } from '../gameState/collisionLayers';
+import { addViewInstance } from '../renderer/renderer';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
@@ -246,7 +247,7 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   events.addEvent('update', update);
   events.addEvent('render', render);
 
-  return {
+  const viewInstance = {
     update,
     events,
     updatePosition,
@@ -257,5 +258,10 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     updateText,
     updateFontSize,
     props: mutableProps,
-  }
+  };
+
+  // Register this view instance with the renderer
+  addViewInstance(viewInstance);
+
+  return viewInstance;
 };

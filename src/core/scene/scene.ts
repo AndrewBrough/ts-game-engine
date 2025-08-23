@@ -4,6 +4,7 @@ import { getState } from "../gameState/gameState";
 import { createDemoCubeView } from "../view/demoCubeView";
 import { createPlayerView } from "../view/player/playerView";
 import type { View } from "../view/types";
+import { cleanupRenderer } from "../renderer/renderer";
 
 export type Scene = {
     name: string;
@@ -30,6 +31,17 @@ export const createScene = (name: string = 'default') => {
         init();
     }
 
+    const destroy = () => {
+        console.log('Destroying scene', name);
+        
+        // Clean up scene events and collisions
+        events.cleanup();
+        collisions.events.cleanup();
+        
+        // Clean up all views and renderer
+        cleanupRenderer();
+    }
+
     return {
         name,
         views: state.views,
@@ -37,5 +49,6 @@ export const createScene = (name: string = 'default') => {
         collisions,
         init,
         start,
+        destroy,
     }
 }

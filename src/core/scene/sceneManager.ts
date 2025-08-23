@@ -18,6 +18,7 @@ const createSceneManager = () => {
         
         // Unload all scenes before loading a new one for now
         for(const scene of scenes) {
+            console.log('Unloading scene', scene.name);
             unloadScene(scene.name);
         }
 
@@ -28,8 +29,7 @@ const createSceneManager = () => {
     const unloadScene = (sceneName: string) => {
         for(const scene of scenes) {
             if(scene.name === sceneName) {
-                scene.events.cleanup();
-                scene.collisions.events.cleanup();
+                scene.destroy();
                 scenes.delete(scene);
             }
         }

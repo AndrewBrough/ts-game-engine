@@ -1,6 +1,11 @@
+import type { Nullable } from "vitest";
+import { createFpsView } from "../loop/fpsView";
+import { addViewInstance, removeViewInstance } from "../renderer/renderer";
 import { getSceneManager } from "../scene/sceneManager";
+import type { ViewInstance } from "../view/view";
 
 export const devKeyboardShortcuts = () => {
+    let fpsView: Nullable<ViewInstance> = null;
 
     const shortcuts: Record<string, () => void> = {
         '1': () => {
@@ -10,6 +15,15 @@ export const devKeyboardShortcuts = () => {
         '2': () => {
             const scene = getSceneManager().loadScene('BREAK_THE_ENGINE');
             scene.start();
+        },
+        'o': () => {
+            if(fpsView !== null) {
+                removeViewInstance(fpsView);
+                fpsView = null;
+            } else {
+                fpsView = createFpsView();
+                addViewInstance(fpsView);
+            }
         },
     }
 
