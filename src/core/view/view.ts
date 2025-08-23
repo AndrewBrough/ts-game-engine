@@ -32,6 +32,8 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     ...(('interactive' in mergedProps) && { interactive: mergedProps.interactive }),
   };
 
+  console.log(mutableProps.relativeTo);
+
   // Helper function to update the view in state
   const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
     const stateViews = getState().views;
