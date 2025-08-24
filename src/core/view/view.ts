@@ -5,16 +5,21 @@ import type { DeepPartial, DeepRequired } from '../types';
 import type { View, InteractiveView } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
-import { convertFontSizeToPixels, convertPositionToPixels, convertSizeToPixels } from '../conversions';
+import {
+  convertFontSizeToPixels,
+  convertPositionToPixels,
+  convertSizeToPixels,
+} from '../conversions';
 import { calculateBounds } from './collision';
-import { addViewInstance } from '../renderer/renderer';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
-export const createView = (props: DeepPartial<View | InteractiveView> = config) => {
+export const createView = (
+  props: DeepPartial<View | InteractiveView> = config
+) => {
   const mergedProps = deepMerge(config, props);
   const events = createEvents();
-  
+
   // Create mutable copies of all props that can be updated
   const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
@@ -29,21 +34,26 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     relativeTo: mergedProps.relativeTo,
     shape: mergedProps.shape,
     // Add interactive properties if they exist
-    ...(('handlers' in mergedProps) && { handlers: mergedProps.handlers }),
-    ...(('interactive' in mergedProps) && { interactive: mergedProps.interactive }),
+    ...('handlers' in mergedProps && { handlers: mergedProps.handlers }),
+    ...('interactive' in mergedProps && {
+      interactive: mergedProps.interactive,
+    }),
   };
 
   // Helper function to update the view in state
   const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
-
     const stateViews = getViewsOnLayer(mutableProps?.layer ?? 'DEFAULT');
-    const viewIndex = stateViews.findIndex((v: View) => v.id === mutableProps.id);
+    const viewIndex = stateViews.findIndex(
+      (v: View) => v.id === mutableProps.id
+    );
     if (viewIndex !== -1) {
       // Override view in state if it already exists
-      stateViews[viewIndex] = {...stateViews[viewIndex], ...view} as View | InteractiveView;
+      stateViews[viewIndex] = { ...stateViews[viewIndex], ...view } as
+        | View
+        | InteractiveView;
     } else {
       // Add view to state if it doesn't exist
-      addView({...mutableProps, ...view} as View);
+      addView({ ...mutableProps, ...view } as View);
     }
   };
 
@@ -72,27 +82,27 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
   const updateSize = (width: number, height: number) => {
     mutableProps.shapeProps.width = width;
     mutableProps.shapeProps.height = height;
-      
+
     // if(mutableProps.shape === "text") {
     //   // For text, calculate actual rendered dimensions using canvas metrics
     //   const ctx = getContext();
     //   if (!ctx) {
     //     throw new Error('Context not found');
     //   }
-      
+
     //   const textStr = mutableProps.textProps.text.toString();
     //   const { fontSize, fontFamily, fontWeight, fontStyle } = mutableProps.textProps;
-      
+
     //   // Set the font to measure text metrics
     //   ctx.font = `${fontWeight} ${fontStyle} ${fontSize}px ${fontFamily}`;
     //   const metrics = ctx.measureText(textStr);
-      
+
     //   // Calculate actual text dimensions
     //   const textWidth = metrics.width;
     //   const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
     //   const descent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
     //   const textHeight = ascent + descent;
-      
+
     //   mutableProps.shapeProps.width = textWidth;
     //   mutableProps.shapeProps.height = textHeight;
     // } else {
@@ -122,25 +132,30 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
 
     // Save current context state
     ctx.save();
-    
+
     // Draw purple dot at anchor point
     ctx.fillStyle = 'yellow';
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 5;
-    
-    const { left, right, top, bottom } = mutableProps.bounds || {left: 0, right: 0, top: 0, bottom: 0};
+
+    const { left, right, top, bottom } = mutableProps.bounds || {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    };
     // Draw a small circle at the anchor position
     ctx.beginPath();
     ctx.arc(left, top, 3, 0, 2 * Math.PI);
     ctx.fill();
-    
+
     // Draw purple rectangle around the actual rendered bounds
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 2;
-    
+
     // Draw the bounds rectangle - same as the rendered object
     ctx.strokeRect(left, top, right - left, bottom - top);
-    
+
     // Restore context state
     ctx.restore();
   };
@@ -157,16 +172,20 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
 
     const sizeInPixels = convertSizeToPixels(
       mutableProps.shapeProps.width ?? mutableProps.bounds?.width ?? 0,
-      mutableProps.shapeProps.height ?? mutableProps.bounds?.height ?? 0);
+      mutableProps.shapeProps.height ?? mutableProps.bounds?.height ?? 0
+    );
 
-    const positionInPixels = convertPositionToPixels(mutableProps.position.x, mutableProps.position.y);
+    const positionInPixels = convertPositionToPixels(
+      mutableProps.position.x,
+      mutableProps.position.y
+    );
     const relativeTo = mutableProps.relativeTo;
     const relativeAnchor = {
       x: 0,
       y: 0,
-    }
+    };
     const { width: w, height: h } = mutableProps.bounds || sizeInPixels;
-    switch(relativeTo) {
+    switch (relativeTo) {
       case 'top-right':
         relativeAnchor.x = window.innerWidth - w;
         relativeAnchor.y = 0;
@@ -184,21 +203,23 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
         relativeAnchor.y = window.innerHeight - h * 2;
         break;
     }
-    
+
     const { x, y } = {
       x: relativeAnchor.x + mutableProps.position.x + positionInPixels.x,
       y: relativeAnchor.y + mutableProps.position.y + positionInPixels.y,
     };
-    
-    const {
-      text,
-      fontSize,
-      fontFamily,
-      fontWeight,
-      fontStyle,
-    } = mutableProps.textProps;
-    
-    mutableProps.bounds = { left: x, right: x + w, top: y, bottom: y + h, width: w, height: h };
+
+    const { text, fontSize, fontFamily, fontWeight, fontStyle } =
+      mutableProps.textProps;
+
+    mutableProps.bounds = {
+      left: x,
+      right: x + w,
+      top: y,
+      bottom: y + h,
+      width: w,
+      height: h,
+    };
     const fontSizePx = convertFontSizeToPixels(fontSize);
 
     const renderShape = () => {
@@ -220,23 +241,28 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
           ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
           ctx.fillText(textStr, x, y + fontSizePx);
           ctx.strokeText(textStr, x, y + fontSizePx);
-          
+
           // Calculate actual text dimensions
           const metrics = ctx.measureText(textStr);
           const actualWidth = metrics.width;
-          const actualHeight = (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) + 
-          (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
-          mutableProps.bounds = calculateBounds({ x, y: y + actualHeight/2 }, { width: actualWidth, height: actualHeight }, mutableProps.anchor);
+          const actualHeight =
+            (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) +
+            (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
+          mutableProps.bounds = calculateBounds(
+            { x, y: y + actualHeight / 2 },
+            { width: actualWidth, height: actualHeight },
+            mutableProps.anchor
+          );
           return;
         }
       }
-    }
+    };
     renderShape();
   };
 
   const render = () => {
     draw();
-  }
+  };
 
   const update = () => {
     drawDebugInfo();
@@ -258,9 +284,6 @@ export const createView = (props: DeepPartial<View | InteractiveView> = config) 
     updateFontSize,
     props: mutableProps,
   };
-
-  // Register this view instance with the renderer
-  addViewInstance(viewInstance);
 
   return viewInstance;
 };
