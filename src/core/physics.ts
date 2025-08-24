@@ -9,9 +9,13 @@ export const createPhysics = () => {
   let currentForce: Position = { x: 0, y: 0 };
 
   const applyForce = (force: Position) => {
-    console.log('apply force', force);
-    currentForce.x += force.x / 100;
-    currentForce.y -= force.y / 100;
+    const difference = {
+      x: force.x - currentForce.x,
+      y: force.y - currentForce.y,
+    };
+    console.log('apply force', difference);
+    currentForce.x += difference.x;
+    currentForce.y += difference.y;
   };
 
   const update = (dampening: number = 0.95) => {

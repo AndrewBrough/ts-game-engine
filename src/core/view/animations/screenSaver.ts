@@ -39,11 +39,13 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   // Store the direction for next frame
   directionMap.set(view.props.id, direction);
 
-  // Update the view position using the move function like the player
-  view.move(
-    { x: direction.x * RANDOM_SPEED, y: direction.y * RANDOM_SPEED },
-    deltaTime
-  );
+  // Apply force using physics system instead of direct movement
+  const force = {
+    x: direction.x * RANDOM_SPEED * (deltaTime / 16), // Normalize by deltaTime
+    y: direction.y * RANDOM_SPEED * (deltaTime / 16),
+  };
+
+  view.physics.applyForce(force);
 
   return view;
 };

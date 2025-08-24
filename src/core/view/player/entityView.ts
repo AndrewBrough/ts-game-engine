@@ -47,7 +47,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   const collisionHandler = createCollisionHandler(view, physics, initialModel);
 
   view.events.addEvent('update', () => {
-    console.log('update', physics.getCurrentForce(), view.id);
+    // console.log('update', physics.getCurrentForce(), view.id);
     // Apply physics forces
     const dampening = view.props.physics?.dampening ?? 0.95;
     const force = physics.update(dampening);
