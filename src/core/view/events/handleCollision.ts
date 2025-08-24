@@ -1,24 +1,24 @@
 import type { Collision } from '../../gameState/collisionManager';
-import type { AnyView, EntityModel } from '../types';
+import type { EntityModel } from '../types';
 import type { PhysicsInstance } from '../../physics';
-import type { EntityViewInstance } from '../player/entityView';
+import type { InteractiveViewInstance } from '../interactiveView';
 
 export type CollisionHandler = ReturnType<typeof createCollisionHandler>;
 
 export const createCollisionHandler = (
-  view: EntityViewInstance,
+  view: InteractiveViewInstance,
   physics: PhysicsInstance,
   initialModel: EntityModel
 ) => {
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
-    if (view1.id !== view.props.id && view2.id !== view.props.id) {
+    if (view1.id !== view.id && view2.id !== view.id) {
       return;
     }
 
     const otherView =
-      collision.view1.id === view.props.id ? collision.view2 : collision.view1;
+      collision.view1.id === view.id ? collision.view2 : collision.view1;
 
     // calc damage and apply health changes
     if (otherView.model && 'collisionDamage' in otherView.model) {

@@ -39,7 +39,7 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   // Store the direction for next frame
   directionMap.set(view.props.id, direction);
 
-  // Apply force using physics system instead of direct movement
+  // Apply force using physics system with stronger force to overcome dampening
   const force = {
     x: direction.x * RANDOM_SPEED * deltaTime, // Normalize by deltaTime
     y: direction.y * RANDOM_SPEED * deltaTime,
