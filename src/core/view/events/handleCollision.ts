@@ -1,11 +1,12 @@
 import type { Collision } from '../../gameState/collisionManager';
-import type { EntityModel } from '../types';
+import type { AnyView, EntityModel } from '../types';
 import type { PhysicsInstance } from '../../physics';
+import type { EntityViewInstance } from '../player/entityView';
 
 export type CollisionHandler = ReturnType<typeof createCollisionHandler>;
 
 export const createCollisionHandler = (
-  view: any,
+  view: EntityViewInstance,
   physics: PhysicsInstance,
   initialModel: EntityModel
 ) => {
@@ -37,14 +38,21 @@ export const createCollisionHandler = (
       });
 
       const directionVector = {
-        x: (-otherView.position.x + view.props.position.x) / 10,
-        y: (-otherView.position.y + view.props.position.y) / 10,
+        x: view.props.position.x - otherView.position.x,
+        y: view.props.position.y - otherView.position.y,
       };
-      console.log(directionVector);
+      const magnitude = Math.sqrt(
+        directionVector.x * directionVector.x +
+          directionVector.y * directionVector.y
+      );
+      const normalizedVector = {
+        x: directionVector.x / magnitude,
+        y: directionVector.y / magnitude,
+      };
 
       physics.applyForce({
-        x: directionVector.x,
-        y: directionVector.y,
+        x: normalizedVector.x * view.props.shapeProps.width * 10,
+        y: normalizedVector.y * view.props.shapeProps.height * 10,
       });
     }
   };
