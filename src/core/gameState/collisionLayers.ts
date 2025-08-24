@@ -4,7 +4,7 @@ export type CollisionLayer = (typeof LAYERS)[number];
 
 export const COLLISION_MATRIX: Record<CollisionLayer, CollisionLayer[]> = {
   BACKGROUND: [],
-  DEFAULT: [],
+  DEFAULT: ['PLAYER'],
   PLAYER: ['DEFAULT'],
   UI: [],
 };

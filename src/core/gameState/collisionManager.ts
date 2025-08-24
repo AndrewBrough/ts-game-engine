@@ -2,6 +2,7 @@ import { createEvents } from '../events/events';
 import { doBoundsOverlap } from '../view/collision';
 import type { View } from '../view/types';
 import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
+import { COLLISION_MATRIX } from './collisionLayers';
 
 export type Collision = {
   view1: View;
@@ -60,10 +61,33 @@ export const collisionManager = () => {
 
   const registerCollision = (collision: Collision) => {
     if (collisions.includes(collision)) {
+      // already registered
       return;
     }
     collisions.push(collision);
-    window.dispatchEvent(new CustomEvent('collide', { detail: { collision } }));
+    // dispatch collision events for both views
+    if (
+      COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
+    ) {
+      dispatchCollisionEvent(`${collision.view2.layer}-collide`, collision);
+    }
+    if (
+      COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
+    ) {
+      dispatchCollisionEvent(`${collision.view1.layer}-collide`, collision);
+    }
+  };
+
+  const dispatchCollisionEvent = (event: string, collision: Collision) => {
+    if (
+      COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
+    ) {
+      window.dispatchEvent(
+        new CustomEvent(event, {
+          detail: { collision },
+        })
+      );
+    }
   };
 
   const unregisterCollision = (collision: Collision) => {

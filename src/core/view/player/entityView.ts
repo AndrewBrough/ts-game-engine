@@ -50,11 +50,16 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
 
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
+    const { view1, view2 } = collision;
+    if (view1.id !== view.props.id && view2.id !== view.props.id) {
+      return;
+    }
+
     const otherView =
       collision.view1.id === view.props.id ? collision.view2 : collision.view1;
 
     // calc damage and apply health changes
-    if (otherView.model && 'health' in otherView.model) {
+    if (otherView.model && 'collisionDamage' in otherView.model) {
       const damage = (otherView.model as EntityModel).collisionDamage;
       const currentHealth = (view.model as EntityModel).health;
       const newHealth = currentHealth - damage;
@@ -72,7 +77,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
     }
   };
 
-  view.events.addEvent('collide', handleCollide);
+  view.events.addEvent(`${view.props.layer}-collide`, handleCollide);
 
   return view;
 };
