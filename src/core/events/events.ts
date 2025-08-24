@@ -43,10 +43,7 @@ export const createEvents = () => {
     }
     events.clear();
     eventHandlers.clear();
-    // Remove from global registry
     eventInstances.delete(instance);
-
-    console.log('cleanup', eventInstances);
   };
 
   const instance = {

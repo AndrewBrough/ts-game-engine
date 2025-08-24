@@ -25,15 +25,12 @@ export const createPauseButton = (
     },
     handlers: {
       onClick: () => {
-        console.log('clicked');
         handlePause();
       },
       onHover: () => {
-        console.log('hovered');
         scale(1.1);
       },
       onHoverOut: () => {
-        console.log('hovered out');
         scale(1);
       },
       onKeyDown: event => {

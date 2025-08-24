@@ -17,7 +17,6 @@ export type Scene = {
 export type SceneInstance = ReturnType<typeof createScene>;
 
 export const createScene = (name: string = 'default') => {
-  console.log('Creating scene', name);
   const state = getState();
   const events = createEvents();
   const collisions = collisionManager();
@@ -25,11 +24,9 @@ export const createScene = (name: string = 'default') => {
   createPlayerView();
 
   const destroy = () => {
-    console.log('Destroying scene', name);
     events.cleanup();
     collisions.events.cleanup();
     clearAllViews();
-    console.log('Cleared all views', getState().views);
   };
 
   return {

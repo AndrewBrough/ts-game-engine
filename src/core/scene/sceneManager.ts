@@ -19,14 +19,12 @@ const createSceneManager = () => {
 
     const sceneInstance = createScene();
     scenes.add(sceneInstance);
-    console.log('Loaded scene', sceneInstance);
     return sceneInstance;
   };
 
   const unloadScene = (sceneName: string) => {
     for (const scene of scenes) {
       if (scene.name === sceneName) {
-        console.log('Unloading scene', scene.name);
         scene.destroy();
         scenes.delete(scene);
       }
