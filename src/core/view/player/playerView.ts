@@ -23,9 +23,9 @@ export const createPlayerView = () => {
       color: 'blue',
     },
     stroke: {
-      color: 'transparent',
-      width: 0,
-      opacity: 0,
+      color: 'blue',
+      width: 2,
+      opacity: 1,
     },
   });
 
@@ -56,8 +56,6 @@ export const createPlayerView = () => {
 
   const playerCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
-    const thisView =
-      collision.view1.id === view.props.id ? collision.view1 : collision.view2;
     const otherView =
       collision.view1.id === view.props.id ? collision.view2 : collision.view1;
 
@@ -71,17 +69,12 @@ export const createPlayerView = () => {
 
       const percentHealth =
         (view.model as EntityModel).health / startPlayerModel.health;
-      console.log(currentHealth, damage, newHealth, percentHealth);
       const opacity = Math.max(0, percentHealth);
+
       view.updateFillColor({
         color: view.fill.color,
         opacity,
       });
-      view.updateStrokeColor({
-        color: view.stroke.color,
-        opacity,
-      });
-      view.update();
     }
   };
 

@@ -275,7 +275,6 @@ export const createView = (
             { width: actualWidth, height: actualHeight },
             mutableProps.anchor
           );
-          console.log(mutableProps.bounds);
           return;
         }
       }
@@ -288,7 +287,7 @@ export const createView = (
   };
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

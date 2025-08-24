@@ -118,16 +118,11 @@ export const doBoundsOverlap = (
 
   // Check if there's actually an overlap
   if (overlapLeft >= overlapRight || overlapTop >= overlapBottom) {
-    console.log('no overlap');
     return null;
-  } else {
-    console.log('overlap');
   }
 
   const overlapWidth = overlapRight - overlapLeft;
   const overlapHeight = overlapBottom - overlapTop;
-
-  console.log(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
   return {
     left: overlapLeft,
