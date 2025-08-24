@@ -34,6 +34,10 @@ export const collisionManager = () => {
         const collision = {
           view1: view,
           view2: v,
+          point: {
+            x: 0,
+            y: 0,
+          },
         };
         const hasCol = hasCollision(collision);
 
@@ -61,15 +65,11 @@ export const collisionManager = () => {
       return;
     }
     collisions.push(collision);
-    console.log('Collision registered', collision);
     window.dispatchEvent(new CustomEvent('collide', { detail: { collision } }));
   };
 
   const unregisterCollision = (collision: Collision) => {
-    const c = collisions.splice(collisions.indexOf(collision), 1);
-    if (c.length > 0) {
-      console.log('unregistered collision', c);
-    }
+    collisions.splice(collisions.indexOf(collision), 1);
   };
 
   return {

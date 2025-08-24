@@ -1,4 +1,5 @@
 import type { EntityViewInstance } from '../player/entityView';
+import type { EntityModel } from '../types';
 
 const RANDOM_SPEED = 0.4; // Same as PLAYER_SPEED
 
@@ -7,14 +8,14 @@ const directionMap = new Map<string, { x: number; y: number }>();
 
 export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   // Get current direction or initialize
-  let direction = directionMap.get(view.view.props.id) || {
+  let direction = directionMap.get(view.props.id) || {
     x: 1,
     y: 1,
   };
-  const { position, units, shapeProps } = view.view.props;
+  const { position, units, shapeProps } = view.props;
 
   // Calculate new position using deltaTime like the player movement
-  const speedModifier = view.entity.speed + RANDOM_SPEED;
+  const speedModifier = (view.model as EntityModel).speed + RANDOM_SPEED;
   const newX = position.x + direction.x * speedModifier;
   const newY = position.y + direction.y * speedModifier;
 
@@ -36,10 +37,10 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   }
 
   // Store the direction for next frame
-  directionMap.set(view.view.props.id, direction);
+  directionMap.set(view.props.id, direction);
 
   // Update the view position using the move function like the player
-  view.view.move(
+  view.move(
     { x: direction.x * RANDOM_SPEED, y: direction.y * RANDOM_SPEED },
     deltaTime
   );

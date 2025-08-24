@@ -9,31 +9,29 @@ export const createDemoCubeView = (id?: string) => {
   // Use provided id or generate a unique one
   const cubeId = id || `demoCube-${Math.random().toString(36).substr(2, 9)}`;
 
-  const entityView = createEntityView(
-    {
-      id: cubeId,
-      layer: 'DEFAULT',
-      position: {
-        x: randomX,
-        y: randomY,
-      },
-      shapeProps: {
-        width: 10,
-        height: 10,
-      },
-      shape: 'rect',
-      fill: {
-        color: 'red',
-      },
+  const entityView = createEntityView({
+    id: cubeId,
+    model: { health: 5, speed: 0.1 },
+    layer: 'DEFAULT',
+    position: {
+      x: randomX,
+      y: randomY,
     },
-    { speed: 0.1 }
-  );
+    shapeProps: {
+      width: 10,
+      height: 10,
+    },
+    shape: 'rect',
+    fill: {
+      color: 'red',
+    },
+  });
 
-  entityView.view.events.addEvent('update', (e: CustomEvent) => {
+  entityView.events.addEvent('update', (e: CustomEvent) => {
     screenSaver(entityView, e.detail.deltaTime ?? 16);
   });
 
-  entityView.view.addAnimation(() => {}, 'update');
+  entityView.addAnimation(() => {}, 'update');
 
-  return entityView.view;
+  return entityView;
 };

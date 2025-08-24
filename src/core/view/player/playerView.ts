@@ -1,10 +1,15 @@
+import type { Collision } from '../../gameState/collisionManager';
 import { isKeyHeld } from '../../input/keyboard';
-import type { Position } from '../types';
+import type { EntityModel, Position } from '../types';
 import { createEntityView } from './entityView';
 
 export const createPlayerView = () => {
-  const { view, entity } = createEntityView({
+  const view = createEntityView({
     id: 'player',
+    model: {
+      speed: 0.5,
+      health: 100,
+    },
     layer: 'PLAYER',
     relativeTo: 'bottom-left',
     shapeProps: {
@@ -24,22 +29,43 @@ export const createPlayerView = () => {
       x: 0,
       y: 0,
     };
+    const speed = (view.model as EntityModel).speed;
 
     if (isKeyHeld('a') || isKeyHeld('ArrowLeft')) {
-      movement.x = -entity.speed;
+      movement.x = -speed;
     }
     if (isKeyHeld('d') || isKeyHeld('ArrowRight')) {
-      movement.x = entity.speed;
+      movement.x = speed;
     }
     if (isKeyHeld('w') || isKeyHeld('ArrowUp')) {
-      movement.y = -entity.speed;
+      movement.y = -speed;
     }
     if (isKeyHeld('s') || isKeyHeld('ArrowDown')) {
-      movement.y = entity.speed;
+      movement.y = speed;
     }
 
     view.move(movement, deltaTime);
   });
+
+  const playerCollide = (e: CustomEvent<{ collision: Collision }>) => {
+    const collision = e.detail?.collision;
+    const otherView =
+      collision.view1.id === view.props.id ? collision.view2 : collision.view1;
+
+    // calc damage and apply health changes
+    if (otherView.model && 'health' in otherView.model) {
+      (view.model as EntityModel).health -= (
+        otherView.model as EntityModel
+      ).health;
+      (otherView.model as EntityModel).health -= (
+        view.model as EntityModel
+      ).health;
+    }
+
+    view.updatePosition();
+  };
+
+  view.events.addEvent('collide', playerCollide);
 
   return view;
 };

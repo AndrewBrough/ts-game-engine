@@ -5,8 +5,9 @@ import type { Bounds } from './collision';
 import type { InteractiveViewInstance } from './interactiveView';
 import type { ViewInstance } from './view';
 
-export type View = {
+export type View<T extends object = {}> = {
   id: string;
+  model: T | object;
   layer: CollisionLayer;
   bounds?: Bounds;
   scale: number;
@@ -78,6 +79,15 @@ export type InteractiveView = AnimatedView & {
 export type AnimatedView = View & {
   addAnimation: (callback: EventListener) => void;
   animate: () => void;
+};
+
+export type EntityModel = {
+  health: number;
+  speed: number;
+};
+
+export type EntityView = AnimatedView & {
+  entity: EntityModel;
 };
 
 export type AnyView = View | InteractiveView | AnimatedView;

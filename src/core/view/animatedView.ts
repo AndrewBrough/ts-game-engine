@@ -5,9 +5,7 @@ import { createView } from './view';
 
 export type AnimatedViewInstance = ReturnType<typeof createAnimatedView>;
 
-export const createAnimatedView = (
-  props: DeepPartial<InteractiveView> = {}
-) => {
+export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
   const viewInstance = createView(props);
 
   const animate = () => {
@@ -43,10 +41,6 @@ export const createAnimatedView = (
       `I am ${viewInstance.props.id} and I collided with ${otherView.id}`
     );
   };
-
-  if (viewInstance.props.layer === 'PLAYER') {
-    viewInstance.events.addEvent('collide', handleCollide);
-  }
 
   return {
     ...viewInstance,

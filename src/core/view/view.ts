@@ -29,6 +29,7 @@ export const createView = (
   // Create mutable copies of all props that can be updated
   const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
+    model: props.model ?? {},
     layer: props.layer ?? 'DEFAULT',
     scale: props.scale ?? 1,
     fill: { ...mergedProps.fill },

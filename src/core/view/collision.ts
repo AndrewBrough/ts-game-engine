@@ -9,7 +9,12 @@ export interface Bounds {
   height: number;
 }
 
-export type Anchor = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+export type Anchor =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+  | 'center';
 
 /**
  * Calculate the bounds of an object based on its position, size, and anchor point
@@ -24,58 +29,58 @@ export const calculateBounds = (
 
   const getBoundsAroundAnchor = (anchor: Anchor) => {
     switch (anchor) {
-    case 'top-left':
-      return {
-        left: x,
-        right: x + width,
-        top: y,
-        bottom: y + height,
-        width,
-        height
-      };
+      case 'top-left':
+        return {
+          left: x,
+          right: x + width,
+          top: y,
+          bottom: y + height,
+          width,
+          height,
+        };
 
-    case 'top-right':
-      return {
-        left: x - width,
-        right: x,
-        top: y,
-        bottom: y + height,
-        width,
-        height
-      };
+      case 'top-right':
+        return {
+          left: x - width,
+          right: x,
+          top: y,
+          bottom: y + height,
+          width,
+          height,
+        };
 
-    case 'bottom-left':
-      return {
-        left: x,
-        right: x + width,
-        top: y - height,
-        bottom: y,
-        width,
-        height
-      };
+      case 'bottom-left':
+        return {
+          left: x,
+          right: x + width,
+          top: y - height,
+          bottom: y,
+          width,
+          height,
+        };
 
-    case 'bottom-right':
-      return {
-        left: x - width,
-        right: x,
-        top: y - height,
-        bottom: y,
-        width,
-        height
-      };
+      case 'bottom-right':
+        return {
+          left: x - width,
+          right: x,
+          top: y - height,
+          bottom: y,
+          width,
+          height,
+        };
 
-    case 'center':
-    default:
-      return {
-        left: x - width / 2,
-        right: x + width / 2,
-        top: y - height / 2,
-        bottom: y + height / 2,
-        width,
-        height
-      };
+      case 'center':
+      default:
+        return {
+          left: x - width / 2,
+          right: x + width / 2,
+          top: y - height / 2,
+          bottom: y + height / 2,
+          width,
+          height,
+        };
     }
-  }
+  };
 
   const bounds = getBoundsAroundAnchor(anchor);
   bounds.left = Math.round(bounds.left);
@@ -90,10 +95,7 @@ export const calculateBounds = (
 /**
  * Check if a point is within the bounds of an object
  */
-export const isPointInBounds = (
-  point: Position,
-  bounds: Bounds
-): boolean => {
+export const isPointInBounds = (point: Position, bounds: Bounds): boolean => {
   return (
     point.x >= bounds.left &&
     point.x <= bounds.right &&
