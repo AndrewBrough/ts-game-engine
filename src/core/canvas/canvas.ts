@@ -1,6 +1,6 @@
 export const CANVAS_ID = 'gameCanvas';
-let CANVAS: HTMLCanvasElement;
-let CTX: CanvasRenderingContext2D;
+export let CANVAS: HTMLCanvasElement;
+export let CTX: CanvasRenderingContext2D;
 
 export const createCanvas = (rootId: string) => {
   const canvas = document.createElement('canvas');
