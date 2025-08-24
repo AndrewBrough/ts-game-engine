@@ -69,7 +69,11 @@ export const createView = (
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: Position) => {
-    mutableProps.position = newPosition;
+    const { x, y } = newPosition;
+    mutableProps.position = {
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    };
   };
 
   // Function to update fill color
