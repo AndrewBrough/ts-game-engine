@@ -3,25 +3,19 @@ import type { Position } from '../types';
 import { createEntityView } from './entityView';
 
 export const createPlayerView = () => {
-  const { view, entity } = createEntityView(
-    {
-      id: 'player',
-      layer: 'PLAYER',
-      relativeTo: 'bottom-left',
-      shapeProps: {
-        width: 10,
-        height: 10,
-      },
-      shape: 'rect',
-      fill: {
-        color: 'blue',
-      },
+  const { view, entity } = createEntityView({
+    id: 'player',
+    layer: 'PLAYER',
+    relativeTo: 'bottom-left',
+    shapeProps: {
+      width: 10,
+      height: 10,
     },
-    {
-      health: 100,
-      speed: 1,
-    }
-  );
+    shape: 'rect',
+    fill: {
+      color: 'blue',
+    },
+  });
 
   view.events.addEvent('update', (e: CustomEvent) => {
     const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
