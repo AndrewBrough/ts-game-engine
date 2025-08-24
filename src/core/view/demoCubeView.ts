@@ -25,6 +25,11 @@ export const createDemoCubeView = (id?: string) => {
     fill: {
       color: 'red',
     },
+    stroke: {
+      color: 'red',
+      opacity: 1,
+      width: 2,
+    },
   });
 
   entityView.events.addEvent('update', (e: CustomEvent) => {

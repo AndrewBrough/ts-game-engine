@@ -1,17 +1,15 @@
-import type { Collision } from '../../gameState/collisionManager';
 import { isKeyHeld } from '../../input/keyboard';
 import type { EntityModel, Position } from '../types';
 import { createEntityView } from './entityView';
 
-const startPlayerModel: EntityModel = {
-  speed: 1,
-  health: 100,
-};
-
 export const createPlayerView = () => {
   const view = createEntityView({
     id: 'player',
-    model: { ...startPlayerModel },
+    model: {
+      speed: 1,
+      health: 100,
+      collisionDamage: 10,
+    },
     layer: 'PLAYER',
     relativeTo: 'top-left',
     shapeProps: {
@@ -24,8 +22,8 @@ export const createPlayerView = () => {
     },
     stroke: {
       color: 'blue',
-      width: 2,
       opacity: 1,
+      width: 2,
     },
   });
 
@@ -53,32 +51,6 @@ export const createPlayerView = () => {
 
     view.move(movement, deltaTime);
   });
-
-  const playerCollide = (e: CustomEvent<{ collision: Collision }>) => {
-    const collision = e.detail?.collision;
-    const otherView =
-      collision.view1.id === view.props.id ? collision.view2 : collision.view1;
-
-    // calc damage and apply health changes
-    if (otherView.model && 'health' in otherView.model) {
-      const damage = (otherView.model as EntityModel).health;
-      const currentHealth = (view.model as EntityModel).health;
-      const newHealth = currentHealth - damage;
-
-      (view.model as EntityModel).health = newHealth;
-
-      const percentHealth =
-        (view.model as EntityModel).health / startPlayerModel.health;
-      const opacity = Math.max(0, percentHealth);
-
-      view.updateFillColor({
-        color: view.fill.color,
-        opacity,
-      });
-    }
-  };
-
-  view.events.addEvent('collide', playerCollide);
 
   return view;
 };

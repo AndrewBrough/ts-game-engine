@@ -86,6 +86,7 @@ export type AnimatedView = View & {
 export type EntityModel = {
   health: number;
   speed: number;
+  collisionDamage: number;
 };
 
 export type EntityView = AnimatedView & {

@@ -23,35 +23,7 @@ export const createScene = (name: string = 'default') => {
   const events = createEvents();
   const collisions = collisionManager();
 
-  const playerView = createPlayerView();
-  const playerHealthView = createAnimatedView({
-    id: 'player-health',
-    layer: 'UI',
-    anchor: 'top-left',
-    position: {
-      x: 1,
-      y: 1,
-    },
-    fill: {
-      color: 'violet',
-      opacity: 1,
-    },
-    stroke: {
-      color: 'transparent',
-      opacity: 0,
-      width: 0,
-    },
-    textProps: {
-      text: (playerView.model as EntityModel).health.toString() ?? '0',
-    },
-  });
-
-  playerView.events.addEvent('update', (e: CustomEvent) => {
-    const { health } = playerView.model as EntityModel;
-    playerHealthView.updateText(health.toString());
-    playerHealthView.update();
-  });
-
+  createPlayerView();
   createDemoCubeView();
 
   const destroy = () => {
