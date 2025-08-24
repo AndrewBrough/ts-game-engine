@@ -68,7 +68,7 @@ export const createPauseButton = (
   const updateText = () => {
     const { timeScale, isLogicPaused } = getState();
     const paused = timeScale === 0 || isLogicPaused;
-    viewInstance.updateText(paused ? '▶️' : '⏸️');
+    viewInstance.updateText(paused ? '▶' : '⏸');
     // if (logicOrAnimation === 'both') {
     //   viewInstance.updateText(paused ? 'Resume' : 'Pause');
     // }
