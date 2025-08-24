@@ -4,9 +4,10 @@ import {
   type CollisionManager,
 } from '../gameState/collisionManager';
 import { clearAllViews, getState } from '../gameState/gameState';
+import { createAnimatedView } from '../view/animatedView';
 import { createDemoCubeView } from '../view/demoCubeView';
 import { createPlayerView } from '../view/player/playerView';
-import type { View } from '../view/types';
+import type { EntityModel, View } from '../view/types';
 
 export type Scene = {
   name: string;
@@ -22,7 +23,28 @@ export const createScene = (name: string = 'default') => {
   const events = createEvents();
   const collisions = collisionManager();
 
-  createPlayerView();
+  const playerView = createPlayerView();
+  const playerHealthView = createAnimatedView({
+    ...playerView,
+    anchor: 'top-left',
+    position: {
+      x: 1,
+      y: 1,
+    },
+    fill: {
+      color: 'violet',
+      opacity: 1,
+    },
+    stroke: {
+      color: 'transparent',
+      opacity: 0,
+      width: 0,
+    },
+    textProps: {
+      text: (playerView.model as EntityModel).health.toString() ?? '0',
+    },
+  });
+
   createDemoCubeView();
 
   const destroy = () => {
