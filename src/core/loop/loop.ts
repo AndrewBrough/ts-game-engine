@@ -50,12 +50,12 @@ export const createLoop = () => {
         fpsStartTime = currentTime;
       }
 
-      getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
-      window.dispatchEvent(
-        new CustomEvent('render', { detail: { time: currentTime } })
-      );
-
       if (timeScale > 0) {
+        getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
+        // console.log(frameCount);
+        window.dispatchEvent(
+          new CustomEvent('render', { detail: { time: currentTime } })
+        );
         window.dispatchEvent(
           new CustomEvent('animate', { detail: { time: currentTime } })
         );

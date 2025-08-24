@@ -3,8 +3,7 @@ import {
   collisionManager,
   type CollisionManager,
 } from '../gameState/collisionManager';
-import { getState } from '../gameState/gameState';
-import { createPlayerView } from '../view/player/playerView';
+import { clearAllViews, getState } from '../gameState/gameState';
 import type { View } from '../view/types';
 
 export type Scene = {
@@ -23,7 +22,6 @@ export const createScene = (name: string = 'default') => {
   const collisions = collisionManager();
 
   const init = () => {
-    createPlayerView();
     console.log('Initialized scene', name, state);
   };
 
@@ -31,6 +29,7 @@ export const createScene = (name: string = 'default') => {
     console.log('Destroying scene', name);
     events.cleanup();
     collisions.events.cleanup();
+    clearAllViews();
   };
 
   return {

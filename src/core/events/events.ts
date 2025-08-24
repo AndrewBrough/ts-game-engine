@@ -12,17 +12,17 @@ export const cleanupEventListeners = () => {
 };
 
 export const createEvents = () => {
-  const events = new Map<string, EventListener>(); 
+  const events = new Map<string, EventListener>();
   const eventHandlers = new Map<string, (e: Event) => void>();
 
   const addEvent = (event: string, callback: EventListener) => {
     events.set(event, callback);
-    
+
     // Create a wrapper function that we can reference for removal
     const handler = (e: Event) => {
       callback(e);
     };
-    
+
     eventHandlers.set(event, handler);
     window.addEventListener(event, handler);
   };
@@ -45,13 +45,15 @@ export const createEvents = () => {
     eventHandlers.clear();
     // Remove from global registry
     eventInstances.delete(instance);
+
+    console.log('cleanup', eventInstances);
   };
 
   const instance = {
     events,
     addEvent,
     removeEvent,
-    cleanup
+    cleanup,
   };
 
   // Register this instance for potential cleanup

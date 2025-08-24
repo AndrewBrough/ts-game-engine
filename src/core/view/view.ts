@@ -269,11 +269,17 @@ export const createView = (
     updateViewInState(mutableProps);
   };
 
+  const destroy = () => {
+    events.removeEvent('update');
+    events.removeEvent('render');
+  };
+
   events.addEvent('update', update);
   events.addEvent('render', render);
 
   const viewInstance = {
     update,
+    destroy,
     events,
     updatePosition,
     updateFillColor,
