@@ -21,6 +21,7 @@ export const createPauseButton = (
     },
     handlers: {
       onClick: () => {
+        console.log('clicked');
         handlePause();
       },
       onKeyDown: event => {

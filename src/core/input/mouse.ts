@@ -10,9 +10,11 @@ const getViewsWithHandler = (
 ) => {
   return getAllViews().filter((view: AnyView) => {
     if ('handlers' in view) {
+      console.log({ view, handlerName });
       const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlerName in handlers) return false;
-      return handlers[handlerName] !== undefined;
+      if (handlerName in handlers) {
+        return true;
+      }
     }
     return false;
   });
@@ -22,6 +24,8 @@ const getViewsWithHandler = (
 const handleClick = (e: MouseEvent) => {
   const viewsWithClick = getViewsWithHandler('onClick');
   const view = locateView({ x: e.clientX, y: e.clientY }, viewsWithClick);
+
+  console.log({ view, viewsWithClick });
 
   if (view && 'handlers' in view) {
     const handlers = view.handlers as Record<string, (e: Event) => void>;
