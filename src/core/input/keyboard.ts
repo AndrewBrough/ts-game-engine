@@ -2,6 +2,12 @@ import { getAllViews } from '../gameState/gameState';
 import type { AnyView, InteractiveView } from '../view/types';
 
 const heldKeys = new Set<string>();
+let currentDeltaTime = 16; // Default to 16ms (60fps)
+
+// Function to update deltaTime from the game loop
+export const updateDeltaTime = (deltaTime: number) => {
+  currentDeltaTime = deltaTime;
+};
 
 // Helper function to get interactive views with specific handlers
 const getViewsWithHandler = (
@@ -27,7 +33,20 @@ const handleKeyDown = (e: KeyboardEvent) => {
     if ('handlers' in view) {
       const handlers = view.handlers as Record<string, (e: Event) => void>;
       if (handlers.onKeyDown) {
-        handlers.onKeyDown(e);
+        // Create a CustomEvent with deltaTime from the game loop
+        const customEvent = new CustomEvent('keydown', {
+          detail: {
+            deltaTime: currentDeltaTime, // Use the current deltaTime from the game loop
+            key: e.key,
+            code: e.code,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey,
+            metaKey: e.metaKey,
+            repeat: e.repeat,
+          },
+        });
+        handlers.onKeyDown(customEvent);
       }
     }
   }
@@ -43,7 +62,20 @@ const handleKeyUp = (e: KeyboardEvent) => {
     if ('handlers' in view) {
       const handlers = view.handlers as Record<string, (e: Event) => void>;
       if (handlers.onKeyUp) {
-        handlers.onKeyUp(e);
+        // Create a CustomEvent with deltaTime from the game loop
+        const customEvent = new CustomEvent('keyup', {
+          detail: {
+            deltaTime: currentDeltaTime, // Use the current deltaTime from the game loop
+            key: e.key,
+            code: e.code,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey,
+            metaKey: e.metaKey,
+            repeat: e.repeat,
+          },
+        });
+        handlers.onKeyUp(customEvent);
       }
     }
   }

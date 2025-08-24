@@ -1,10 +1,11 @@
-import { createAnimatedView } from '../animatedView';
 import { isKeyHeld } from '../../input/keyboard';
+import { createInteractiveView } from '../interactiveView';
+import type { Position } from '../types';
 
 const PLAYER_SPEED = 0.5;
 
 export const createPlayerView = () => {
-  const animatedView = createAnimatedView({
+  const animatedView = createInteractiveView({
     id: 'player',
     layer: 'PLAYER',
     // anchor: 'center',
@@ -19,42 +20,29 @@ export const createPlayerView = () => {
     },
   });
 
-  // Add movement animation
-  animatedView.addAnimation((e: CustomEvent) => {
-    let deltaX = 0;
-    let deltaY = 0;
-    const deltaTime = e.detail.deltaTime;
+  animatedView.events.addEvent('update', (e: CustomEvent) => {
+    const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
 
-    // Check for left movement (A key or left arrow)
-    if (isKeyHeld('a') || isKeyHeld('A') || isKeyHeld('ArrowLeft')) {
-      deltaX -= PLAYER_SPEED;
+    const movement: Position = {
+      x: 0,
+      y: 0,
+    };
+
+    if (isKeyHeld('a') || isKeyHeld('ArrowLeft')) {
+      movement.x = -PLAYER_SPEED;
+    }
+    if (isKeyHeld('d') || isKeyHeld('ArrowRight')) {
+      movement.x = PLAYER_SPEED;
+    }
+    if (isKeyHeld('w') || isKeyHeld('ArrowUp')) {
+      movement.y = -PLAYER_SPEED;
+    }
+    if (isKeyHeld('s') || isKeyHeld('ArrowDown')) {
+      movement.y = PLAYER_SPEED;
     }
 
-    // Check for right movement (D key or right arrow)
-    if (isKeyHeld('d') || isKeyHeld('D') || isKeyHeld('ArrowRight')) {
-      deltaX += PLAYER_SPEED;
-    }
-
-    if (isKeyHeld('w') || isKeyHeld('W') || isKeyHeld('ArrowUp')) {
-      deltaY -= PLAYER_SPEED;
-    }
-
-    if (isKeyHeld('s') || isKeyHeld('S') || isKeyHeld('ArrowDown')) {
-      deltaY += PLAYER_SPEED;
-    }
-
-    deltaX *= deltaTime / 10;
-    deltaY *= deltaTime / 10;
-
-    // Update position if there's movement
-    if (deltaX !== 0 || deltaY !== 0) {
-      const currentX = animatedView.props.position.x;
-      const newX = currentX + deltaX;
-      const currentY = animatedView.props.position.y;
-      const newY = currentY + deltaY;
-      animatedView.updatePosition({ x: newX, y: newY });
-    }
-  }, 'update');
+    animatedView.move(movement, deltaTime);
+  });
 
   return animatedView;
 };

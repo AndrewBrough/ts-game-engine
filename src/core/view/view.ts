@@ -2,7 +2,13 @@ import { getContext } from '../canvas/canvas';
 import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
-import type { View, InteractiveView, AnyViewInstance, AnyView } from './types';
+import type {
+  View,
+  InteractiveView,
+  AnyViewInstance,
+  AnyView,
+  Position,
+} from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import {
@@ -59,9 +65,8 @@ export const createView = (
   };
 
   // Function to update the position and trigger a redraw
-  const updatePosition = (newPosition: { x: number; y: number }) => {
-    mutableProps.position.x = newPosition.x;
-    mutableProps.position.y = newPosition.y;
+  const updatePosition = (newPosition: Position) => {
+    mutableProps.position = newPosition;
   };
 
   // Function to update fill color

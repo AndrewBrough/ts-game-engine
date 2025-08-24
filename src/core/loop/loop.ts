@@ -1,5 +1,6 @@
 import { getCanvas, getContext } from '../canvas/canvas';
 import { updateFPS, getState } from '../gameState/gameState';
+import { updateDeltaTime } from '../input/keyboard';
 
 export const createLoop = () => {
   let lastFrameTime = 0;
@@ -13,6 +14,9 @@ export const createLoop = () => {
 
     const currentTime = performance.now();
     const deltaTime = currentTime - lastFrameTime;
+
+    // Update the keyboard system with current deltaTime
+    updateDeltaTime(deltaTime);
 
     // Initialize FPS tracking on first frame
     if (fpsStartTime === 0) {

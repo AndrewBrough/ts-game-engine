@@ -9,11 +9,16 @@ export const createInteractiveView = (props: DeepPartial<InteractiveView>) => {
 
   // Store handler references for proper cleanup
   const handlers = {
-    click: (event: Event) => view.events.events.get('onClick')?.(event),
-    mouseover: (event: Event) => view.events.events.get('onHover')?.(event),
-    mouseout: (event: Event) => view.events.events.get('onHoverOut')?.(event),
-    keydown: (event: Event) => view.events.events.get('onKeyDown')?.(event),
-    keyup: (event: Event) => view.events.events.get('onKeyUp')?.(event),
+    click: (event: Event) =>
+      view.events.events.get('onClick')?.(event as CustomEvent),
+    mouseover: (event: Event) =>
+      view.events.events.get('onHover')?.(event as CustomEvent),
+    mouseout: (event: Event) =>
+      view.events.events.get('onHoverOut')?.(event as CustomEvent),
+    keydown: (event: Event) =>
+      view.events.events.get('onKeyDown')?.(event as CustomEvent),
+    keyup: (event: Event) =>
+      view.events.events.get('onKeyUp')?.(event as CustomEvent),
   };
 
   const addHandlers = () => {

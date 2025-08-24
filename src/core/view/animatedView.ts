@@ -1,5 +1,5 @@
 import type { DeepPartial } from '../types';
-import type { InteractiveView } from './types';
+import type { InteractiveView, Position } from './types';
 import { createView } from './view';
 
 export type AnimatedViewInstance = ReturnType<typeof createAnimatedView>;
@@ -9,6 +9,13 @@ export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
 
   const animate = () => {
     viewInstance.update();
+  };
+
+  const move = (position: Position, deltaTime: number) => {
+    viewInstance.updatePosition({
+      x: viewInstance.props.position.x + (position.x * deltaTime) / 10,
+      y: viewInstance.props.position.y + (position.y * deltaTime) / 10,
+    });
   };
 
   const addAnimation = (
@@ -26,5 +33,6 @@ export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
     ...viewInstance,
     addAnimation,
     animate,
+    move,
   };
 };
