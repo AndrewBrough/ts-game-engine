@@ -12,13 +12,13 @@ export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
   };
 
   const addAnimation = (
-    callback: EventListener,
+    callback: (e: CustomEvent) => void,
     event: 'animate' | 'update' | 'render' = 'animate'
   ) => {
     viewInstance.events.addEvent(event, callback);
   };
 
-  addAnimation(() => {
+  addAnimation((e: CustomEvent) => {
     animate();
   });
 

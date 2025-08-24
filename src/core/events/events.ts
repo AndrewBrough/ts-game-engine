@@ -12,25 +12,25 @@ export const cleanupEventListeners = () => {
 };
 
 export const createEvents = () => {
-  const events = new Map<string, EventListener>();
-  const eventHandlers = new Map<string, (e: Event) => void>();
+  const events = new Map<string, (e: CustomEvent) => void>();
+  const eventHandlers = new Map<string, (e: CustomEvent) => void>();
 
-  const addEvent = (event: string, callback: EventListener) => {
+  const addEvent = (event: string, callback: (e: CustomEvent) => void) => {
     events.set(event, callback);
 
     // Create a wrapper function that we can reference for removal
-    const handler = (e: Event) => {
+    const handler = (e: CustomEvent) => {
       callback(e);
     };
 
     eventHandlers.set(event, handler);
-    window.addEventListener(event, handler);
+    window.addEventListener(event, handler as EventListener);
   };
 
   const removeEvent = (event: string) => {
     const handler = eventHandlers.get(event);
     if (handler) {
-      window.removeEventListener(event, handler);
+      window.removeEventListener(event, handler as EventListener);
       eventHandlers.delete(event);
     }
     events.delete(event);
@@ -39,7 +39,7 @@ export const createEvents = () => {
   const cleanup = () => {
     // Remove all event listeners
     for (const [event, handler] of eventHandlers) {
-      window.removeEventListener(event, handler);
+      window.removeEventListener(event, handler as EventListener);
     }
     events.clear();
     eventHandlers.clear();

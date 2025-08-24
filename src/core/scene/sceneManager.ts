@@ -18,9 +18,8 @@ const createSceneManager = () => {
     unloadScene(sceneName);
 
     const sceneInstance = createScene();
-    sceneInstance.init();
-    console.log('Loaded scene', sceneInstance);
     scenes.add(sceneInstance);
+    console.log('Loaded scene', sceneInstance);
     return sceneInstance;
   };
 

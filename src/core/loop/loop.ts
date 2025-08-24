@@ -26,11 +26,11 @@ export const createLoop = () => {
      */
     if (!isLogicPaused && timeScale > 0) {
       window.dispatchEvent(
-        new CustomEvent('update', { detail: { time: currentTime } })
+        new CustomEvent('update', { detail: { deltaTime } })
       );
       if (deltaTime >= targetFrameTime) {
         window.dispatchEvent(
-          new CustomEvent('collisions', { detail: { time: currentTime } })
+          new CustomEvent('collisions', { detail: { deltaTime } })
         );
       }
     }
@@ -54,10 +54,10 @@ export const createLoop = () => {
         getContext().clearRect(0, 0, getCanvas().width, getCanvas().height);
         // console.log(frameCount);
         window.dispatchEvent(
-          new CustomEvent('render', { detail: { time: currentTime } })
+          new CustomEvent('render', { detail: { deltaTime } })
         );
         window.dispatchEvent(
-          new CustomEvent('animate', { detail: { time: currentTime } })
+          new CustomEvent('animate', { detail: { deltaTime } })
         );
       }
     }
