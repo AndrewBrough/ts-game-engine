@@ -3,6 +3,7 @@ import type { CollisionLayer } from '../gameState/collisionLayers';
 import type { AnimatedViewInstance } from './animatedView';
 import type { Bounds } from './collision';
 import type { InteractiveViewInstance } from './interactiveView';
+import type { EntityViewInstance } from './player/entityView';
 import type { ViewInstance } from './view';
 
 export type View<T extends object = {}> = {
@@ -11,6 +12,7 @@ export type View<T extends object = {}> = {
   layer: CollisionLayer;
   bounds?: Bounds;
   scale: number;
+  force: Position;
   fill: {
     color: string;
     opacity: number;
@@ -58,6 +60,12 @@ export type View<T extends object = {}> = {
     fontWeight: string;
     fontStyle: string;
   };
+  /**
+   * Physics properties for entity movement and forces
+   */
+  physics?: {
+    dampening: number; // Air resistance factor (0-1, where 1 = no dampening, 0 = full stop)
+  };
 };
 
 export type InteractiveView = AnimatedView & {
@@ -93,7 +101,7 @@ export type EntityView = AnimatedView & {
   entity: EntityModel;
 };
 
-export type AnyView = View | InteractiveView | AnimatedView;
+export type AnyView = View | InteractiveView | AnimatedView | EntityView;
 
 export type Position = {
   x: number;
@@ -111,4 +119,5 @@ export type { ViewInstance } from './view';
 export type AnyViewInstance =
   | ViewInstance
   | InteractiveViewInstance
-  | AnimatedViewInstance;
+  | AnimatedViewInstance
+  | EntityViewInstance;

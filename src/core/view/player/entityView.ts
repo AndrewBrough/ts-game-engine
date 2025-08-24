@@ -1,9 +1,10 @@
-import type { Collision } from '../../gameState/collisionManager';
 import { createModel } from '../../model/model';
+import { createPhysics } from '../../physics';
 import type { DeepPartial } from '../../types';
 import { createAnimatedView } from '../animatedView';
 import { createInteractiveView } from '../interactiveView';
-import type { EntityModel, InteractiveView } from '../types';
+import { createCollisionHandler } from '../events/handleCollision';
+import type { EntityModel, InteractiveView, Position } from '../types';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
@@ -18,6 +19,10 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   const view = createInteractiveView({
     ...props,
     model: { ...initialModel },
+    physics: {
+      dampening: 0.95, // Default air resistance
+      ...props.physics,
+    },
   });
   const healthView = createAnimatedView({
     id: `${view.props.id}-health`,
@@ -38,7 +43,22 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
     },
   });
 
-  view.events.addEvent('update', (e: CustomEvent) => {
+  const physics = createPhysics();
+  const collisionHandler = createCollisionHandler(view, physics, initialModel);
+
+  view.events.addEvent('update', () => {
+    console.log('update', physics.getCurrentForce(), view.id);
+    // Apply physics forces
+    const dampening = view.props.physics?.dampening ?? 0.95;
+    const force = physics.update(dampening);
+
+    if (force.x !== 0 || force.y !== 0) {
+      view.updatePosition({
+        x: view.props.position.x + force.x,
+        y: view.props.position.y + force.y,
+      });
+    }
+
     const { health } = view.model as EntityModel;
     healthView.updateText(health.toString());
     healthView.updatePosition({
@@ -48,48 +68,22 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
     healthView.update();
   });
 
-  const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
-    const collision = e.detail?.collision;
-    const { view1, view2 } = collision;
-    if (view1.id !== view.props.id && view2.id !== view.props.id) {
-      return;
-    }
+  // Attach collision handler
+  collisionHandler.attachCollisionHandler();
 
-    const otherView =
-      collision.view1.id === view.props.id ? collision.view2 : collision.view1;
-
-    // calc damage and apply health changes
-    if (otherView.model && 'collisionDamage' in otherView.model) {
-      const damage = (otherView.model as EntityModel).collisionDamage;
-      const currentHealth = (view.model as EntityModel).health;
-      const newHealth = currentHealth - damage;
-
-      (view.model as EntityModel).health = newHealth;
-
-      const percentHealth =
-        (view.model as EntityModel).health / initialModel.health;
-      const opacity = Math.max(0, percentHealth);
-
-      view.updateFillColor({
-        color: view.fill.color,
-        opacity,
-      });
-
-      const directionVector = {
-        x: (otherView.position.x - view.props.position.x) / 10,
-        y: (otherView.position.y - view.props.position.y) / 10,
-      };
-
-      console.log(directionVector);
-
-      view.updatePosition({
-        x: view.props.position.x - directionVector.x,
-        y: view.props.position.y - directionVector.y,
-      });
-    }
+  // Expose physics and collision methods for external use
+  const entityView = {
+    ...view,
+    physics: {
+      applyForce: (force: Position) => physics.applyForce(force),
+      getCurrentForce: () => physics.getCurrentForce(),
+      reset: () => physics.reset(),
+    },
+    collision: {
+      detach: () => collisionHandler.detachCollisionHandler(),
+      attach: () => collisionHandler.attachCollisionHandler(),
+    },
   };
 
-  view.events.addEvent(`${view.props.layer}-collide`, handleCollide);
-
-  return view;
+  return entityView;
 };

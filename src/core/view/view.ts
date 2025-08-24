@@ -32,6 +32,7 @@ export const createView = (
     model: props.model ?? {},
     layer: props.layer ?? 'DEFAULT',
     scale: props.scale ?? 1,
+    force: { x: 0, y: 0 },
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
     shapeProps: { ...mergedProps.shapeProps },
@@ -41,6 +42,8 @@ export const createView = (
     units: mergedProps.units,
     relativeTo: mergedProps.relativeTo,
     shape: mergedProps.shape,
+    // Add physics properties if they exist
+    ...(mergedProps.physics && { physics: mergedProps.physics }),
     // Add interactive properties if they exist
     ...('handlers' in mergedProps && { handlers: mergedProps.handlers }),
     ...('interactive' in mergedProps && {
@@ -287,7 +290,7 @@ export const createView = (
   };
 
   const update = () => {
-    // drawDebugInfo();
+    drawDebugInfo();
     updateViewInState(mutableProps);
   };
 
