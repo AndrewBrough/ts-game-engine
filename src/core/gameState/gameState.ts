@@ -1,28 +1,26 @@
 import { createModel } from '../model/model';
-import type { View, InteractiveView } from '../view/types';
+import type { AnyView } from '../view/types';
 import { COLLISION_MATRIX, type CollisionLayer } from './collisionLayers';
 
 export type GameState = {
   score: number;
-  views: Record<CollisionLayer, View[]>;
+  views: Record<CollisionLayer, AnyView[]>;
   fps: number;
   isLogicPaused: boolean;
   timeScale: number;
-  focusedView: InteractiveView | null;
 };
 
 const gameState = createModel<GameState>({
   score: 0,
-  views: {} as Record<CollisionLayer, View[]>,
+  views: {} as Record<CollisionLayer, AnyView[]>,
   fps: 0,
   isLogicPaused: false,
   timeScale: 1,
-  focusedView: null,
 });
 
 export const getState = () => gameState;
 
-export const addView = (view: View) => {
+export const addView = (view: AnyView) => {
   const layer = view.layer;
   if (!gameState.views[layer]) {
     gameState.views[layer] = [];
@@ -30,7 +28,7 @@ export const addView = (view: View) => {
   gameState.views[layer].push(view);
 };
 
-export const removeView = (view: View) => {
+export const removeView = (view: AnyView) => {
   const layer = view.layer;
   if (gameState.views[layer]) {
     gameState.views[layer] = gameState.views[layer].filter(v => v !== view);
@@ -38,15 +36,15 @@ export const removeView = (view: View) => {
 };
 
 // Helper function to get all views across all layers
-export const getAllViews = (): View[] => {
+export const getAllViews = (): AnyView[] => {
   return Object.values(gameState.views).flat();
 };
 
-export const getAllCollidableViews = (): (View | InteractiveView)[] => {
+export const getAllCollidableViews = (): AnyView[] => {
   return [...getViewsOnLayer('DEFAULT'), ...getViewsOnLayer('PLAYER')];
 };
 
-export const updateView = (view: View | InteractiveView) => {
+export const updateView = (view: AnyView) => {
   const layer = view.layer;
   const stateViews = getViewsOnLayer(layer);
   const viewIndex = stateViews.findIndex(v => v.id === view.id);
@@ -56,9 +54,7 @@ export const updateView = (view: View | InteractiveView) => {
 };
 
 // Helper function to get views on a specific layer
-export const getViewsOnLayer = (
-  layer: CollisionLayer
-): (View | InteractiveView)[] => {
+export const getViewsOnLayer = (layer: CollisionLayer): AnyView[] => {
   return gameState.views[layer] || [];
 };
 
@@ -73,7 +69,7 @@ export const clearAllViews = () => {
   }
 
   // Clear all layers
-  gameState.views = {} as Record<CollisionLayer, (View | InteractiveView)[]>;
+  gameState.views = {} as Record<CollisionLayer, AnyView[]>;
 };
 
 export const updateFPS = (fps: number) => {
@@ -96,18 +92,10 @@ export const toggleTimeScale = () => {
   setTimeScale(gameState.timeScale === 1 ? 0 : 1);
 };
 
-export const setFocusedView = (view: InteractiveView | null) => {
-  gameState.focusedView = view;
-};
-
-export const getFocusedView = () => {
-  return gameState.focusedView;
-};
-
 export const getCollisionLayerViews = (
   layer: CollisionLayer,
   excludeEmptyBounds = true
-): (View | InteractiveView)[] => {
+): AnyView[] => {
   const collidingViews = [];
   const layers = COLLISION_MATRIX[layer];
 
@@ -119,7 +107,9 @@ export const getCollisionLayerViews = (
   for (const layer of layers) {
     const views = getViewsOnLayer(layer);
     if (excludeEmptyBounds) {
-      collidingViews.push(...views.filter(v => v.bounds));
+      collidingViews.push(
+        ...views.filter(v => v.bounds !== undefined && v.bounds.width !== 0)
+      );
     } else {
       collidingViews.push(...views);
     }

@@ -1,22 +1,35 @@
-import { getState } from "../gameState/gameState";
-import type { InteractiveView, Position } from "../view/types";
+import { getState } from '../gameState/gameState';
+import type { AnyView, Position } from '../view/types';
 
 // Helper function to get interactive views
 export const getInteractiveViews = () => {
-    return Object.values(getState().views).flat().filter((view): view is InteractiveView => 
-      'interactive' in view && view.interactive === true
-    );
-  };
-
-export const locateView = (inputPosition: Position, viewsToCheck: InteractiveView[] = getInteractiveViews()) => {
-    return viewsToCheck.find((v) => {
-      const { left, right, top, bottom } = v.bounds || { left: 0, right: 0, top: 0, bottom: 0 };
-      
-      return (
-        inputPosition.x >= left &&
-        inputPosition.x <= right &&
-        inputPosition.y >= top &&
-        inputPosition.y <= bottom
-      );
+  return Object.values(getState().views)
+    .flat()
+    .filter((view: AnyView) => {
+      if ('interactive' in view) {
+        return view.interactive === true;
+      }
+      return false;
     });
-  };
+};
+
+export const locateView = (
+  inputPosition: Position,
+  viewsToCheck: AnyView[] = getInteractiveViews()
+) => {
+  return viewsToCheck.find(v => {
+    const { left, right, top, bottom } = v.bounds || {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    };
+
+    return (
+      inputPosition.x >= left &&
+      inputPosition.x <= right &&
+      inputPosition.y >= top &&
+      inputPosition.y <= bottom
+    );
+  });
+};

@@ -2,7 +2,7 @@ import { getContext } from '../canvas/canvas';
 import { config } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
-import type { View, InteractiveView } from './types';
+import type { View, InteractiveView, AnyViewInstance, AnyView } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import {
@@ -41,19 +41,20 @@ export const createView = (
   };
 
   // Helper function to update the view in state
-  const updateViewInState = (view: DeepRequired<View | InteractiveView>) => {
+  const updateViewInState = (view: DeepRequired<AnyViewInstance>) => {
     const stateViews = getViewsOnLayer(mutableProps?.layer ?? 'DEFAULT');
     const viewIndex = stateViews.findIndex(
-      (v: View) => v.id === mutableProps.id
+      (v: AnyView) => v.id === mutableProps.id
     );
     if (viewIndex !== -1) {
       // Override view in state if it already exists
-      stateViews[viewIndex] = { ...stateViews[viewIndex], ...view } as
-        | View
-        | InteractiveView;
+      stateViews[viewIndex] = {
+        ...stateViews[viewIndex],
+        ...view,
+      } as AnyView;
     } else {
       // Add view to state if it doesn't exist
-      addView({ ...mutableProps, ...view } as View);
+      addView({ ...mutableProps, ...view } as AnyView);
     }
   };
 

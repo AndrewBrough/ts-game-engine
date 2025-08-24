@@ -1,56 +1,74 @@
-import { getAllViews, setFocusedView } from "../gameState/gameState";
-import type { InteractiveView } from "../view/types";
-import { getInteractiveViews, locateView } from "./targeting";
+import { getAllViews } from '../gameState/gameState';
+import type { AnyView, InteractiveView } from '../view/types';
+import { getInteractiveViews, locateView } from './targeting';
 
-let hoveredView: InteractiveView | null = null;
+let hoveredView: AnyView | null = null;
 
 // Helper function to get interactive views with specific handlers
-const getViewsWithHandler = (handlerName: keyof NonNullable<InteractiveView['handlers']>) => {
-  return getAllViews().filter((view): view is InteractiveView => {
-    if (!('handlers' in view)) return false;
-    if (!view.handlers) return false;
-    if (!(handlerName in view.handlers)) return false;
-    return view.handlers[handlerName] !== undefined;
+const getViewsWithHandler = (
+  handlerName: keyof NonNullable<InteractiveView['handlers']>
+) => {
+  return getAllViews().filter((view: AnyView) => {
+    if ('handlers' in view) {
+      const handlers = view.handlers as Record<string, (e: Event) => void>;
+      if (handlerName in handlers) return false;
+      return handlers[handlerName] !== undefined;
+    }
+    return false;
   });
 };
-
-
 
 // Click handler
 const handleClick = (e: MouseEvent) => {
   const viewsWithClick = getViewsWithHandler('onClick');
   const view = locateView({ x: e.clientX, y: e.clientY }, viewsWithClick);
-  
-  if (view && view.handlers?.onClick) {
-    view.handlers.onClick(e, view);
-    // Focus the clicked view for keyboard events
-    setFocusedView(view);
+
+  if (view && 'handlers' in view) {
+    const handlers = view.handlers as Record<string, (e: Event) => void>;
+    if (handlers.onClick) {
+      handlers.onClick(e);
+    }
   }
 };
 
 // Mouse move handler
 const handleMouseMove = (e: MouseEvent) => {
-  const view = locateView({ x: e.clientX, y: e.clientY }, getInteractiveViews());
-  
+  const view = locateView(
+    { x: e.clientX, y: e.clientY },
+    getInteractiveViews()
+  );
+
   // Handle hover out for previous hovered view
   if (hoveredView && (!view || view.id !== hoveredView.id)) {
-    if (hoveredView.handlers?.onHoverOut) {
-      hoveredView.handlers.onHoverOut(e, hoveredView);
+    if ('handlers' in hoveredView) {
+      const handlers = hoveredView.handlers as Record<
+        string,
+        (e: Event) => void
+      >;
+      if (handlers.onHoverOut) {
+        handlers.onHoverOut(e);
+      }
     }
     hoveredView = null;
   }
-  
+
   // Handle hover for new view
   if (view && view.id !== hoveredView?.id) {
     hoveredView = view;
-    if (view.handlers?.onHover) {
-      view.handlers.onHover(e, view);
+    if ('handlers' in view) {
+      const handlers = view.handlers as Record<string, (e: Event) => void>;
+      if (handlers.onHover) {
+        handlers.onHover(e);
+      }
     }
   }
-  
+
   // Handle mousemove for current view
-  if (view && view.handlers?.onMouseMove) {
-    view.handlers.onMouseMove(e, view);
+  if (view && 'handlers' in view) {
+    const handlers = view.handlers as Record<string, (e: Event) => void>;
+    if (handlers.onMouseMove) {
+      handlers.onMouseMove(e);
+    }
   }
 };
 
@@ -58,10 +76,16 @@ const handleMouseMove = (e: MouseEvent) => {
 const handleTouchStart = (e: TouchEvent) => {
   const viewsWithTouchStart = getViewsWithHandler('onTouchStart');
   const touch = e.touches[0];
-  const view = locateView({ x: touch.clientX, y: touch.clientY }, viewsWithTouchStart);
-  
-  if (view && view.handlers?.onTouchStart) {
-    view.handlers.onTouchStart(e, view);
+  const view = locateView(
+    { x: touch.clientX, y: touch.clientY },
+    viewsWithTouchStart
+  );
+
+  if (view && 'handlers' in view) {
+    const handlers = view.handlers as Record<string, (e: Event) => void>;
+    if (handlers.onTouchStart) {
+      handlers.onTouchStart(e);
+    }
   }
 };
 
@@ -69,10 +93,16 @@ const handleTouchStart = (e: TouchEvent) => {
 const handleTouchEnd = (e: TouchEvent) => {
   const viewsWithTouchEnd = getViewsWithHandler('onTouchEnd');
   const touch = e.changedTouches[0];
-  const view = locateView({ x: touch.clientX, y: touch.clientY }, viewsWithTouchEnd);
-  
-  if (view && view.handlers?.onTouchEnd) {
-    view.handlers.onTouchEnd(e, view);
+  const view = locateView(
+    { x: touch.clientX, y: touch.clientY },
+    viewsWithTouchEnd
+  );
+
+  if (view && 'handlers' in view) {
+    const handlers = view.handlers as Record<string, (e: Event) => void>;
+    if (handlers.onTouchEnd) {
+      handlers.onTouchEnd(e);
+    }
   }
 };
 

@@ -2,7 +2,7 @@ import type { View } from './view/types';
 
 export type Units = 'px' | 'vh' | 'vw';
 
-export type Config = View & {
+export type Config = Omit<View, 'id' | 'layer'> & {
   units: Units;
 };
 
