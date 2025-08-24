@@ -234,7 +234,8 @@ export const createView = (
     const fontSizePx = convertFontSizeToPixels(fontSize);
 
     const renderShape = () => {
-      switch (mutableProps.shape) {
+      const shape = mutableProps.textProps.text ? 'text' : mutableProps.shape;
+      switch (shape) {
         case 'rect':
           ctx.globalAlpha = mutableProps.fill.opacity;
           ctx.fillRect(x, y, w, h);
@@ -286,7 +287,7 @@ export const createView = (
   };
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

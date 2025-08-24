@@ -28,7 +28,7 @@ export const config: Config = {
     height: 0,
   },
   textProps: {
-    text: 'Hello, world!',
+    text: '',
     fontSize: 3,
     fontWeight: 'normal',
     fontStyle: 'normal',
