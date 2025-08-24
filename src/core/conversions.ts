@@ -3,11 +3,8 @@ import { config, type Units } from './config';
 /**
  * Convert viewport units (vh/vw) to pixels
  */
-export const convertToPixels = (value: number, unit?: Units): number => {
-  unit = unit ?? config.units;
+export const convertToPixels = (value: number, unit: Units): number => {
   switch (unit) {
-    case 'px':
-      return value;
     case 'vh':
       return (value / 100) * window.innerHeight;
     case 'vw':
@@ -18,34 +15,20 @@ export const convertToPixels = (value: number, unit?: Units): number => {
 };
 
 /**
- * Convert multiple values with units to pixels
+ * Assume default to vh, convert x and y to vw in pixels
  */
 export const convertPositionToPixels = (
   x: number,
-  y: number,
-  units?: Units
+  y: number
 ): { x: number; y: number } => {
-  units = units ?? config.units;
-
-  return {
-    x: convertToPixels(x, units),
-    y: convertToPixels(y, units),
+  const positionInPixels = {
+    x: convertToPixels(x, 'vw'),
+    y: convertToPixels(y, 'vh'),
   };
-};
-
-/**
- * Convert size values with units to pixels
- */
-export const convertSizeToPixels = (
-  width: number,
-  height: number,
-  units?: Units
-): { width: number; height: number } => {
-  units = units ?? config.units;
 
   return {
-    width: convertToPixels(width, units),
-    height: convertToPixels(height, units),
+    x: positionInPixels.x,
+    y: positionInPixels.y,
   };
 };
 
@@ -60,16 +43,31 @@ export const convertFontSizeToPixels = (
   return convertToPixels(fontSize, units);
 };
 
-export const convertSizeToViewports = (
+// Assume default to vh, convert width to vw in pixels and height to pixels
+export const convertSizeToPixels = (
   width: number,
-  height: number,
-  units?: Units
+  height: number
 ): { width: number; height: number } => {
-  if(units === 'px') {
-    return {
-      width: width / 100,
-      height: height / 100,
-    };
+  // const widthInVh = convertViewportUnits(width, 'vw');
+  // const heightInVh = convertViewportUnits(height, 'vh');
+
+  const widthInPixels = convertToPixels(width, 'vh');
+  const heightInPixels = convertToPixels(height, 'vh');
+
+  return {
+    width: widthInPixels,
+    height: heightInPixels,
+  };
+};
+
+export const convertViewportUnits = (value: number, units: Units) => {
+  if (config.units === 'vh' && units === 'vw') {
+    console.log('vh to vw', value);
+    return value * 100;
   }
-  return convertSizeToPixels(width, height, units);
+  if (config.units === 'vw' && units === 'vh') {
+    console.log('vw to vh', value);
+    return value / 100;
+  }
+  return value;
 };

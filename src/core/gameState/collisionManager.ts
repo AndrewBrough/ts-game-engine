@@ -67,12 +67,12 @@ export const collisionManager = () => {
     if (
       COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
     ) {
-      dispatchCollisionEvent(`${collision.view2.layer}-collide`, collision);
+      dispatchCollisionEvent(`${collision.view1.layer}-collide`, collision);
     }
     if (
       COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
     ) {
-      dispatchCollisionEvent(`${collision.view1.layer}-collide`, collision);
+      dispatchCollisionEvent(`${collision.view2.layer}-collide`, collision);
     }
   };
 

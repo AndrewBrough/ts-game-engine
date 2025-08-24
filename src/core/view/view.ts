@@ -181,6 +181,7 @@ export const createView = (
       mutableProps.position.x,
       mutableProps.position.y
     );
+
     const relativeTo = mutableProps.relativeTo;
     const relativeAnchor = {
       x: 0,
@@ -290,7 +291,7 @@ export const createView = (
   };
 
   const update = () => {
-    // drawDebugInfo();
+    drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

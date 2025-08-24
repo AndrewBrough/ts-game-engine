@@ -20,18 +20,18 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   let xMax = 100;
   if (units === 'vw') {
     // Convert vw to vh equivalent: (window.innerHeight / window.innerWidth) * 100
-    yMax = (window.innerHeight / window.innerWidth) * 100;
+    yMax = (window.innerHeight / window.innerWidth) * 100 - shapeProps.height;
   }
   if (units === 'vh') {
-    xMax = (window.innerWidth / window.innerHeight) * 100;
+    xMax = (window.innerWidth / window.innerHeight) * 100 - shapeProps.width;
   }
 
   // For x-axis: use viewport width boundary
-  if (newX <= -shapeProps.width / 1.5 || newX > xMax - shapeProps.width * 2) {
+  if (newX <= -shapeProps.width / 2 || newX > xMax) {
     direction.x = -direction.x;
   }
 
-  if (newY <= -shapeProps.height / 1.5 || newY > yMax - shapeProps.height) {
+  if (newY <= -shapeProps.height / 2 || newY > yMax - shapeProps.height) {
     direction.y = -direction.y;
   }
 

@@ -8,6 +8,7 @@ import { createFpsView } from '../loop/fpsView';
 import { createDemoCubeView } from '../view/demoCubeView';
 import { createPlayerView } from '../view/player/playerView';
 import type { View } from '../view/types';
+import { createWorldBoundsView } from '../view/world/worldBoundsView';
 
 export type Scene = {
   name: string;
@@ -23,10 +24,10 @@ export const createScene = (name: string = 'default') => {
   const events = createEvents();
   const collisions = collisionManager();
 
-  createFpsView();
-
+  // createFpsView();
+  // createWorldBoundsView();
   createPlayerView();
-  createDemoCubeView();
+  // createDemoCubeView();
 
   const destroy = () => {
     events.cleanup();
