@@ -1,3 +1,4 @@
+import type { Collision } from '../gameState/collisionManager';
 import type { DeepPartial } from '../types';
 import type { InteractiveView, Position } from './types';
 import { createView } from './view';
@@ -31,17 +32,27 @@ export const createAnimatedView = (
     animate();
   });
 
-  viewInstance.events.addEvent('collide', (e: CustomEvent) => {
+  const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
-    if (collision) {
-      console.log('Animated view collided with', collision);
-    }
-  });
+    const otherView =
+      collision.view1.id === viewInstance.props.id
+        ? collision.view2
+        : collision.view1;
+
+    console.log(
+      `I am ${viewInstance.props.id} and I collided with ${otherView.id}`
+    );
+  };
+
+  if (viewInstance.props.layer === 'PLAYER') {
+    viewInstance.events.addEvent('collide', handleCollide);
+  }
 
   return {
     ...viewInstance,
     addAnimation,
     animate,
     move,
+    handleCollide,
   };
 };

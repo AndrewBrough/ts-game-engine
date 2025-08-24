@@ -30,26 +30,39 @@ export const collisionManager = () => {
     // Only check for collisions for views on layers that are in the collision matrix
     const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
     for (const v of viewsOnMatrixLayers) {
-      // console.log('Checking collision', view.id, v.id);
       if (v.bounds && v.id !== view.id) {
         const collision = {
           view1: view,
           view2: v,
         };
+        const hasCol = hasCollision(collision);
 
         if (doBoundsOverlap(view.bounds, v.bounds)) {
-          registerCollision(collision);
-        } else {
+          if (!hasCol) {
+            registerCollision(collision);
+          }
+        } else if (hasCol) {
           unregisterCollision(collision);
         }
       }
     }
   };
 
+  const hasCollision = (collision: Collision) => {
+    const c = collisions.find(
+      c =>
+        c.view1.id === collision.view1.id && c.view2.id === collision.view2.id
+    );
+    return c !== undefined;
+  };
+
   const registerCollision = (collision: Collision) => {
+    if (collisions.includes(collision)) {
+      return;
+    }
     collisions.push(collision);
+    console.log('Collision registered', collision);
     window.dispatchEvent(new CustomEvent('collide', { detail: { collision } }));
-    console.log('Collision detected', collision);
   };
 
   const unregisterCollision = (collision: Collision) => {

@@ -41,7 +41,14 @@ export const getAllViews = (): AnyView[] => {
 };
 
 export const getAllCollidableViews = (): AnyView[] => {
-  return [...getViewsOnLayer('DEFAULT'), ...getViewsOnLayer('PLAYER')];
+  const views = Object.keys(gameState.views).map(layer => {
+    if (COLLISION_MATRIX[layer as CollisionLayer].length > 0) {
+      return gameState.views[layer as CollisionLayer];
+    }
+    return [];
+  });
+
+  return views.flat();
 };
 
 export const updateView = (view: AnyView) => {
