@@ -4,10 +4,10 @@ import {
   type CollisionManager,
 } from '../gameState/collisionManager';
 import { clearAllViews, getState } from '../gameState/gameState';
-import { createAnimatedView } from '../view/animatedView';
+import { createFpsView } from '../loop/fpsView';
 import { createDemoCubeView } from '../view/demoCubeView';
 import { createPlayerView } from '../view/player/playerView';
-import type { EntityModel, View } from '../view/types';
+import type { View } from '../view/types';
 
 export type Scene = {
   name: string;
@@ -22,6 +22,8 @@ export const createScene = (name: string = 'default') => {
   const state = getState();
   const events = createEvents();
   const collisions = collisionManager();
+
+  createFpsView();
 
   createPlayerView();
   createDemoCubeView();

@@ -290,7 +290,7 @@ export const createView = (
   };
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 
