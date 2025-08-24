@@ -31,11 +31,7 @@ export const createDemoCubeView = (id?: string) => {
     },
   });
 
-  entityView.events.addEvent('update', (e: CustomEvent) => {
-    screenSaver(entityView, e.detail.deltaTime ?? 16);
-  });
-
-  entityView.addAnimation(() => {}, 'update');
+  screenSaver(entityView);
 
   return entityView;
 };
