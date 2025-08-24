@@ -39,9 +39,11 @@ export const collisionManager = () => {
             y: 0,
           },
         };
-        const hasCol = hasCollision(collision);
 
-        if (doBoundsOverlap(view.bounds, v.bounds)) {
+        const hasCol = hasCollision(collision);
+        const boundsOverlap = doBoundsOverlap(view.bounds, v.bounds);
+
+        if (boundsOverlap) {
           if (!hasCol) {
             registerCollision(collision);
           }

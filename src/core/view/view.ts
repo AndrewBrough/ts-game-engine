@@ -184,19 +184,19 @@ export const createView = (
     switch (relativeTo) {
       case 'top-right':
         relativeAnchor.x = window.innerWidth - w;
-        relativeAnchor.y = 0;
+        relativeAnchor.y = -h / 2;
         break;
       case 'top-left':
         relativeAnchor.x = 0;
-        relativeAnchor.y = 0;
+        relativeAnchor.y = -h / 2;
         break;
       case 'bottom-right':
         relativeAnchor.x = window.innerWidth - w;
-        relativeAnchor.y = window.innerHeight - h * 2;
+        relativeAnchor.y = window.innerHeight;
         break;
       case 'bottom-left':
         relativeAnchor.x = 0;
-        relativeAnchor.y = window.innerHeight - h * 2;
+        relativeAnchor.y = window.innerHeight;
         break;
     }
 
@@ -205,7 +205,7 @@ export const createView = (
         relativeAnchor.x +
         mutableProps.position.x +
         positionInPixels.x +
-        wScaleDiff * 1.5,
+        wScaleDiff,
       y:
         relativeAnchor.y +
         mutableProps.position.y +
@@ -271,7 +271,7 @@ export const createView = (
   };
 
   const update = () => {
-    // drawDebugInfo();
+    drawDebugInfo();
     updateViewInState(mutableProps);
   };
 

@@ -7,11 +7,11 @@ export const createPlayerView = () => {
   const view = createEntityView({
     id: 'player',
     model: {
-      speed: 0.5,
+      speed: 1,
       health: 100,
     },
     layer: 'PLAYER',
-    relativeTo: 'bottom-left',
+    relativeTo: 'top-left',
     shapeProps: {
       width: 10,
       height: 10,
@@ -49,6 +49,8 @@ export const createPlayerView = () => {
 
   const playerCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
+    const thisView =
+      collision.view1.id === view.props.id ? collision.view1 : collision.view2;
     const otherView =
       collision.view1.id === view.props.id ? collision.view2 : collision.view1;
 
@@ -61,8 +63,6 @@ export const createPlayerView = () => {
         view.model as EntityModel
       ).health;
     }
-
-    view.updatePosition();
   };
 
   view.events.addEvent('collide', playerCollide);

@@ -2,11 +2,11 @@ import type { View } from './view/types';
 
 export type Units = 'px' | 'vh' | 'vw';
 
-export type Config = Omit<View, 'id' | 'layer'> & {
+export type Config = Omit<View, 'id' | 'layer' | 'model'> & {
   units: Units;
 };
 
-export const config: Omit<Config, 'id'> = {
+export const config: Config = {
   units: 'vh',
   anchor: 'top-left',
   position: { x: 0, y: 0 },

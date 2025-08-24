@@ -105,15 +105,33 @@ export const isPointInBounds = (point: Position, bounds: Bounds): boolean => {
 };
 
 /**
- * Check if two bounds overlap (collision detection)
+ * Check if two bounds overlap and return the overlap bounds
  */
-export const doBoundsOverlap = (bounds1: Bounds, bounds2: Bounds): boolean => {
-  return (
-    bounds1.right >= bounds2.left &&
-    bounds1.left <= bounds2.right &&
-    bounds1.bottom >= bounds2.top &&
-    bounds1.top <= bounds2.bottom
-  );
+export const doBoundsOverlap = (
+  bounds1: Bounds,
+  bounds2: Bounds
+): Bounds | null => {
+  const overlapLeft = Math.max(bounds1.left, bounds2.left);
+  const overlapRight = Math.min(bounds1.right, bounds2.right);
+  const overlapTop = Math.max(bounds1.top, bounds2.top);
+  const overlapBottom = Math.min(bounds1.bottom, bounds2.bottom);
+
+  // Check if there's actually an overlap
+  if (overlapLeft >= overlapRight || overlapTop >= overlapBottom) {
+    return null;
+  }
+
+  const overlapWidth = overlapRight - overlapLeft;
+  const overlapHeight = overlapBottom - overlapTop;
+
+  return {
+    left: overlapLeft,
+    right: overlapRight,
+    top: overlapTop,
+    bottom: overlapBottom,
+    width: overlapWidth,
+    height: overlapHeight,
+  };
 };
 
 /**
