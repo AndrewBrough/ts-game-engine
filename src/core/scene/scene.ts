@@ -25,7 +25,8 @@ export const createScene = (name: string = 'default') => {
 
   const playerView = createPlayerView();
   const playerHealthView = createAnimatedView({
-    ...playerView,
+    id: 'player-health',
+    layer: 'UI',
     anchor: 'top-left',
     position: {
       x: 1,
@@ -43,6 +44,12 @@ export const createScene = (name: string = 'default') => {
     textProps: {
       text: (playerView.model as EntityModel).health.toString() ?? '0',
     },
+  });
+
+  playerView.events.addEvent('update', (e: CustomEvent) => {
+    const { health } = playerView.model as EntityModel;
+    playerHealthView.updateText(health.toString());
+    playerHealthView.update();
   });
 
   createDemoCubeView();

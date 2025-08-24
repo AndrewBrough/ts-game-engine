@@ -34,10 +34,6 @@ export const collisionManager = () => {
         const collision = {
           view1: view,
           view2: v,
-          point: {
-            x: 0,
-            y: 0,
-          },
         };
 
         const hasCol = hasCollision(collision);
