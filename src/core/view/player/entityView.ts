@@ -37,7 +37,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
       opacity: 1,
       width: 2,
     },
-    shapeProps: view.props.shapeProps,
+    geometry: view.props.geometry,
     textProps: {
       text: (view.model as EntityModel).health.toString() ?? '0',
     },

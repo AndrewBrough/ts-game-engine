@@ -1,56 +1,111 @@
-import { getState } from '../../gameState/gameState';
 import type { DeepPartial } from '../../types';
 import { createEntityView } from '../player/entityView';
-import type { InteractiveView } from '../types';
-import { createPauseButton } from '../pauseButton';
+import type { EntityView } from '../types';
 
 const WALL_THICKNESS = 5;
-
-const createWall = (props: DeepPartial<InteractiveView>) => {
-  createEntityView({
-    ...props,
-  });
-};
+const baseProps = {
+  layer: 'WALLS',
+  shape: 'rect',
+  relativeTo: 'center',
+  anchor: 'center',
+  geometry: {
+    width: 100,
+    height: WALL_THICKNESS,
+    units: ['vw', 'vh'],
+  },
+  fill: {
+    color: 'black',
+    opacity: 0.7,
+  },
+  stroke: {
+    color: 'black',
+    opacity: 1,
+  },
+  textProps: {
+    text: '',
+  },
+} as DeepPartial<EntityView>;
 
 export const createWorldBoundsView = () => {
-  //   createWall({
-  //     id: 'top-wall',
-  //     model: {
-  //       health: 'top',
-  //       speed: 0,
-  //       collisionDamage: 0,
-  //     },
-  //     layer: 'WALLS',
-  //     shape: 'rect',
-  //     position: {
-  //       x: 0,
-  //       y: 0,
-  //     },
-  //     shapeProps: {
-  //       width: 100,
-  //       height: WALL_THICKNESS,
-  //     },
-  //     fill: {
-  //       color: 'blue',
-  //       opacity: 0.7,
-  //     },
-  //     stroke: {
-  //       color: 'black',
-  //       opacity: 1,
-  //     },
-  //   });
-
-  createPauseButton({
-    relativeTo: 'bottom-right',
+  createEntityView({
+    ...baseProps,
+    id: 'top-wall',
     position: {
-      x: -5,
-      y: -5,
+      x: 0,
+      y: 0,
     },
-    shapeProps: {
-      width: 5,
-      height: 5,
+    geometry: {
+      ...baseProps.geometry,
+      width: 100,
+      height: WALL_THICKNESS,
+    },
+    fill: {
+      color: 'blue',
     },
   });
+
+  createEntityView({
+    ...baseProps,
+    id: 'bottom-wall',
+    position: {
+      x: 0,
+      y: 85,
+    },
+    geometry: {
+      ...baseProps.geometry,
+      width: 100,
+      height: WALL_THICKNESS,
+    },
+    fill: {
+      color: 'blue',
+    },
+  });
+
+  createEntityView({
+    ...baseProps,
+    id: 'left-wall',
+    position: {
+      x: 0,
+      y: 0,
+    },
+    geometry: {
+      ...baseProps.geometry,
+      width: WALL_THICKNESS,
+      height: 100,
+    },
+    fill: {
+      color: 'orange',
+    },
+  });
+
+  createEntityView({
+    ...baseProps,
+    id: 'right-wall',
+    position: {
+      x: 90,
+      y: 0,
+    },
+    geometry: {
+      ...baseProps.geometry,
+      width: WALL_THICKNESS,
+      height: 100,
+    },
+    fill: {
+      color: 'green',
+    },
+  });
+
+  // createPauseButton({
+  //   relativeTo: 'bottom-right',
+  //   position: {
+  //     x: -5,
+  //     y: -5,
+  //   },
+  //   shapeProps: {
+  //     width: 5,
+  //     height: 5,
+  //   },
+  // });
 
   // Bottom wall
   //   createWall({

@@ -99,7 +99,7 @@ describe('createCollisionHandler', () => {
       position: { x: 50, y: 50 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,
@@ -121,7 +121,7 @@ describe('createCollisionHandler', () => {
       position: { x: 60, y: 60 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,
@@ -189,7 +189,7 @@ describe('createCollisionHandler', () => {
       position: { x: 10, y: 10 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,
@@ -211,7 +211,7 @@ describe('createCollisionHandler', () => {
       position: { x: 20, y: 20 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,
@@ -266,7 +266,7 @@ describe('createCollisionHandler', () => {
       position: { x: 50, y: 50 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,
@@ -288,7 +288,7 @@ describe('createCollisionHandler', () => {
       position: { x: 60, y: 60 },
       units: 'vh',
       shape: 'rect',
-      shapeProps: { width: 10, height: 10, radius: 0 },
+      geometry: { width: 10, height: 10, radius: 0 },
       textProps: {
         text: '',
         fontSize: 16,

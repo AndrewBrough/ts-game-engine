@@ -9,29 +9,23 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
     x: 1,
     y: 1,
   };
-  const { position, units, shapeProps } = view.props;
+  const { position, geometry } = view.props;
 
   // Calculate new position using deltaTime like the player movement
   const newX = position.x + direction.x * deltaTime * view.model.speed;
   const newY = position.y + direction.y * deltaTime * view.model.speed;
   // For y-axis: calculate proper viewport height boundary
   // If using vw units, convert to vh equivalent for y-axis
-  let yMax = 100;
-  let xMax = 100;
-  if (units === 'vw') {
-    // Convert vw to vh equivalent: (window.innerHeight / window.innerWidth) * 100
-    yMax = (window.innerHeight / window.innerWidth) * 100 - shapeProps.height;
-  }
-  if (units === 'vh') {
-    xMax = (window.innerWidth / window.innerHeight) * 100 - shapeProps.width;
-  }
+  let xMax = 100 - geometry.width / 2;
+  let yMax = 100 - geometry.height * 2;
+  console.log(newX, newY, xMax, yMax);
 
   // For x-axis: use viewport width boundary
-  if (newX <= -shapeProps.width / 2 || newX > xMax) {
+  if (newX <= -geometry.width / 2 || newX > xMax) {
     direction.x = -direction.x;
   }
 
-  if (newY <= -shapeProps.height / 2 || newY > yMax - shapeProps.height) {
+  if (newY <= -geometry.height / 2 || newY > yMax) {
     direction.y = -direction.y;
   }
 

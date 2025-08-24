@@ -35,13 +35,11 @@ export const createView = (
     force: { x: 0, y: 0 },
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
-    shapeProps: { ...mergedProps.shapeProps },
+    geometry: { ...mergedProps.geometry },
     textProps: { ...mergedProps.textProps },
     position: { x: mergedProps.position.x, y: mergedProps.position.y },
     anchor: mergedProps.anchor,
-    units: mergedProps.units,
     relativeTo: mergedProps.relativeTo,
-    shape: mergedProps.shape,
     // Add physics properties if they exist
     ...(mergedProps.physics && { physics: mergedProps.physics }),
     // Add interactive properties if they exist
@@ -98,8 +96,8 @@ export const createView = (
 
   // Function to update shape size
   const updateSize = (width: number, height: number) => {
-    mutableProps.shapeProps.width = width;
-    mutableProps.shapeProps.height = height;
+    mutableProps.geometry.width = width;
+    mutableProps.geometry.height = height;
     mutableProps.bounds = {
       left: 0,
       right: width,
@@ -173,9 +171,12 @@ export const createView = (
     ctx.lineWidth = mutableProps.stroke.width;
 
     const sizeInPixels = convertSizeToPixels(
-      mutableProps.shapeProps.width ?? mutableProps.bounds?.width ?? 0,
-      mutableProps.shapeProps.height ?? mutableProps.bounds?.height ?? 0
+      mutableProps.geometry.width ?? mutableProps.bounds?.width ?? 0,
+      mutableProps.geometry.height ?? mutableProps.bounds?.height ?? 0,
+      mutableProps.geometry.units
     );
+
+    console.log(sizeInPixels);
 
     const positionInPixels = convertPositionToPixels(
       mutableProps.position.x,
@@ -238,7 +239,9 @@ export const createView = (
     const fontSizePx = convertFontSizeToPixels(fontSize);
 
     const renderShape = () => {
-      const shape = mutableProps.textProps.text ? 'text' : mutableProps.shape;
+      const shape = mutableProps.textProps.text
+        ? 'text'
+        : mutableProps.geometry.shape;
       switch (shape) {
         case 'rect':
           ctx.globalAlpha = mutableProps.fill.opacity;

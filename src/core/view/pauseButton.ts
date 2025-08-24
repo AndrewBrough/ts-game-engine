@@ -14,6 +14,7 @@ export const createPauseButton = (
 ) => {
   const defaultProps: DeepPartial<InteractiveView> = {
     id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
+    relativeTo: 'top-right',
     layer: 'UI',
     shape: 'text',
     fill: {

@@ -15,11 +15,11 @@ export const createPlayerView = () => {
     },
     layer: 'PLAYER',
     relativeTo: 'top-left',
-    shapeProps: {
+    geometry: {
+      shape: 'rect',
       width: 10,
       height: 10,
     },
-    shape: 'rect',
     fill: {
       color: 'blue',
     },

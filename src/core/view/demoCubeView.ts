@@ -17,7 +17,7 @@ export const createDemoCubeView = (id?: string) => {
       x: randomX,
       y: randomY,
     },
-    shapeProps: {
+    geometry: {
       width: 10,
       height: 10,
     },

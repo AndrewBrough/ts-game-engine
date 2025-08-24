@@ -31,10 +31,6 @@ export type View<T extends object = {}> = {
    */
   position: Position;
   /**
-   * Units for position and size values
-   */
-  units: Units;
-  /**
    * Position relative to screen corners or center (ignores anchor when used)
    */
   relativeTo?:
@@ -43,8 +39,9 @@ export type View<T extends object = {}> = {
     | 'bottom-right'
     | 'bottom-left'
     | 'center';
-  shape: 'rect' | 'circle' | 'line' | 'text';
-  shapeProps: {
+  geometry: {
+    shape: 'rect' | 'circle' | 'line' | 'text';
+    units: Units[];
     width: number;
     height: number;
     radius: number;

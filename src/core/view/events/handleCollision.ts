@@ -51,8 +51,8 @@ export const createCollisionHandler = (
       };
 
       physics.applyForce({
-        x: normalizedVector.x * view.props.shapeProps.width * 10,
-        y: normalizedVector.y * view.props.shapeProps.height * 10,
+        x: normalizedVector.x * view.props.geometry.width * 10,
+        y: normalizedVector.y * view.props.geometry.height * 10,
       });
     }
   };
