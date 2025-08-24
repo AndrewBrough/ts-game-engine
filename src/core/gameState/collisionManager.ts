@@ -38,7 +38,6 @@ export const collisionManager = () => {
         };
 
         if (doBoundsOverlap(view.bounds, v.bounds)) {
-          console.log('Collision detected', collision);
           registerCollision(collision);
         } else {
           unregisterCollision(collision);
@@ -49,9 +48,8 @@ export const collisionManager = () => {
 
   const registerCollision = (collision: Collision) => {
     collisions.push(collision);
-    window.dispatchEvent(
-      new CustomEvent('collision', { detail: { collision } })
-    );
+    window.dispatchEvent(new CustomEvent('collide', { detail: { collision } }));
+    console.log('Collision detected', collision);
   };
 
   const unregisterCollision = (collision: Collision) => {

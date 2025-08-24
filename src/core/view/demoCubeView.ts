@@ -1,5 +1,5 @@
 import { screenSaver } from './animations/screenSaver';
-import { createAnimatedView } from './animatedView';
+import { createEntityView } from './player/entityView';
 
 export const createDemoCubeView = (id?: string) => {
   // Generate random positions between 0-100
@@ -9,28 +9,31 @@ export const createDemoCubeView = (id?: string) => {
   // Use provided id or generate a unique one
   const cubeId = id || `demoCube-${Math.random().toString(36).substr(2, 9)}`;
 
-  const animatedView = createAnimatedView({
-    id: cubeId,
-    layer: 'DEFAULT',
-    position: {
-      x: randomX,
-      y: randomY,
+  const entityView = createEntityView(
+    {
+      id: cubeId,
+      layer: 'DEFAULT',
+      position: {
+        x: randomX,
+        y: randomY,
+      },
+      shapeProps: {
+        width: 10,
+        height: 10,
+      },
+      shape: 'rect',
+      fill: {
+        color: 'red',
+      },
     },
-    shapeProps: {
-      width: 10,
-      height: 10,
-    },
-    shape: 'rect',
-    fill: {
-      color: 'red',
-    },
+    { speed: 0.1 }
+  );
+
+  entityView.view.events.addEvent('update', (e: CustomEvent) => {
+    screenSaver(entityView, e.detail.deltaTime ?? 16);
   });
 
-  animatedView.events.addEvent('update', (e: CustomEvent) => {
-    screenSaver(animatedView, e.detail.deltaTime ?? 16);
-  });
+  entityView.view.addAnimation(() => {}, 'update');
 
-  animatedView.addAnimation(() => {}, 'update');
-
-  return animatedView;
+  return entityView.view;
 };

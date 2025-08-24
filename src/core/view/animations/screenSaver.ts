@@ -1,21 +1,23 @@
-import type { AnimatedViewInstance } from '../animatedView';
+import type { EntityViewInstance } from '../player/entityView';
 
-const CUBE_SPEED = 0.5; // Same as PLAYER_SPEED
+const RANDOM_SPEED = 0.5; // Same as PLAYER_SPEED
 
 // Store direction outside the function to persist between calls
 const directionMap = new Map<string, { x: number; y: number }>();
 
-export const screenSaver = (
-  viewInstance: AnimatedViewInstance,
-  deltaTime: number
-) => {
+export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   // Get current direction or initialize
-  let direction = directionMap.get(viewInstance.props.id) || { x: 1, y: 1 };
-  const { position, units, shapeProps } = viewInstance.props;
+  let direction = directionMap.get(view.view.props.id) || {
+    x: 1,
+    y: 1,
+  };
+  const { position, units, shapeProps } = view.view.props;
 
   // Calculate new position using deltaTime like the player movement
-  const newX = position.x + direction.x * CUBE_SPEED * (deltaTime / 10);
-  const newY = position.y + direction.y * CUBE_SPEED * (deltaTime / 10);
+  const speedModifier = (view.entity.speed + RANDOM_SPEED) * (deltaTime / 10);
+  console.log({ speedModifier }, view.entity.speed);
+  const newX = position.x + direction.x * speedModifier;
+  const newY = position.y + direction.y * speedModifier;
 
   // For x-axis: use viewport width boundary
   if (newX < 0 || newX > 100 - shapeProps.width * 2) {
@@ -35,13 +37,13 @@ export const screenSaver = (
   }
 
   // Store the direction for next frame
-  directionMap.set(viewInstance.props.id, direction);
+  directionMap.set(view.view.props.id, direction);
 
   // Update the view position using the move function like the player
-  viewInstance.move(
-    { x: direction.x * CUBE_SPEED, y: direction.y * CUBE_SPEED },
+  view.view.move(
+    { x: direction.x * RANDOM_SPEED, y: direction.y * RANDOM_SPEED },
     deltaTime
   );
 
-  return viewInstance;
+  return view;
 };

@@ -1,26 +1,29 @@
 import { isKeyHeld } from '../../input/keyboard';
-import { createInteractiveView } from '../interactiveView';
 import type { Position } from '../types';
-
-const PLAYER_SPEED = 0.5;
+import { createEntityView } from './entityView';
 
 export const createPlayerView = () => {
-  const animatedView = createInteractiveView({
-    id: 'player',
-    layer: 'PLAYER',
-    // anchor: 'center',
-    relativeTo: 'bottom-left',
-    shapeProps: {
-      width: 10,
-      height: 10,
+  const { view, entity } = createEntityView(
+    {
+      id: 'player',
+      layer: 'PLAYER',
+      relativeTo: 'bottom-left',
+      shapeProps: {
+        width: 10,
+        height: 10,
+      },
+      shape: 'rect',
+      fill: {
+        color: 'blue',
+      },
     },
-    shape: 'rect',
-    fill: {
-      color: 'blue',
-    },
-  });
+    {
+      health: 100,
+      speed: 1,
+    }
+  );
 
-  animatedView.events.addEvent('update', (e: CustomEvent) => {
+  view.events.addEvent('update', (e: CustomEvent) => {
     const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
 
     const movement: Position = {
@@ -29,20 +32,20 @@ export const createPlayerView = () => {
     };
 
     if (isKeyHeld('a') || isKeyHeld('ArrowLeft')) {
-      movement.x = -PLAYER_SPEED;
+      movement.x = -entity.speed;
     }
     if (isKeyHeld('d') || isKeyHeld('ArrowRight')) {
-      movement.x = PLAYER_SPEED;
+      movement.x = entity.speed;
     }
     if (isKeyHeld('w') || isKeyHeld('ArrowUp')) {
-      movement.y = -PLAYER_SPEED;
+      movement.y = -entity.speed;
     }
     if (isKeyHeld('s') || isKeyHeld('ArrowDown')) {
-      movement.y = PLAYER_SPEED;
+      movement.y = entity.speed;
     }
 
-    animatedView.move(movement, deltaTime);
+    view.move(movement, deltaTime);
   });
 
-  return animatedView;
+  return view;
 };
