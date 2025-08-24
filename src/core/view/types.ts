@@ -13,9 +13,11 @@ export type View<T extends object = {}> = {
   scale: number;
   fill: {
     color: string;
+    opacity: number;
   };
   stroke: {
     color: string;
+    opacity: number;
     width: number;
   };
   /**

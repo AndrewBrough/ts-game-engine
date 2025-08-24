@@ -3,13 +3,15 @@ import { isKeyHeld } from '../../input/keyboard';
 import type { EntityModel, Position } from '../types';
 import { createEntityView } from './entityView';
 
+const startPlayerModel: EntityModel = {
+  speed: 1,
+  health: 100,
+};
+
 export const createPlayerView = () => {
   const view = createEntityView({
     id: 'player',
-    model: {
-      speed: 1,
-      health: 100,
-    },
+    model: { ...startPlayerModel },
     layer: 'PLAYER',
     relativeTo: 'top-left',
     shapeProps: {
@@ -19,6 +21,11 @@ export const createPlayerView = () => {
     shape: 'rect',
     fill: {
       color: 'blue',
+    },
+    stroke: {
+      color: 'transparent',
+      width: 0,
+      opacity: 0,
     },
   });
 
@@ -56,12 +63,25 @@ export const createPlayerView = () => {
 
     // calc damage and apply health changes
     if (otherView.model && 'health' in otherView.model) {
-      (view.model as EntityModel).health -= (
-        otherView.model as EntityModel
-      ).health;
-      (otherView.model as EntityModel).health -= (
-        view.model as EntityModel
-      ).health;
+      const damage = (otherView.model as EntityModel).health;
+      const currentHealth = (view.model as EntityModel).health;
+      const newHealth = currentHealth - damage;
+
+      (view.model as EntityModel).health = newHealth;
+
+      const percentHealth =
+        (view.model as EntityModel).health / startPlayerModel.health;
+      console.log(currentHealth, damage, newHealth, percentHealth);
+      const opacity = Math.max(0, percentHealth);
+      view.updateFillColor({
+        color: view.fill.color,
+        opacity,
+      });
+      view.updateStrokeColor({
+        color: view.stroke.color,
+        opacity,
+      });
+      view.update();
     }
   };
 

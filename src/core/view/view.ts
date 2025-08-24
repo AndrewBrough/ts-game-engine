@@ -72,13 +72,20 @@ export const createView = (
   };
 
   // Function to update fill color
-  const updateFillColor = (color: string) => {
-    mutableProps.fill.color = color;
+  const updateFillColor = (fill: { color?: string; opacity?: number }) => {
+    mutableProps.fill.color = fill.color ?? mutableProps.fill.color;
+    mutableProps.fill.opacity = fill.opacity ?? mutableProps.fill.opacity;
   };
 
   // Function to update stroke color
-  const updateStrokeColor = (color: string) => {
-    mutableProps.stroke.color = color;
+  const updateStrokeColor = (stroke: {
+    color?: string;
+    opacity?: number;
+    width?: number;
+  }) => {
+    mutableProps.stroke.color = stroke.color ?? mutableProps.stroke.color;
+    mutableProps.stroke.opacity = stroke.opacity ?? mutableProps.stroke.opacity;
+    mutableProps.stroke.width = stroke.width ?? mutableProps.stroke.width;
   };
 
   // Function to update stroke width
@@ -126,8 +133,8 @@ export const createView = (
     ctx.save();
 
     // Draw purple dot at anchor point
-    ctx.fillStyle = 'yellow';
-    ctx.strokeStyle = 'yellow';
+    ctx.fillStyle = 'purple';
+    ctx.strokeStyle = 'purple';
     ctx.lineWidth = 5;
 
     const { left, right, top, bottom } = mutableProps.bounds || {
@@ -141,7 +148,7 @@ export const createView = (
     ctx.arc(left, top, 3, 0, 2 * Math.PI);
     ctx.fill();
 
-    // Draw purple rectangle around the actual rendered bounds
+    // Draw yellow rectangle around the actual rendered bounds
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 2;
 
@@ -229,15 +236,21 @@ export const createView = (
     const renderShape = () => {
       switch (mutableProps.shape) {
         case 'rect':
+          ctx.globalAlpha = mutableProps.fill.opacity;
           ctx.fillRect(x, y, w, h);
+          ctx.globalAlpha = mutableProps.stroke.opacity;
           ctx.strokeRect(x, y, w, h);
           break;
         case 'circle':
+          ctx.globalAlpha = mutableProps.fill.opacity;
           ctx.fillRect(x, y, w, h);
+          ctx.globalAlpha = mutableProps.stroke.opacity;
           ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
           break;
         case 'line':
+          ctx.globalAlpha = mutableProps.fill.opacity;
           ctx.fillRect(x, y, w, h);
+          ctx.globalAlpha = mutableProps.stroke.opacity;
           ctx.strokeRect(x, y, w, h);
           break;
         case 'text': {
@@ -245,7 +258,9 @@ export const createView = (
           ctx.font = `${fontWeight} ${fontStyle} ${
             fontSizePx * mutableProps.scale
           }px ${fontFamily}`;
+          ctx.globalAlpha = mutableProps.fill.opacity;
           ctx.fillText(textStr, x, y + fontSizePx);
+          ctx.globalAlpha = mutableProps.stroke.opacity;
           ctx.strokeText(textStr, x, y + fontSizePx);
 
           // Calculate actual text dimensions

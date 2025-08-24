@@ -14,10 +14,12 @@ export const config: Config = {
   scale: 1,
   fill: {
     color: 'transparent',
+    opacity: 1,
   },
   stroke: {
     color: 'transparent',
-    width: 0,
+    width: 1,
+    opacity: 1,
   },
   shape: 'rect',
   shapeProps: {

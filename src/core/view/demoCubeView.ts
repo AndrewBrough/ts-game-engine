@@ -11,7 +11,7 @@ export const createDemoCubeView = (id?: string) => {
 
   const entityView = createEntityView({
     id: cubeId,
-    model: { health: 5, speed: 0.1 },
+    model: { health: 10, speed: 0.1 },
     layer: 'DEFAULT',
     position: {
       x: randomX,
