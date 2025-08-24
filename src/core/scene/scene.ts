@@ -4,7 +4,6 @@ import {
   type CollisionManager,
 } from '../gameState/collisionManager';
 import { getState } from '../gameState/gameState';
-import { createDemoCubeView } from '../view/demoCubeView';
 import { createPlayerView } from '../view/player/playerView';
 import type { View } from '../view/types';
 
@@ -24,15 +23,8 @@ export const createScene = (name: string = 'default') => {
   const collisions = collisionManager();
 
   const init = () => {
-    console.log('Initializing scene', name);
     createPlayerView();
-    createDemoCubeView();
-  };
-
-  /* Override me */
-  const start = () => {
-    console.log('Starting scene', name);
-    init();
+    console.log('Initialized scene', name, state);
   };
 
   const destroy = () => {
@@ -47,7 +39,6 @@ export const createScene = (name: string = 'default') => {
     events,
     collisions,
     init,
-    start,
     destroy,
   };
 };

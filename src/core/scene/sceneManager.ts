@@ -14,15 +14,11 @@ const createSceneManager = () => {
   const scenes: Set<SceneInstance> = new Set();
 
   const loadScene = (sceneName: SceneName) => {
-    const scene = SCENES[sceneName];
+    const createScene = SCENES[sceneName];
+    unloadScene(sceneName);
 
-    // Unload all scenes before loading a new one for now
-    for (const scene of scenes) {
-      console.log('Unloading scene', scene.name);
-      unloadScene(scene.name);
-    }
-
-    const sceneInstance = scene();
+    const sceneInstance = createScene();
+    sceneInstance.init();
     console.log('Loaded scene', sceneInstance);
     scenes.add(sceneInstance);
     return sceneInstance;
@@ -31,15 +27,23 @@ const createSceneManager = () => {
   const unloadScene = (sceneName: string) => {
     for (const scene of scenes) {
       if (scene.name === sceneName) {
+        console.log('Unloading scene', scene.name);
         scene.destroy();
         scenes.delete(scene);
       }
     }
   };
 
+  const unloadAllScenes = () => {
+    for (const scene of scenes) {
+      unloadScene(scene.name);
+    }
+  };
+
   return {
     loadScene,
     unloadScene,
+    unloadAllScenes,
   };
 };
 

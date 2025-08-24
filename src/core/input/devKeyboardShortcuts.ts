@@ -3,12 +3,13 @@ import { getSceneManager } from '../scene/sceneManager';
 export const devKeyboardShortcuts = () => {
   const shortcuts: Record<string, () => void> = {
     '1': () => {
-      const scene = getSceneManager().loadScene('TEST');
-      scene.start();
+      getSceneManager().loadScene('TEST');
     },
     '2': () => {
-      const scene = getSceneManager().loadScene('BREAK_THE_ENGINE');
-      scene.start();
+      getSceneManager().loadScene('BREAK_THE_ENGINE');
+    },
+    '0': () => {
+      getSceneManager().unloadAllScenes();
     },
   };
 
