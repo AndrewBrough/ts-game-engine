@@ -11,7 +11,7 @@ export type EntityViewInstance = ReturnType<typeof createEntityView>;
 export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   const initialModel = createModel<EntityModel>({
     health: 100,
-    speed: 0.5,
+    speed: 1,
     collisionDamage: 1,
     ...props.model,
   });
@@ -71,6 +71,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   // Expose physics and collision methods for external use
   const entityView = {
     ...view,
+    model: { ...initialModel },
     physics: {
       applyForce: (force: Position) => physics.applyForce(force),
       getCurrentForce: () => physics.getCurrentForce(),

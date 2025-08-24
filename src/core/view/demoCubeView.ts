@@ -7,11 +7,11 @@ export const createDemoCubeView = (id?: string) => {
   const randomY = Math.random() * 100;
 
   // Use provided id or generate a unique one
-  const cubeId = id || `demoCube-${Math.random().toString(36).substr(2, 9)}`;
+  const cubeId = id || `demoCube-${crypto.randomUUID()}`;
 
   const entityView = createEntityView({
     id: cubeId,
-    model: { health: 10, speed: 0.1 },
+    model: { health: 10, speed: 0.5 },
     layer: 'DEFAULT',
     position: {
       x: randomX,

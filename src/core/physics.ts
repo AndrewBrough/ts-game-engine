@@ -14,7 +14,6 @@ export const createPhysics = (props: View['physics']) => {
       x: force.x - currentForce.x,
       y: force.y - currentForce.y,
     };
-    console.log('apply force', difference);
     currentForce.x += difference.x / 100;
     currentForce.y += difference.y / 100;
   };

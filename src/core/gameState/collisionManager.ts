@@ -24,28 +24,26 @@ export const collisionManager = () => {
   });
 
   const checkCollisions = (view: View) => {
-    if (!view.bounds) {
-      throw new Error(`View ${view.id} has no bounds`);
-    }
+    if (view.bounds) {
+      // Only check for collisions for views on layers that are in the collision matrix
+      const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
+      for (const v of viewsOnMatrixLayers) {
+        if (v.bounds && v.id !== view.id) {
+          const collision = {
+            view1: view,
+            view2: v,
+          };
 
-    // Only check for collisions for views on layers that are in the collision matrix
-    const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
-    for (const v of viewsOnMatrixLayers) {
-      if (v.bounds && v.id !== view.id) {
-        const collision = {
-          view1: view,
-          view2: v,
-        };
+          const hasCol = hasCollision(collision);
+          const boundsOverlap = doBoundsOverlap(view.bounds, v.bounds);
 
-        const hasCol = hasCollision(collision);
-        const boundsOverlap = doBoundsOverlap(view.bounds, v.bounds);
-
-        if (boundsOverlap) {
-          if (!hasCol) {
-            registerCollision(collision);
+          if (boundsOverlap) {
+            if (!hasCol) {
+              registerCollision(collision);
+            }
+          } else if (hasCol) {
+            unregisterCollision(collision);
           }
-        } else if (hasCol) {
-          unregisterCollision(collision);
         }
       }
     }

@@ -4,7 +4,6 @@ import type { EntityViewInstance } from '../player/entityView';
 
 export const handleMove = (view: EntityViewInstance) => {
   view.events.addEvent('update', (e: CustomEvent) => {
-    console.log(e);
     const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
 
     const movement: Position = {
