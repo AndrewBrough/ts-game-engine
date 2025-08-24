@@ -74,6 +74,18 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
         color: view.fill.color,
         opacity,
       });
+
+      const directionVector = {
+        x: (otherView.position.x - view.props.position.x) / 10,
+        y: (otherView.position.y - view.props.position.y) / 10,
+      };
+
+      console.log(directionVector);
+
+      view.updatePosition({
+        x: view.props.position.x - directionVector.x,
+        y: view.props.position.y - directionVector.y,
+      });
     }
   };
 
