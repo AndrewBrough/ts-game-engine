@@ -16,6 +16,10 @@ export const createPauseButton = (
     id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
     layer: 'UI',
     shape: 'text',
+    position: {
+      x: -1,
+      y: 0,
+    },
     fill: {
       color: 'white',
     },
@@ -42,11 +46,7 @@ export const createPauseButton = (
   };
 
   const scale = (scale: number) => {
-    console.log('scale', scale);
-    viewInstance.updateSize(
-      (viewInstance.props.bounds?.width ?? 0) * scale,
-      (viewInstance.props.bounds?.height ?? 0) * scale
-    );
+    viewInstance.updateScale(scale);
   };
 
   const mergedProps = {
@@ -57,11 +57,16 @@ export const createPauseButton = (
   const viewInstance = createInteractiveView(mergedProps);
 
   const handlePause = () => {
-    const { timeScale } = getState();
-    if (logicOrAnimation === 'logic' || logicOrAnimation === 'both') {
+    const { timeScale, isLogicPaused } = getState();
+    const paused = timeScale === 0 || isLogicPaused;
+    console.log('paused', paused);
+
+    if (paused) {
       toggleLogicPaused();
+      setTimeScale(1);
     }
-    if (logicOrAnimation === 'animation' || logicOrAnimation === 'both') {
+    if (!paused) {
+      toggleLogicPaused();
       setTimeScale(timeScale > 0 ? 0 : 1);
     }
     updateText();
@@ -69,17 +74,19 @@ export const createPauseButton = (
 
   const updateText = () => {
     const { timeScale, isLogicPaused } = getState();
-    if (logicOrAnimation === 'both') {
-      viewInstance.updateText(isLogicPaused ? 'Resume' : 'Pause');
-    }
-    if (logicOrAnimation === 'logic') {
-      viewInstance.updateText(
-        isLogicPaused ? 'Resume Updates' : 'Pause Updates'
-      );
-    }
-    if (logicOrAnimation === 'animation') {
-      viewInstance.updateText(timeScale === 0 ? 'Resume Time' : 'Pause Time');
-    }
+    const paused = timeScale === 0 || isLogicPaused;
+    viewInstance.updateText(paused ? '▶️' : '⏸️');
+    // if (logicOrAnimation === 'both') {
+    //   viewInstance.updateText(paused ? 'Resume' : 'Pause');
+    // }
+    // if (logicOrAnimation === 'logic') {
+    //   viewInstance.updateText(
+    //     isLogicPaused ? 'Resume Updates' : 'Pause Updates'
+    //   );
+    // }
+    // if (logicOrAnimation === 'animation') {
+    //   viewInstance.updateText(timeScale === 0 ? 'Resume Time' : 'Pause Time');
+    // }
   };
 
   updateText();

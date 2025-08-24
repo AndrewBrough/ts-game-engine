@@ -7,10 +7,11 @@ export type Config = Omit<View, 'id' | 'layer'> & {
 };
 
 export const config: Omit<Config, 'id'> = {
-  units: 'vw',
+  units: 'vh',
   anchor: 'top-left',
   position: { x: 0, y: 0 },
   bounds: { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 },
+  scale: 1,
   fill: {
     color: 'transparent',
   },
@@ -26,7 +27,7 @@ export const config: Omit<Config, 'id'> = {
   },
   textProps: {
     text: 'Hello, world!',
-    fontSize: 5,
+    fontSize: 3,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',

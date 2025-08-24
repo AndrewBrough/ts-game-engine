@@ -9,6 +9,7 @@ export type View = {
   id: string;
   layer: CollisionLayer;
   bounds?: Bounds;
+  scale: number;
   fill: {
     color: string;
   };

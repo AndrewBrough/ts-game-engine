@@ -30,6 +30,7 @@ export const createView = (
   const mutableProps: View | InteractiveView = {
     id: props.id ?? crypto.randomUUID(),
     layer: props.layer ?? 'DEFAULT',
+    scale: props.scale ?? 1,
     fill: { ...mergedProps.fill },
     stroke: { ...mergedProps.stroke },
     shapeProps: { ...mergedProps.shapeProps },
@@ -96,6 +97,11 @@ export const createView = (
       width: width,
       height: height,
     };
+  };
+
+  // Function to update scale
+  const updateScale = (scale: number) => {
+    mutableProps.scale = scale;
   };
 
   // Function to update text
@@ -169,7 +175,11 @@ export const createView = (
       x: 0,
       y: 0,
     };
-    const { width: w, height: h } = mutableProps.bounds || sizeInPixels;
+    const { width, height } = mutableProps.bounds || sizeInPixels;
+    const w = width * mutableProps.scale;
+    const h = height * mutableProps.scale;
+    const wScaleDiff = w - width;
+    const hScaleDiff = h - height;
     switch (relativeTo) {
       case 'top-right':
         relativeAnchor.x = window.innerWidth - w;
@@ -190,8 +200,16 @@ export const createView = (
     }
 
     const { x, y } = {
-      x: relativeAnchor.x + mutableProps.position.x + positionInPixels.x,
-      y: relativeAnchor.y + mutableProps.position.y + positionInPixels.y,
+      x:
+        relativeAnchor.x +
+        mutableProps.position.x +
+        positionInPixels.x +
+        wScaleDiff * 1.5,
+      y:
+        relativeAnchor.y +
+        mutableProps.position.y +
+        positionInPixels.y +
+        hScaleDiff,
     };
 
     const { text, fontSize, fontFamily, fontWeight, fontStyle } =
@@ -223,7 +241,9 @@ export const createView = (
           break;
         case 'text': {
           const textStr = text.toString();
-          ctx.font = `${fontWeight} ${fontStyle} ${fontSizePx}px ${fontFamily}`;
+          ctx.font = `${fontWeight} ${fontStyle} ${
+            fontSizePx * mutableProps.scale
+          }px ${fontFamily}`;
           ctx.fillText(textStr, x, y + fontSizePx);
           ctx.strokeText(textStr, x, y + fontSizePx);
 
@@ -250,7 +270,7 @@ export const createView = (
   };
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 
@@ -271,6 +291,7 @@ export const createView = (
     updateStrokeColor,
     updateStrokeWidth,
     updateSize,
+    updateScale,
     updateText,
     updateFontSize,
     props: mutableProps,
