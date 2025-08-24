@@ -22,23 +22,13 @@ export type Anchor =
 export const calculateBounds = (
   position: Position,
   size: Size,
-  anchor: Anchor
+  anchor?: Anchor
 ): Bounds => {
   const { x, y } = position;
   const { width, height } = size;
 
-  const getBoundsAroundAnchor = (anchor: Anchor) => {
+  const getBoundsAroundAnchor = (anchor?: Anchor) => {
     switch (anchor) {
-      case 'top-left':
-        return {
-          left: x,
-          right: x + width,
-          top: y,
-          bottom: y + height,
-          width,
-          height,
-        };
-
       case 'top-right':
         return {
           left: x - width,
@@ -70,12 +60,22 @@ export const calculateBounds = (
         };
 
       case 'center':
-      default:
         return {
           left: x - width / 2,
           right: x + width / 2,
           top: y - height / 2,
           bottom: y + height / 2,
+          width,
+          height,
+        };
+
+      default:
+      case 'top-left':
+        return {
+          left: x,
+          right: x + width,
+          top: y,
+          bottom: y + height,
           width,
           height,
         };

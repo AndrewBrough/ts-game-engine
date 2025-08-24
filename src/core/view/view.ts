@@ -38,7 +38,6 @@ export const createView = (
     geometry: { ...mergedProps.geometry },
     textProps: { ...mergedProps.textProps },
     position: { x: mergedProps.position.x, y: mergedProps.position.y },
-    anchor: mergedProps.anchor,
     relativeTo: mergedProps.relativeTo,
     // Add physics properties if they exist
     ...(mergedProps.physics && { physics: mergedProps.physics }),
@@ -283,8 +282,7 @@ export const createView = (
             (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
           mutableProps.bounds = calculateBounds(
             { x, y: y + actualHeight / 2 },
-            { width: actualWidth, height: actualHeight },
-            mutableProps.anchor
+            { width: actualWidth, height: actualHeight }
           );
           return;
         }

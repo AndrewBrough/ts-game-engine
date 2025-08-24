@@ -6,7 +6,7 @@ import type { InteractiveViewInstance } from './interactiveView';
 import type { EntityViewInstance } from './player/entityView';
 import type { ViewInstance } from './view';
 
-export type View<T extends object = {}> = {
+export type View<T extends object = object> = {
   id: string;
   model: T | object;
   layer: CollisionLayer;
@@ -25,7 +25,7 @@ export type View<T extends object = {}> = {
   /**
    * Position to start drawing from
    */
-  anchor: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
+  anchor?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
   /**
    * Relative to the anchor position
    */

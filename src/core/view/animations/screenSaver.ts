@@ -5,7 +5,7 @@ const directionMap = new Map<string, { x: number; y: number }>();
 
 export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   // Get current direction or initialize
-  let direction = directionMap.get(view.props.id) || {
+  const direction = directionMap.get(view.props.id) || {
     x: 1,
     y: 1,
   };
@@ -16,8 +16,8 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
   const newY = position.y + direction.y * deltaTime * view.model.speed;
   // For y-axis: calculate proper viewport height boundary
   // If using vw units, convert to vh equivalent for y-axis
-  let xMax = 100 - geometry.width / 2;
-  let yMax = 100 - geometry.height * 2;
+  const xMax = 100 - geometry.width / 2;
+  const yMax = 100 - geometry.height * 2;
   console.log(newX, newY, xMax, yMax);
 
   // For x-axis: use viewport width boundary

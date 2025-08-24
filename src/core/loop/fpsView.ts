@@ -4,7 +4,9 @@ import { createAnimatedView } from '../view/animatedView';
 export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
-    shape: 'text',
+    geometry: {
+      shape: 'text',
+    },
     position: {
       x: 1,
       y: 1,

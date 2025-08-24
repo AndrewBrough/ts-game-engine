@@ -2,7 +2,7 @@ import type { View } from './view/types';
 
 export type Units = 'px' | 'vh' | 'vw';
 
-export type Config = Omit<View, 'id' | 'layer' | 'model'>;
+export type Config = Omit<View, 'id' | 'layer' | 'model' | 'anchor'>;
 
 export const config: Config = {
   position: { x: 0, y: 0 },
