@@ -9,12 +9,11 @@ export const createPlayerView = () => {
       health: 100,
       collisionDamage: 10,
     },
+    layer: 'PLAYER',
     position: {
       x: 40,
       y: 40,
     },
-    layer: 'PLAYER',
-    relativeTo: 'top-left',
     geometry: {
       shape: 'rect',
       width: 10,

@@ -21,7 +21,6 @@ export const createDemoCubeView = (id?: string) => {
       width: 10,
       height: 10,
     },
-    shape: 'rect',
     fill: {
       color: 'red',
     },
