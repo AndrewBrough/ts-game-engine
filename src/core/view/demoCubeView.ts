@@ -1,3 +1,5 @@
+import { alwaysMoveForward } from './animations/alwaysMoveForward';
+import { bounceOffWalls } from './animations/bounceOffWalls';
 import { screenSaver } from './animations/screenSaver';
 import { createEntityView } from './player/entityView';
 
@@ -11,7 +13,7 @@ export const createDemoCubeView = (id?: string) => {
 
   const entityView = createEntityView({
     id: cubeId,
-    model: { health: 10, speed: 0.5 },
+    model: { health: 10, speed: 1 },
     layer: 'DEFAULT',
     position: {
       x: randomX,
@@ -31,7 +33,9 @@ export const createDemoCubeView = (id?: string) => {
     },
   });
 
-  screenSaver(entityView);
+  // screenSaver(entityView);
+  // alwaysMoveForward(entityView);
+  // bounceOffWalls(entityView);
 
   return entityView;
 };

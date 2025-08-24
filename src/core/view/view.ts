@@ -178,9 +178,6 @@ export const createView = (
       mutableProps.geometry.height ?? mutableProps.bounds?.height ?? 0,
       mutableProps.geometry.units
     );
-
-    console.log(sizeInPixels);
-
     const positionInPixels = convertPositionToPixels(
       mutableProps.position.x,
       mutableProps.position.y

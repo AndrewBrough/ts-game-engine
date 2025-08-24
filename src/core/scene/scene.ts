@@ -9,6 +9,7 @@ import { createDemoCubeView } from '../view/demoCubeView';
 import { createPauseButton } from '../view/pauseButton';
 import { createPlayerView } from '../view/player/playerView';
 import type { View } from '../view/types';
+import { createWorldBoundsView } from '../view/world/worldBoundsView';
 
 export type Scene = {
   name: string;
@@ -26,7 +27,7 @@ export const createScene = (name: string = 'default') => {
 
   createPauseButton();
   createFpsView();
-  // createWorldBoundsView();
+  createWorldBoundsView();
   createPlayerView();
   createDemoCubeView();
 
