@@ -1,54 +1,67 @@
-import { createEvents } from "../events/events";
-import { doBoundsOverlap } from "../view/collision";
-import type { View } from "../view/types";
-import { getAllCollidableViews, getCollisionLayerViews } from "./gameState";
+import { createEvents } from '../events/events';
+import { doBoundsOverlap } from '../view/collision';
+import type { View } from '../view/types';
+import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
 
 export type Collision = {
-    view1: View;
-    view2: View;
-}
+  view1: View;
+  view2: View;
+};
 
 export type CollisionManager = ReturnType<typeof collisionManager>;
 
 export const collisionManager = () => {
-    const events = createEvents();
-    
-    events.addEvent('collisions', () => {
-        // Get all views across all layers
-        const allViews = getAllCollidableViews();
-        for(const view of allViews) {
-            checkCollisions(view);
-        }
-    });
+  const events = createEvents();
+  const collisions: Collision[] = [];
 
-    const checkCollisions = (view: View) => {
-        if(!view.bounds) {
-            throw new Error(`View ${view.id} has no bounds`);
-        }
+  events.addEvent('collisions', () => {
+    // Get all views across all layers
+    const allViews = getAllCollidableViews();
+    for (const view of allViews) {
+      checkCollisions(view);
+    }
+  });
 
-        // Only check for collisions for views on layers that are in the collision matrix
-        const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
-        for(const v of viewsOnMatrixLayers) {
-            // console.log('Checking collision', view.id, v.id);
-            if(v.bounds && v.id !== view.id) {
-                const collision = {
-                    view1: view,
-                    view2: v,
-                }
-
-                if(doBoundsOverlap(view.bounds, v.bounds)) {
-                    // console.log('Collision detected', view.id, v.id);
-                    triggerCollision(collision);
-                }
-            }
-        }
+  const checkCollisions = (view: View) => {
+    if (!view.bounds) {
+      throw new Error(`View ${view.id} has no bounds`);
     }
 
-    const triggerCollision = (collision: Collision) => {
-        window.dispatchEvent(new CustomEvent('collision', { detail: {collision} }));
-    }
+    // Only check for collisions for views on layers that are in the collision matrix
+    const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
+    for (const v of viewsOnMatrixLayers) {
+      // console.log('Checking collision', view.id, v.id);
+      if (v.bounds && v.id !== view.id) {
+        const collision = {
+          view1: view,
+          view2: v,
+        };
 
-    return {
-        events,
+        if (doBoundsOverlap(view.bounds, v.bounds)) {
+          console.log('Collision detected', collision);
+          registerCollision(collision);
+        } else {
+          unregisterCollision(collision);
+        }
+      }
     }
-}
+  };
+
+  const registerCollision = (collision: Collision) => {
+    collisions.push(collision);
+    window.dispatchEvent(
+      new CustomEvent('collision', { detail: { collision } })
+    );
+  };
+
+  const unregisterCollision = (collision: Collision) => {
+    const c = collisions.splice(collisions.indexOf(collision), 1);
+    if (c.length > 0) {
+      console.log('unregistered collision', c);
+    }
+  };
+
+  return {
+    events,
+  };
+};
