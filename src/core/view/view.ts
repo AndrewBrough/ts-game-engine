@@ -88,35 +88,14 @@ export const createView = (
   const updateSize = (width: number, height: number) => {
     mutableProps.shapeProps.width = width;
     mutableProps.shapeProps.height = height;
-
-    // if(mutableProps.shape === "text") {
-    //   // For text, calculate actual rendered dimensions using canvas metrics
-    //   const ctx = getContext();
-    //   if (!ctx) {
-    //     throw new Error('Context not found');
-    //   }
-
-    //   const textStr = mutableProps.textProps.text.toString();
-    //   const { fontSize, fontFamily, fontWeight, fontStyle } = mutableProps.textProps;
-
-    //   // Set the font to measure text metrics
-    //   ctx.font = `${fontWeight} ${fontStyle} ${fontSize}px ${fontFamily}`;
-    //   const metrics = ctx.measureText(textStr);
-
-    //   // Calculate actual text dimensions
-    //   const textWidth = metrics.width;
-    //   const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
-    //   const descent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
-    //   const textHeight = ascent + descent;
-
-    //   mutableProps.shapeProps.width = textWidth;
-    //   mutableProps.shapeProps.height = textHeight;
-    // } else {
-    //   // For non-text shapes, use regular size conversion
-    //   const { width: convertedWidth, height: convertedHeight } = convertSizeToPixels(width, height);
-    //   mutableProps.shapeProps.width = convertedWidth;
-    //   mutableProps.shapeProps.height = convertedHeight;
-    // }
+    mutableProps.bounds = {
+      left: 0,
+      right: width,
+      top: 0,
+      bottom: height,
+      width: width,
+      height: height,
+    };
   };
 
   // Function to update text

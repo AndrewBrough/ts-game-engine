@@ -24,6 +24,14 @@ export const createPauseButton = (
         console.log('clicked');
         handlePause();
       },
+      onHover: () => {
+        console.log('hovered');
+        scale(1.1);
+      },
+      onHoverOut: () => {
+        console.log('hovered out');
+        scale(1);
+      },
       onKeyDown: event => {
         const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
         if (keys.includes(event.key)) {
@@ -31,6 +39,14 @@ export const createPauseButton = (
         }
       },
     },
+  };
+
+  const scale = (scale: number) => {
+    console.log('scale', scale);
+    viewInstance.updateSize(
+      (viewInstance.props.bounds?.width ?? 0) * scale,
+      (viewInstance.props.bounds?.height ?? 0) * scale
+    );
   };
 
   const mergedProps = {

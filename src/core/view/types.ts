@@ -31,7 +31,12 @@ export type View = {
   /**
    * Position relative to screen corners or center (ignores anchor when used)
    */
-  relativeTo?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
+  relativeTo?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'center';
   shape: 'rect' | 'circle' | 'line' | 'text';
   shapeProps: {
     width: number;
@@ -52,6 +57,7 @@ export type View = {
 };
 
 export type InteractiveView = AnimatedView & {
+  interactive: boolean;
   /**
    * Event handlers for interactive functionality
    */
@@ -88,4 +94,7 @@ export type Size = {
 // Re-export ViewInstance from view.ts
 export type { ViewInstance } from './view';
 
-export type AnyViewInstance = ViewInstance | InteractiveViewInstance | AnimatedViewInstance;
+export type AnyViewInstance =
+  | ViewInstance
+  | InteractiveViewInstance
+  | AnimatedViewInstance;

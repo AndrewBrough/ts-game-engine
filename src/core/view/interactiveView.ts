@@ -4,10 +4,8 @@ import type { InteractiveView } from './types';
 
 export type InteractiveViewInstance = ReturnType<typeof createInteractiveView>;
 
-export const createInteractiveView = (
-  props: DeepPartial<InteractiveView> = {}
-) => {
-  const view = createAnimatedView(props);
+export const createInteractiveView = (props: DeepPartial<InteractiveView>) => {
+  const view = createAnimatedView({ ...props, interactive: true });
 
   // Store handler references for proper cleanup
   const handlers = {
