@@ -1,12 +1,13 @@
-import type { Position } from './view/types';
+import type { Position, View } from './view/types';
 
 export type PhysicsInstance = ReturnType<typeof createPhysics>;
 
 /**
  * Creates a physics object for handling forces and dampening
  */
-export const createPhysics = () => {
+export const createPhysics = (props: View['physics']) => {
   let currentForce: Position = { x: 0, y: 0 };
+  const dampening = props?.dampening ?? 0.95;
 
   const applyForce = (force: Position) => {
     const difference = {
@@ -14,11 +15,11 @@ export const createPhysics = () => {
       y: force.y - currentForce.y,
     };
     console.log('apply force', difference);
-    currentForce.x += difference.x;
-    currentForce.y += difference.y;
+    currentForce.x += difference.x / 100;
+    currentForce.y += difference.y / 100;
   };
 
-  const update = (dampening: number = 0.95) => {
+  const update = () => {
     // Apply dampening (air resistance)
     currentForce.x *= dampening;
     currentForce.y *= dampening;

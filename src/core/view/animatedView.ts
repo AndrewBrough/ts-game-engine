@@ -1,6 +1,5 @@
-import type { Collision } from '../gameState/collisionManager';
 import type { DeepPartial } from '../types';
-import type { InteractiveView, Position } from './types';
+import type { InteractiveView } from './types';
 import { createView } from './view';
 
 export type AnimatedViewInstance = ReturnType<typeof createAnimatedView>;
@@ -10,13 +9,6 @@ export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
 
   const animate = () => {
     viewInstance.update();
-  };
-
-  const move = (position: Position, deltaTime: number) => {
-    viewInstance.updatePosition({
-      x: viewInstance.props.position.x + (position.x * deltaTime) / 10,
-      y: viewInstance.props.position.y + (position.y * deltaTime) / 10,
-    });
   };
 
   const addAnimation = (
@@ -30,23 +22,9 @@ export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
     animate();
   });
 
-  const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
-    const collision = e.detail?.collision;
-    const otherView =
-      collision.view1.id === viewInstance.props.id
-        ? collision.view2
-        : collision.view1;
-
-    console.log(
-      `I am ${viewInstance.props.id} and I collided with ${otherView.id}`
-    );
-  };
-
   return {
     ...viewInstance,
     addAnimation,
     animate,
-    move,
-    handleCollide,
   };
 };

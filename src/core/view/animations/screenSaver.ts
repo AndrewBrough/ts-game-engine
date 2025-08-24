@@ -41,8 +41,8 @@ export const screenSaver = (view: EntityViewInstance, deltaTime: number) => {
 
   // Apply force using physics system instead of direct movement
   const force = {
-    x: direction.x * RANDOM_SPEED * (deltaTime / 16), // Normalize by deltaTime
-    y: direction.y * RANDOM_SPEED * (deltaTime / 16),
+    x: direction.x * RANDOM_SPEED * deltaTime, // Normalize by deltaTime
+    y: direction.y * RANDOM_SPEED * deltaTime,
   };
 
   view.physics.applyForce(force);
