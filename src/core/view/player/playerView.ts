@@ -9,6 +9,10 @@ export const createPlayerView = () => {
       health: 100,
       collisionDamage: 10,
     },
+    physics: {
+      dampening: 0.9,
+      bounce: 2,
+    },
     layer: 'PLAYER',
     position: {
       x: 40,

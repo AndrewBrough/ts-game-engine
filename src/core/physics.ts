@@ -18,6 +18,11 @@ export const createPhysics = (props: View['physics']) => {
     currentForce.y += difference.y / 100;
   };
 
+  const setForce = (force: Position) => {
+    currentForce.x = force.x;
+    currentForce.y = force.y;
+  };
+
   const update = () => {
     // Apply dampening (air resistance)
     currentForce.x *= dampening;
@@ -38,6 +43,7 @@ export const createPhysics = (props: View['physics']) => {
 
   return {
     applyForce,
+    setForce,
     update,
     getCurrentForce,
     reset,

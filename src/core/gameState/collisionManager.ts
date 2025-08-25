@@ -1,12 +1,15 @@
 import { createEvents } from '../events/events';
-import { doBoundsOverlap } from '../view/collision';
-import type { View } from '../view/types';
+import { doBoundsOverlap, type Bounds } from '../view/collision';
+import type { Position, View } from '../view/types';
 import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
 import { COLLISION_MATRIX } from './collisionLayers';
 
 export type Collision = {
+  id: string;
   view1: View;
   view2: View;
+  contactPoint: Position;
+  normal: Position; // Normalized collision direction
 };
 
 export type CollisionManager = ReturnType<typeof collisionManager>;
@@ -29,19 +32,33 @@ export const collisionManager = () => {
       const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
       for (const v of viewsOnMatrixLayers) {
         if (v.bounds && v.id !== view.id) {
-          const collision = {
-            view1: view,
-            view2: v,
-          };
-
-          const hasCol = hasCollision(collision);
           const boundsOverlap = doBoundsOverlap(view.bounds, v.bounds);
 
-          if (boundsOverlap) {
-            if (!hasCol) {
-              registerCollision(collision);
-            }
+          // Calculate collision normal (direction from v to view)
+          const dx = view.position.x - v.position.x;
+          const dy = view.position.y - v.position.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const normal = {
+            x: distance > 0 ? dx / distance : 0,
+            y: distance > 0 ? dy / distance : 0,
+          };
+
+          const collision = {
+            id: `${view.id}-${v.id}`,
+            view1: view,
+            view2: v,
+            contactPoint: {
+              x: boundsOverlap?.left ?? 0,
+              y: boundsOverlap?.top ?? 0,
+            },
+            normal,
+          };
+          const hasCol = hasCollision(collision.id);
+          if (boundsOverlap && !hasCol) {
+            console.log('collision', collision);
+            registerCollision(collision);
           } else if (hasCol) {
+            console.log('unregistering collision', collision);
             unregisterCollision(collision);
           }
         }
@@ -49,11 +66,8 @@ export const collisionManager = () => {
     }
   };
 
-  const hasCollision = (collision: Collision) => {
-    const c = collisions.find(
-      c =>
-        c.view1.id === collision.view1.id && c.view2.id === collision.view2.id
-    );
+  const hasCollision = (id: string) => {
+    const c = collisions.find(c => c.id === id);
     return c !== undefined;
   };
 

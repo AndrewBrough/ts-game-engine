@@ -19,7 +19,6 @@ export const screenSaver = (entityView: EntityViewInstance) => {
       entityView.physics.reset();
       constantForce.y *= -1;
     }
-    console.log(constantForce);
     entityView.physics.applyForce(constantForce);
   });
 };

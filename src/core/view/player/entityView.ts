@@ -20,8 +20,9 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
     ...props,
     model: { ...initialModel },
     physics: {
-      dampening: 0.9, // Default air resistance
       ...props.physics,
+      dampening: 0.9, // Default air resistance
+      bounce: 2,
     },
   });
   const healthView = createAnimatedView({

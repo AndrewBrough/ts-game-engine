@@ -8,7 +8,6 @@ export const bounceOffWalls = (entityView: EntityViewInstance) => {
       x: entityView.props.position.x + currentForce.x * deltaTime,
       y: entityView.props.position.y + currentForce.y * deltaTime,
     };
-    console.log(nextPosition);
     if (nextPosition.x <= 0 || nextPosition.x >= 100) {
       // console.log('bounce x', currentForce, nextPosition);
       currentForce.x = -currentForce.x * 2;

@@ -2,6 +2,7 @@ import type { Collision } from '../../gameState/collisionManager';
 import type { EntityModel } from '../types';
 import type { PhysicsInstance } from '../../physics';
 import type { InteractiveViewInstance } from '../interactiveView';
+import { createAnimatedView } from '../animatedView';
 
 export type CollisionHandler = ReturnType<typeof createCollisionHandler>;
 
@@ -10,15 +11,23 @@ export const createCollisionHandler = (
   physics: PhysicsInstance,
   initialModel: EntityModel
 ) => {
+  const collisionVector = createAnimatedView({
+    fill: {
+      color: 'cyan',
+      opacity: 1,
+    },
+  });
+
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
-    if (view1.id !== view.id && view2.id !== view.id) {
+    const isView1 = view1.id === view.id;
+    const isView2 = view2.id === view.id;
+    if (!isView1 && !isView2) {
       return;
     }
 
-    const otherView =
-      collision.view1.id === view.id ? collision.view2 : collision.view1;
+    const otherView = isView1 ? view2 : view1;
 
     // calc damage and apply health changes
     if (otherView.model && 'collisionDamage' in otherView.model) {
@@ -37,23 +46,18 @@ export const createCollisionHandler = (
         opacity,
       });
 
-      const directionVector = {
-        x: view.props.position.x - otherView.position.x,
-        y: view.props.position.y - otherView.position.y,
-      };
-      const magnitude = Math.sqrt(
-        directionVector.x * directionVector.x +
-          directionVector.y * directionVector.y
-      );
-      const normalizedVector = {
-        x: directionVector.x / magnitude,
-        y: directionVector.y / magnitude,
-      };
+      // const currentForce = physics.getCurrentForce();
+      const bounceForceX =
+        collision.normal.x * view.props.physics.bounce * (isView1 ? 1 : -1);
+      const bounceForceY =
+        collision.normal.y * view.props.physics.bounce * (isView1 ? 1 : -1);
 
-      physics.applyForce({
-        x: normalizedVector.x * view.props.geometry.width * 10,
-        y: normalizedVector.y * view.props.geometry.height * 10,
-      });
+      const targetForce = {
+        x: bounceForceX,
+        y: bounceForceY,
+      };
+      // physics.reset();
+      physics.setForce(targetForce);
     }
   };
 

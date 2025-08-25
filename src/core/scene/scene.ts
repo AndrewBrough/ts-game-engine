@@ -25,11 +25,12 @@ export const createScene = (name: string = 'default') => {
   const events = createEvents();
   const collisions = collisionManager();
 
-  createPauseButton();
-  createFpsView();
   createWorldBoundsView();
   createPlayerView();
   createDemoCubeView();
+
+  createFpsView();
+  createPauseButton();
 
   const destroy = () => {
     events.cleanup();

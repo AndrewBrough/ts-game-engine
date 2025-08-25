@@ -60,8 +60,9 @@ export type View<T extends object = object> = {
   /**
    * Physics properties for entity movement and forces
    */
-  physics?: {
+  physics: {
     dampening: number; // Air resistance factor (0-1, where 1 = no dampening, 0 = full stop)
+    bounce: number; // Bounce factor (0-1, where 1 = full bounce, 0 = no bounce)
   };
 };
 
