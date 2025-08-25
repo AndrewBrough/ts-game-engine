@@ -5,17 +5,11 @@ export const screenSaver = (entityView: EntityViewInstance) => {
   const constantForce = { x: randomSpeed(), y: randomSpeed() };
 
   entityView.events.addEvent('update', (e: CustomEvent) => {
-    if (
-      entityView.props.position.x <= 0 ||
-      entityView.props.position.x >= 100
-    ) {
+    if (entityView.geometry.x <= 0 || entityView.geometry.x >= 100) {
       entityView.physics.reset();
       constantForce.x *= -1;
     }
-    if (
-      entityView.props.position.y <= 0 ||
-      entityView.props.position.y >= 100
-    ) {
+    if (entityView.geometry.y <= 0 || entityView.geometry.y >= 100) {
       entityView.physics.reset();
       constantForce.y *= -1;
     }

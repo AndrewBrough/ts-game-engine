@@ -25,7 +25,7 @@ export const createScene = (name: string = 'default') => {
   const events = createEvents();
   const collisions = collisionManager();
 
-  createWorldBoundsView();
+  // createWorldBoundsView();
   createPlayerView();
   createDemoCubeView();
 

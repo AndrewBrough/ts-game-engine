@@ -11,12 +11,6 @@ import type {
 } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
-import {
-  convertFontSizeToPixels,
-  convertPositionToPixels,
-  convertSizeToPixels,
-} from '../conversions';
-import { calculateBounds } from './collision';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
@@ -28,28 +22,19 @@ export const createView = (
 
   // Create mutable copies of all props that can be updated
   const mutableProps: View | InteractiveView = {
+    ...mergedProps,
     id: props.id ?? crypto.randomUUID(),
     model: props.model ?? {},
     layer: props.layer ?? 'DEFAULT',
     scale: props.scale ?? 1,
-    force: { x: 0, y: 0 },
-    fill: { ...mergedProps.fill },
-    stroke: { ...mergedProps.stroke },
-    geometry: { ...mergedProps.geometry },
-    textProps: { ...mergedProps.textProps },
-    position: { x: mergedProps.position.x, y: mergedProps.position.y },
     relativeTo: mergedProps.relativeTo,
-    // Add physics properties if they exist
-    ...(mergedProps.physics && { physics: mergedProps.physics }),
-    // Add interactive properties if they exist
+    physics: mergedProps.physics ?? config.physics,
     ...('handlers' in mergedProps && { handlers: mergedProps.handlers }),
-    ...('interactive' in mergedProps && {
-      interactive: mergedProps.interactive,
-    }),
+    interactive: true,
   };
 
   // Helper function to update the view in state
-  const updateViewInState = (view: DeepRequired<AnyViewInstance>) => {
+  const updateViewInState = (view: DeepRequired<AnyView>) => {
     const stateViews = getViewsOnLayer(mutableProps?.layer ?? 'DEFAULT');
     const viewIndex = stateViews.findIndex(
       (v: AnyView) => v.id === mutableProps.id
@@ -69,10 +54,11 @@ export const createView = (
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: Position) => {
     const { x, y } = newPosition;
-    mutableProps.position = {
-      x: Math.max(0, Math.min(100, x)),
-      y: Math.max(0, Math.min(100, y)),
-    };
+    const maxX = 100 - mutableProps.geometry.width;
+    const maxY = 100 - mutableProps.geometry.height;
+    console.log(maxX, maxY, x, y);
+    mutableProps.geometry.x = Math.max(0, Math.min(maxX, x));
+    mutableProps.geometry.y = Math.max(0, Math.min(maxY, y));
   };
 
   // Function to update fill color
@@ -101,14 +87,6 @@ export const createView = (
   const updateSize = (width: number, height: number) => {
     mutableProps.geometry.width = width;
     mutableProps.geometry.height = height;
-    mutableProps.bounds = {
-      left: 0,
-      right: width,
-      top: 0,
-      bottom: height,
-      width: width,
-      height: height,
-    };
   };
 
   // Function to update scale
@@ -127,41 +105,41 @@ export const createView = (
   };
 
   // Debug function to draw anchor point and bounds
-  const drawDebugInfo = () => {
-    const ctx = getContext();
-    if (!ctx) {
-      throw new Error('Context not found');
-    }
+  // const drawDebugInfo = () => {
+  //   const ctx = getContext();
+  //   if (!ctx) {
+  //     throw new Error('Context not found');
+  //   }
 
-    // Save current context state
-    ctx.save();
+  //   // Save current context state
+  //   ctx.save();
 
-    // Draw purple dot at anchor point
-    ctx.fillStyle = 'purple';
-    ctx.strokeStyle = 'purple';
-    ctx.lineWidth = 5;
+  //   // Draw purple dot at anchor point
+  //   ctx.fillStyle = 'purple';
+  //   ctx.strokeStyle = 'purple';
+  //   ctx.lineWidth = 5;
 
-    const { left, right, top, bottom } = mutableProps.bounds || {
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-    };
-    // Draw a small circle at the anchor position
-    ctx.beginPath();
-    ctx.arc(left, top, 3, 0, 2 * Math.PI);
-    ctx.fill();
+  //   const { left, right, top, bottom } = mutableProps.bounds || {
+  //     left: 0,
+  //     right: 0,
+  //     top: 0,
+  //     bottom: 0,
+  //   };
+  //   // Draw a small circle at the anchor position
+  //   ctx.beginPath();
+  //   ctx.arc(left, top, 3, 0, 2 * Math.PI);
+  //   ctx.fill();
 
-    // Draw yellow rectangle around the actual rendered bounds
-    ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 2;
+  //   // Draw yellow rectangle around the actual rendered bounds
+  //   ctx.strokeStyle = 'yellow';
+  //   ctx.lineWidth = 2;
 
-    // Draw the bounds rectangle - same as the rendered object
-    ctx.strokeRect(left, top, right - left, bottom - top);
+  //   // Draw the bounds rectangle - same as the rendered object
+  //   ctx.strokeRect(left, top, right - left, bottom - top);
 
-    // Restore context state
-    ctx.restore();
-  };
+  //   // Restore context state
+  //   ctx.restore();
+  // };
 
   const draw = () => {
     const ctx = getContext();
@@ -173,119 +151,96 @@ export const createView = (
     ctx.strokeStyle = mutableProps.stroke.color;
     ctx.lineWidth = mutableProps.stroke.width;
 
-    const sizeInPixels = convertSizeToPixels(
-      mutableProps.geometry.width ?? mutableProps.bounds?.width ?? 0,
-      mutableProps.geometry.height ?? mutableProps.bounds?.height ?? 0,
-      mutableProps.geometry.units
-    );
-    const positionInPixels = convertPositionToPixels(
-      mutableProps.position.x,
-      mutableProps.position.y
-    );
+    // const relativeTo = mutableProps.relativeTo;
+    // const relativeAnchor = {
+    //   x: 0,
+    //   y: 0,
+    // };
+    // const { width, height } = mutableProps.bounds || sizeInPixels;
+    // const w = width * mutableProps.scale;
+    // const h = height * mutableProps.scale;
+    // const wScaleDiff = w - width;
+    // const hScaleDiff = h - height;
+    // switch (relativeTo) {
+    //   case 'top-right':
+    //     relativeAnchor.x = window.innerWidth - w;
+    //     relativeAnchor.y = -h / 2;
+    //     break;
+    //   case 'top-left':
+    //     relativeAnchor.x = 0;
+    //     relativeAnchor.y = -h / 2;
+    //     break;
+    //   case 'bottom-right':
+    //     relativeAnchor.x = window.innerWidth - w;
+    //     relativeAnchor.y = window.innerHeight;
+    //     break;
+    //   case 'bottom-left':
+    //     relativeAnchor.x = 0;
+    //     relativeAnchor.y = window.innerHeight;
+    //     break;
+    // }
 
-    const relativeTo = mutableProps.relativeTo;
-    const relativeAnchor = {
-      x: 0,
-      y: 0,
-    };
-    const { width, height } = mutableProps.bounds || sizeInPixels;
-    const w = width * mutableProps.scale;
-    const h = height * mutableProps.scale;
-    const wScaleDiff = w - width;
-    const hScaleDiff = h - height;
-    switch (relativeTo) {
-      case 'top-right':
-        relativeAnchor.x = window.innerWidth - w;
-        relativeAnchor.y = -h / 2;
-        break;
-      case 'top-left':
-        relativeAnchor.x = 0;
-        relativeAnchor.y = -h / 2;
-        break;
-      case 'bottom-right':
-        relativeAnchor.x = window.innerWidth - w;
-        relativeAnchor.y = window.innerHeight;
-        break;
-      case 'bottom-left':
-        relativeAnchor.x = 0;
-        relativeAnchor.y = window.innerHeight;
-        break;
-    }
+    // const { x, y } = {
+    //   x:
+    //     relativeAnchor.x +
+    //     mutableProps.position.x +
+    //     positionInPixels.x +
+    //     wScaleDiff,
+    //   y:
+    //     relativeAnchor.y +
+    //     mutableProps.position.y +
+    //     positionInPixels.y +
+    //     hScaleDiff,
+    // };
 
-    const { x, y } = {
-      x:
-        relativeAnchor.x +
-        mutableProps.position.x +
-        positionInPixels.x +
-        wScaleDiff,
-      y:
-        relativeAnchor.y +
-        mutableProps.position.y +
-        positionInPixels.y +
-        hScaleDiff,
-    };
+    // const { text, fontSize, fontFamily, fontWeight, fontStyle } =
+    //   mutableProps.textProps;
+    // const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
-    const { text, fontSize, fontFamily, fontWeight, fontStyle } =
-      mutableProps.textProps;
+    const { x, y, width, height } = mutableProps.geometry;
 
-    mutableProps.bounds = {
-      left: x,
-      right: x + w,
-      top: y,
-      bottom: y + h,
-      width: w,
-      height: h,
-    };
-    const fontSizePx = convertFontSizeToPixels(fontSize);
+    // const renderShape = () => {
+    ctx.globalAlpha = mutableProps.fill.opacity;
+    ctx.fillRect(x, y, width, height);
+    ctx.globalAlpha = mutableProps.stroke.opacity;
+    ctx.strokeRect(x, y, width, height);
 
-    const renderShape = () => {
-      const shape = mutableProps.textProps.text
-        ? 'text'
-        : mutableProps.geometry.shape;
-      switch (shape) {
-        case 'rect':
-          ctx.globalAlpha = mutableProps.fill.opacity;
-          ctx.fillRect(x, y, w, h);
-          ctx.globalAlpha = mutableProps.stroke.opacity;
-          ctx.strokeRect(x, y, w, h);
-          break;
-        case 'circle':
-          ctx.globalAlpha = mutableProps.fill.opacity;
-          ctx.fillRect(x, y, w, h);
-          ctx.globalAlpha = mutableProps.stroke.opacity;
-          ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
-          break;
-        case 'line':
-          ctx.globalAlpha = mutableProps.fill.opacity;
-          ctx.fillRect(x, y, w, h);
-          ctx.globalAlpha = mutableProps.stroke.opacity;
-          ctx.strokeRect(x, y, w, h);
-          break;
-        case 'text': {
-          const textStr = text.toString();
-          ctx.font = `${fontWeight} ${fontStyle} ${
-            fontSizePx * mutableProps.scale
-          }px ${fontFamily}`;
-          ctx.globalAlpha = mutableProps.fill.opacity;
-          ctx.fillText(textStr, x, y + fontSizePx);
-          ctx.globalAlpha = mutableProps.stroke.opacity;
-          ctx.strokeText(textStr, x, y + fontSizePx);
+    // // case 'circle':
+    // //   ctx.globalAlpha = mutableProps.fill.opacity;
+    // //   ctx.fillRect(x, y, w, h);
+    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
+    // //   ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
+    // //   break;
+    // // case 'line':
+    // //   ctx.globalAlpha = mutableProps.fill.opacity;
+    // //   ctx.fillRect(x, y, w, h);
+    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
+    // //   ctx.strokeRect(x, y, w, h);
+    // //   break;
+    // // case 'text': {
+    // //   const textStr = text.toString();
+    // //   ctx.font = `${fontWeight} ${fontStyle} ${
+    // //     fontSizePx * mutableProps.scale
+    // //   }px ${fontFamily}`;
+    // //   ctx.globalAlpha = mutableProps.fill.opacity;
+    // //   ctx.fillText(textStr, x, y + fontSizePx);
+    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
+    // //   ctx.strokeText(textStr, x, y + fontSizePx);
 
-          // Calculate actual text dimensions
-          const metrics = ctx.measureText(textStr);
-          const actualWidth = metrics.width;
-          const actualHeight =
-            (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) +
-            (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
-          mutableProps.bounds = calculateBounds(
-            { x, y: y + actualHeight / 2 },
-            { width: actualWidth, height: actualHeight }
-          );
-          return;
-        }
-      }
-    };
-    renderShape();
+    // //   // Calculate actual text dimensions
+    // //   const metrics = ctx.measureText(textStr);
+    // //   const actualWidth = metrics.width;
+    // //   const actualHeight =
+    // //     (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) +
+    // //     (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
+    // //   mutableProps.bounds = calculateBounds(
+    // //     { x, y: y + actualHeight / 2 },
+    // //     { width: actualWidth, height: actualHeight }
+    // //   );
+    //   return;
+    // }
+    // };
+    // renderShape();
   };
 
   const render = () => {
@@ -293,7 +248,7 @@ export const createView = (
   };
 
   const update = () => {
-    drawDebugInfo();
+    // drawDebugInfo();
     updateViewInState(mutableProps);
   };
 
@@ -306,6 +261,7 @@ export const createView = (
   events.addEvent('render', render);
 
   const viewInstance = {
+    ...mutableProps,
     update,
     destroy,
     events,
@@ -317,7 +273,6 @@ export const createView = (
     updateScale,
     updateText,
     updateFontSize,
-    props: mutableProps,
   };
 
   return viewInstance;

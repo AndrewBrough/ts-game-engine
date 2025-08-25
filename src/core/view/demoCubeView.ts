@@ -19,11 +19,9 @@ export const createDemoCubeView = (id?: string) => {
       bounce: 2,
     },
     layer: 'DEFAULT',
-    position: {
+    geometry: {
       x: randomX,
       y: randomY,
-    },
-    geometry: {
       width: 10,
       height: 10,
     },

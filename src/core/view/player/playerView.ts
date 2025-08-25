@@ -14,12 +14,9 @@ export const createPlayerView = () => {
       bounce: 2,
     },
     layer: 'PLAYER',
-    position: {
+    geometry: {
       x: 40,
       y: 40,
-    },
-    geometry: {
-      shape: 'rect',
       width: 10,
       height: 10,
     },

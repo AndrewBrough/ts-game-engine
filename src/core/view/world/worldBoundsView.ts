@@ -30,18 +30,16 @@ export const createWorldBoundsView = () => {
   createEntityView({
     ...baseProps,
     id: 'top-wall',
-    position: {
+    geometry: {
+      ...baseProps.geometry,
       x: 0,
       y: 0,
+      width: 100,
+      height: WALL_THICKNESS,
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    geometry: {
-      ...baseProps.geometry,
-      width: 100,
-      height: WALL_THICKNESS,
     },
     fill: {
       color: 'blue',
@@ -51,18 +49,16 @@ export const createWorldBoundsView = () => {
   createEntityView({
     ...baseProps,
     id: 'bottom-wall',
-    position: {
+    geometry: {
+      ...baseProps.geometry,
       x: 0,
       y: 85,
+      width: 100,
+      height: WALL_THICKNESS,
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    geometry: {
-      ...baseProps.geometry,
-      width: 100,
-      height: WALL_THICKNESS,
     },
     fill: {
       color: 'blue',
@@ -72,16 +68,14 @@ export const createWorldBoundsView = () => {
   createEntityView({
     ...baseProps,
     id: 'left-wall',
-    position: {
-      x: 0,
-      y: 0,
-    },
     physics: {
       dampening: 0.9,
       bounce: 200,
     },
     geometry: {
       ...baseProps.geometry,
+      x: 0,
+      y: 0,
       width: WALL_THICKNESS,
       height: 100,
     },
@@ -93,18 +87,16 @@ export const createWorldBoundsView = () => {
   createEntityView({
     ...baseProps,
     id: 'right-wall',
-    position: {
+    geometry: {
+      ...baseProps.geometry,
       x: 90,
       y: 0,
+      width: WALL_THICKNESS,
+      height: 100,
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    geometry: {
-      ...baseProps.geometry,
-      width: WALL_THICKNESS,
-      height: 100,
     },
     fill: {
       color: 'green',

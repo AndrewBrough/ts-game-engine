@@ -41,7 +41,6 @@ export const createInteractiveView = (props: DeepPartial<InteractiveView>) => {
 
   return {
     ...view,
-    ...view.props,
     addHandlers,
     clearHandlers,
   };

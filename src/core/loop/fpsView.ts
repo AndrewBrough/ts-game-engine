@@ -5,9 +5,6 @@ export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
     geometry: {
-      shape: 'text',
-    },
-    position: {
       x: 1,
       y: 1,
     },

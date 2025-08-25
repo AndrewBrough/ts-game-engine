@@ -24,7 +24,7 @@ describe('screenSaver', () => {
     const deltaTime = 16; // 60fps
 
     // Call screenSaver
-    screenSaver(mockView as any, deltaTime);
+    screenSaver(mockView as any);
 
     // Check that applyForce was called
     expect(mockPhysics.applyForce).toHaveBeenCalledWith({
@@ -62,8 +62,8 @@ describe('screenSaver', () => {
     const deltaTime = 16;
 
     // Call screenSaver multiple times to test boundary behavior
-    screenSaver(mockView as any, deltaTime);
-    screenSaver(mockView as any, deltaTime);
+    screenSaver(mockView as any);
+    screenSaver(mockView as any);
 
     // Should have called applyForce at least once
     expect(mockPhysics.applyForce).toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe('screenSaver', () => {
 
     deltaTimes.forEach(deltaTime => {
       mockPhysics.applyForce.mockClear();
-      screenSaver(mockView as any, deltaTime);
+      screenSaver(mockView as any);
 
       expect(mockPhysics.applyForce).toHaveBeenCalledWith({
         x: expect.any(Number),
@@ -130,7 +130,7 @@ describe('screenSaver', () => {
 
     testCases.forEach(({ deltaTime, expectedFactor }) => {
       mockPhysics.applyForce.mockClear();
-      screenSaver(mockView as any, deltaTime);
+      screenSaver(mockView as any);
 
       const callArgs = mockPhysics.applyForce.mock.calls[0][0];
       // Force should be proportional to deltaTime/16

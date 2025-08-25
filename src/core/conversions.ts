@@ -32,13 +32,6 @@ export const convertPositionToPixels = (
   };
 };
 
-/**
- * Convert font size with units to pixels
- */
-export const convertFontSizeToPixels = (fontSize: number): number => {
-  return convertToPixels(fontSize, config.geometry.units[0]);
-};
-
 // Assume default to vh, convert width to vw in pixels and height to pixels
 export const convertSizeToPixels = (
   width: number,
@@ -52,16 +45,4 @@ export const convertSizeToPixels = (
     width: widthInPixels,
     height: heightInPixels,
   };
-};
-
-export const convertViewportUnits = (value: number) => {
-  if (config.geometry.units[0] === 'vh' && config.geometry.units[1] === 'vw') {
-    console.log('vh to vw', value);
-    return value * 100;
-  }
-  if (config.geometry.units[0] === 'vw' && config.geometry.units[1] === 'vh') {
-    console.log('vw to vh', value);
-    return value / 100;
-  }
-  return value;
 };

@@ -1,7 +1,6 @@
 import type { Units } from '../config';
 import type { CollisionLayer } from '../gameState/collisionLayers';
 import type { AnimatedViewInstance } from './animatedView';
-import type { Bounds } from './collision';
 import type { InteractiveViewInstance } from './interactiveView';
 import type { EntityViewInstance } from './player/entityView';
 import type { ViewInstance } from './view';
@@ -10,7 +9,6 @@ export type View<T extends object = object> = {
   id: string;
   model: T | object;
   layer: CollisionLayer;
-  bounds?: Bounds;
   scale: number;
   force: Position;
   fill: {
@@ -29,7 +27,6 @@ export type View<T extends object = object> = {
   /**
    * Relative to the anchor position
    */
-  position: Position;
   /**
    * Position relative to screen corners or center (ignores anchor when used)
    */
@@ -39,13 +36,7 @@ export type View<T extends object = object> = {
     | 'bottom-right'
     | 'bottom-left'
     | 'center';
-  geometry: {
-    shape: 'rect' | 'circle' | 'line' | 'text';
-    units: Units[];
-    width: number;
-    height: number;
-    radius: number;
-  };
+  geometry: Geometry;
   /**
    * Indicates if the shapeProps dimensions have been calculated from rendering
    */
@@ -64,6 +55,14 @@ export type View<T extends object = object> = {
     dampening: number; // Air resistance factor (0-1, where 1 = no dampening, 0 = full stop)
     bounce: number; // Bounce factor (0-1, where 1 = full bounce, 0 = no bounce)
   };
+};
+
+export type Geometry = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: number;
 };
 
 export type InteractiveView = AnimatedView & {

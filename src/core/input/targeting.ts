@@ -18,18 +18,12 @@ export const locateView = (
   viewsToCheck: AnyView[] = getInteractiveViews()
 ) => {
   return viewsToCheck.find(v => {
-    const { left, right, top, bottom } = v.bounds || {
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-    };
-
+    const { x, y, width, height } = v.geometry;
     return (
-      inputPosition.x >= left &&
-      inputPosition.x <= right &&
-      inputPosition.y >= top &&
-      inputPosition.y <= bottom
+      inputPosition.x >= x &&
+      inputPosition.x <= x + width &&
+      inputPosition.y >= y &&
+      inputPosition.y <= y + height
     );
   });
 };

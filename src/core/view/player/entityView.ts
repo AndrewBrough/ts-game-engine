@@ -19,32 +19,27 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   const view = createInteractiveView({
     ...props,
     model: { ...initialModel },
-    physics: {
-      ...props.physics,
-      dampening: 0.9, // Default air resistance
-      bounce: 2,
-    },
   });
-  const healthView = createAnimatedView({
-    id: `${view.props.id}-health`,
-    layer: 'UI',
-    anchor: 'top-left',
-    fill: {
-      color: 'white',
-      opacity: 1,
-    },
-    stroke: {
-      color: 'white',
-      opacity: 1,
-      width: 2,
-    },
-    geometry: view.props.geometry,
-    textProps: {
-      text: (view.model as EntityModel).health.toString() ?? '0',
-    },
-  });
+  // const healthView = createAnimatedView({
+  //   id: `${view.props.id}-health`,
+  //   layer: 'UI',
+  //   anchor: 'top-left',
+  //   fill: {
+  //     color: 'white',
+  //     opacity: 1,
+  //   },
+  //   stroke: {
+  //     color: 'white',
+  //     opacity: 1,
+  //     width: 2,
+  //   },
+  //   geometry: view.props.geometry,
+  //   textProps: {
+  //     text: (view.model as EntityModel).health.toString() ?? '0',
+  //   },
+  // });
 
-  const physics = createPhysics(view.props.physics);
+  const physics = createPhysics(view.physics);
   const collisionHandler = createCollisionHandler(view, physics, initialModel);
 
   view.events.addEvent('update', () => {
@@ -52,18 +47,18 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
 
     if (force.x !== 0 || force.y !== 0) {
       view.updatePosition({
-        x: view.props.position.x + force.x,
-        y: view.props.position.y + force.y,
+        x: view.geometry.x + force.x,
+        y: view.geometry.y + force.y,
       });
     }
 
-    const { health } = view.model as EntityModel;
-    healthView.updateText(health.toString());
-    healthView.updatePosition({
-      x: view.props.position.x,
-      y: view.props.position.y + 4,
-    });
-    healthView.update();
+    // const { health } = view.model as EntityModel;
+    // healthView.updateText(health.toString());
+    // healthView.updatePosition({
+    //   x: view.props.geometry.x,
+    //   y: view.props.geometry.y + 4,
+    // });
+    // healthView.update();
   });
 
   // Attach collision handler

@@ -1,5 +1,5 @@
 import { createEvents } from '../events/events';
-import { doBoundsOverlap, type Bounds } from '../view/collision';
+import { getOverlap, type Bounds } from '../view/collision';
 import type { Position, View } from '../view/types';
 import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
 import { COLLISION_MATRIX } from './collisionLayers';
@@ -27,16 +27,16 @@ export const collisionManager = () => {
   });
 
   const checkCollisions = (view: View) => {
-    if (view.bounds) {
+    if (view.geometry) {
       // Only check for collisions for views on layers that are in the collision matrix
       const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
       for (const v of viewsOnMatrixLayers) {
-        if (v.bounds && v.id !== view.id) {
-          const boundsOverlap = doBoundsOverlap(view.bounds, v.bounds);
+        if (v.geometry && v.id !== view.id) {
+          const boundsOverlap = getOverlap(view.geometry, v.geometry);
 
           // Calculate collision normal (direction from v to view)
-          const dx = view.position.x - v.position.x;
-          const dy = view.position.y - v.position.y;
+          const dx = view.geometry.x - v.geometry.x;
+          const dy = view.geometry.y - v.geometry.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           const normal = {
             x: distance > 0 ? dx / distance : 0,

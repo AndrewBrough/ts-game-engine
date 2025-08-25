@@ -1,4 +1,4 @@
-import type { Position, Size } from './types';
+import type { Geometry, Position, Size } from './types';
 
 export interface Bounds {
   left: number;
@@ -7,6 +7,8 @@ export interface Bounds {
   bottom: number;
   width: number;
   height: number;
+  centerX: number;
+  centerY: number;
 }
 
 export type Anchor =
@@ -26,70 +28,16 @@ export const calculateBounds = (
 ): Bounds => {
   const { x, y } = position;
   const { width, height } = size;
-
-  const getBoundsAroundAnchor = (anchor?: Anchor) => {
-    switch (anchor) {
-      case 'top-right':
-        return {
-          left: x - width,
-          right: x,
-          top: y,
-          bottom: y + height,
-          width,
-          height,
-        };
-
-      case 'bottom-left':
-        return {
-          left: x,
-          right: x + width,
-          top: y - height,
-          bottom: y,
-          width,
-          height,
-        };
-
-      case 'bottom-right':
-        return {
-          left: x - width,
-          right: x,
-          top: y - height,
-          bottom: y,
-          width,
-          height,
-        };
-
-      case 'center':
-        return {
-          left: x - width / 2,
-          right: x + width / 2,
-          top: y - height / 2,
-          bottom: y + height / 2,
-          width,
-          height,
-        };
-
-      default:
-      case 'top-left':
-        return {
-          left: x,
-          right: x + width,
-          top: y,
-          bottom: y + height,
-          width,
-          height,
-        };
-    }
+  return {
+    left: position.x,
+    right: position.x + width,
+    top: position.y,
+    bottom: position.y + height,
+    width,
+    height,
+    centerX: position.x + width / 2,
+    centerY: position.y + height / 2,
   };
-
-  const bounds = getBoundsAroundAnchor(anchor);
-  bounds.left = Math.round(bounds.left);
-  bounds.right = Math.round(bounds.right);
-  bounds.top = Math.round(bounds.top);
-  bounds.bottom = Math.round(bounds.bottom);
-  bounds.width = Math.round(bounds.width);
-  bounds.height = Math.round(bounds.height);
-  return bounds;
 };
 
 /**
@@ -107,14 +55,20 @@ export const isPointInBounds = (point: Position, bounds: Bounds): boolean => {
 /**
  * Check if two bounds overlap and return the overlap bounds
  */
-export const doBoundsOverlap = (
-  bounds1: Bounds,
-  bounds2: Bounds
+export const getOverlap = (
+  bounds1: Geometry,
+  bounds2: Geometry
 ): Bounds | null => {
-  const overlapLeft = Math.max(bounds1.left, bounds2.left);
-  const overlapRight = Math.min(bounds1.right, bounds2.right);
-  const overlapTop = Math.max(bounds1.top, bounds2.top);
-  const overlapBottom = Math.min(bounds1.bottom, bounds2.bottom);
+  const overlapLeft = Math.max(bounds1.x, bounds2.x);
+  const overlapRight = Math.min(
+    bounds1.x + bounds1.width,
+    bounds2.x + bounds2.width
+  );
+  const overlapTop = Math.max(bounds1.y, bounds2.y);
+  const overlapBottom = Math.min(
+    bounds1.y + bounds1.height,
+    bounds2.y + bounds2.height
+  );
 
   // Check if there's actually an overlap
   if (overlapLeft >= overlapRight || overlapTop >= overlapBottom) {
@@ -131,6 +85,8 @@ export const doBoundsOverlap = (
     bottom: overlapBottom,
     width: overlapWidth,
     height: overlapHeight,
+    centerX: overlapLeft + overlapWidth / 2,
+    centerY: overlapTop + overlapHeight / 2,
   };
 };
 

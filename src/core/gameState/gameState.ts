@@ -99,10 +99,7 @@ export const toggleTimeScale = () => {
   setTimeScale(gameState.timeScale === 1 ? 0 : 1);
 };
 
-export const getCollisionLayerViews = (
-  layer: CollisionLayer,
-  excludeEmptyBounds = true
-): AnyView[] => {
+export const getCollisionLayerViews = (layer: CollisionLayer): AnyView[] => {
   const collidingViews = [];
   const layers = COLLISION_MATRIX[layer];
 
@@ -113,13 +110,7 @@ export const getCollisionLayerViews = (
 
   for (const layer of layers) {
     const views = getViewsOnLayer(layer);
-    if (excludeEmptyBounds) {
-      collidingViews.push(
-        ...views.filter(v => v.bounds !== undefined && v.bounds.width !== 0)
-      );
-    } else {
-      collidingViews.push(...views);
-    }
+    collidingViews.push(...views);
   }
 
   return collidingViews;

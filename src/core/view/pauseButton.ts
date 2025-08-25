@@ -16,9 +16,6 @@ export const createPauseButton = (
     id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
     relativeTo: 'top-right',
     layer: 'UI',
-    geometry: {
-      shape: 'text',
-    },
     fill: {
       color: 'white',
     },

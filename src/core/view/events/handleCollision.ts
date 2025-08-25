@@ -48,9 +48,9 @@ export const createCollisionHandler = (
 
       // const currentForce = physics.getCurrentForce();
       const bounceForceX =
-        collision.normal.x * view.props.physics.bounce * (isView1 ? 1 : -1);
+        collision.normal.x * view.physics.bounce * (isView1 ? 1 : -1);
       const bounceForceY =
-        collision.normal.y * view.props.physics.bounce * (isView1 ? 1 : -1);
+        collision.normal.y * view.physics.bounce * (isView1 ? 1 : -1);
 
       const targetForce = {
         x: bounceForceX,
@@ -62,11 +62,11 @@ export const createCollisionHandler = (
   };
 
   const attachCollisionHandler = () => {
-    view.events.addEvent(`${view.props.layer}-collide`, handleCollide);
+    view.events.addEvent(`${view.layer}-collide`, handleCollide);
   };
 
   const detachCollisionHandler = () => {
-    view.events.removeEvent(`${view.props.layer}-collide`);
+    view.events.removeEvent(`${view.layer}-collide`);
   };
 
   return {
