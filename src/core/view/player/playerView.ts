@@ -3,8 +3,6 @@ import { handleMove } from '../events/handleMove';
 import { createEntityView } from './entityView';
 
 export const createPlayerView = () => {
-  const screen = Screen();
-
   const view = createEntityView({
     id: 'player',
     layer: 'PLAYER',
@@ -12,8 +10,8 @@ export const createPlayerView = () => {
       speed: 20,
     },
     geometry: {
-      x: screen.center.x,
-      y: screen.center.y,
+      x: Screen.center.x,
+      y: Screen.center.y,
     },
     fill: {
       color: 'blue',

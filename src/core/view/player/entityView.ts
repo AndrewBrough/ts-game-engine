@@ -5,6 +5,7 @@ import { createInteractiveView } from '../interactiveView';
 import { createCollisionHandler } from '../events/handleCollision';
 import type { EntityModel, InteractiveView } from '../types';
 import { createHealthView } from './healthView';
+import { Screen } from '../../units';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
@@ -20,6 +21,8 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     },
     geometry: {
       shape: 'rect',
+      width: Screen.percent(20).w,
+      height: Screen.percent(20).w,
       ...props.geometry,
     },
   });
@@ -31,6 +34,9 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   view.events.addEvent('update', () => {
     updatePhysics();
     updateHealth();
+
+    // Update view so next render gets the above changes
+    view.update();
   });
 
   const updatePhysics = () => {
@@ -44,9 +50,6 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
         y: view.geometry.y + force.y,
       });
     }
-
-    // update and render view
-    view.update();
   };
 
   const updateHealth = () => {

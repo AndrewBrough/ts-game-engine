@@ -1,8 +1,6 @@
 import type { View } from './view/types';
 import { Screen } from './units';
 
-const minSize = Screen().w / 10;
-
 export const defaultViewConfig: View = {
   id: crypto.randomUUID(),
   model: {
@@ -24,16 +22,17 @@ export const defaultViewConfig: View = {
   },
   textProps: {
     text: '',
-    fontSize: 16,
+    fontSize: Screen.percent(20).w,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
   },
   geometry: {
-    x: Screen().center.x,
-    y: Screen().center.y,
-    width: minSize,
-    height: minSize,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    shape: undefined,
   },
   physics: {
     speed: 20,
