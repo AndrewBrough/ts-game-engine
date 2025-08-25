@@ -20,9 +20,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const viewIndex = stateViews.findIndex((v: AnyView) => v.id === view.id);
     if (viewIndex !== -1) {
       // Override view in state if it already exists
-      stateViews[viewIndex] = {
-        ...view,
-      } as AnyView;
+      stateViews[viewIndex] = view;
     } else {
       addView(view);
     }
@@ -123,10 +121,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
       throw new Error('Context not found');
     }
 
-    ctx.fillStyle = view.fill.color;
-    ctx.strokeStyle = view.stroke.color;
-    ctx.lineWidth = view.stroke.width;
-
     // const relativeTo = mutableProps.relativeTo;
     // const relativeAnchor = {
     //   x: 0,
@@ -173,30 +167,46 @@ export const createView = (props: DeepPartial<View> = {}) => {
     //   mutableProps.textProps;
     // const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
-    const { x, y, width, height } = view.geometry;
+    const renderShape = (mode: 'fill' | 'stroke' | 'both' = 'both') => {
+      const { x, y, width, height } = view.geometry;
+      switch (view.geometry.shape) {
+        case 'rect':
+          if (mode === 'fill' || mode === 'both') {
+            ctx.fillRect(x, y, width, height);
+          }
+          if (mode === 'stroke' || mode === 'both') {
+            ctx.strokeRect(x, y, width, height);
+          }
+          break;
+        case 'text':
+          if (mode === 'fill' || mode === 'both') {
+            ctx.fillText(
+              view.textProps.text.toString(),
+              x,
+              y + view.textProps.fontSize
+            );
+          }
+          if (mode === 'stroke' || mode === 'both') {
+            ctx.strokeText(
+              view.textProps.text.toString(),
+              x,
+              y + view.textProps.fontSize
+            );
+          }
+          break;
+      }
+    };
 
-    // const renderShape = () => {
-
-    if (view.geometry.shape === 'rect') {
-      ctx.globalAlpha = view.fill.opacity;
-      ctx.fillRect(x, y, width, height);
-      ctx.globalAlpha = view.stroke.opacity;
-      ctx.strokeRect(x, y, width, height);
-    }
-
-    if (view.textProps.text) {
-      ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${view.textProps.fontSize}px ${view.textProps.fontFamily}`;
+    if (view.fill.color !== 'transparent' && view.fill.opacity !== 0) {
       ctx.fillStyle = view.fill.color;
-      ctx.fillText(
-        view.textProps.text.toString(),
-        x,
-        y + view.textProps.fontSize
-      );
-      ctx.strokeText(
-        view.textProps.text.toString(),
-        x,
-        y + view.textProps.fontSize
-      );
+      ctx.globalAlpha = view.fill.opacity;
+      renderShape('fill');
+    }
+    if (view.stroke.color !== 'transparent' && view.stroke.opacity !== 0) {
+      ctx.strokeStyle = view.stroke.color;
+      ctx.globalAlpha = view.stroke.opacity;
+      ctx.lineWidth = view.stroke.width;
+      renderShape('stroke');
     }
 
     // // case 'circle':

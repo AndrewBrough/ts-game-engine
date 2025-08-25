@@ -9,7 +9,7 @@ export const defaultViewConfig: View = {
     maxHealth: 100,
     health: 100,
     speed: 20,
-    collisionDamage: 0,
+    collisionDamage: 1,
   },
   scale: 1,
   layer: 'DEFAULT',
@@ -20,7 +20,7 @@ export const defaultViewConfig: View = {
   stroke: {
     color: 'transparent',
     width: 1,
-    opacity: 1,
+    opacity: 0,
   },
   textProps: {
     text: '',

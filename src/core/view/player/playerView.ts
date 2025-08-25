@@ -10,7 +10,6 @@ export const createPlayerView = () => {
     layer: 'PLAYER',
     model: {
       speed: 20,
-      collisionDamage: 10,
     },
     geometry: {
       x: screen.center.x,
