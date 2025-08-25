@@ -43,6 +43,8 @@ export const createEnemyView = (id?: string) => {
     },
   });
 
+  console.log(entityView);
+
   entityView.updatePosition({
     x: Math.random() * Screen.w,
     y: Math.random() * Screen.h,
@@ -50,7 +52,7 @@ export const createEnemyView = (id?: string) => {
 
   // screenSaver(entityView);
   // alwaysMoveForward(entityView);
-  // bounceOffWalls(entityView);
+  bounceOffWalls(entityView);
 
   return entityView;
 };

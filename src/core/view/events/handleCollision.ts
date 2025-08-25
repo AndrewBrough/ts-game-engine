@@ -1,18 +1,21 @@
 import type { Collision } from '../../gameState/collisionManager';
-import type { EntityModel } from '../types';
+import type { EntityModel, View } from '../types';
 import type { PhysicsInstance } from '../../physics';
-import type { InteractiveViewInstance } from '../interactiveView';
-import { createAnimatedView } from '../animatedView';
+import { getBounceForce } from '../animations/bounceOffWalls';
+import type { EntityViewInstance } from '../player/entityView';
 
-export type CollisionHandler = ReturnType<typeof createCollisionHandler>;
+export type CollisionHandlerInstance = {
+  handleCollide: (e: CustomEvent<{ collision: Collision }>) => void;
+  attachCollisionHandler: () => void;
+  detachCollisionHandler: () => void;
+};
 
-export const createCollisionHandler = (
-  view: InteractiveViewInstance,
-  physics: PhysicsInstance
-) => {
+export const createCollisionHandler = (view: EntityViewInstance) => {
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
+    console.log('handleCollide', view.id, e.detail);
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
+    console.log(view1.id, view2.id);
     const isView1 = view1.id === view.id;
     const isView2 = view2.id === view.id;
     if (!isView1 && !isView2) {
@@ -23,34 +26,31 @@ export const createCollisionHandler = (
 
     // calc damage and apply health changes
     if (otherView.model && 'collisionDamage' in otherView.model) {
-      const damage = (otherView.model as EntityModel).collisionDamage;
-      const currentHealth = (view.model as EntityModel).health;
-      const newHealth = currentHealth - damage;
-
-      (view.model as EntityModel).health = newHealth;
-
-      const percentHealth = view.model.health / view.model.maxHealth;
-      const opacity = Math.max(0, percentHealth) ?? 0;
-
-      view.updateGeometryStyle({
-        fill: {
-          opacity,
-        },
-      });
-
-      // const currentForce = physics.getCurrentForce();
-      const bounceForceX =
-        collision.normal.x * view.physics.bounce * (isView1 ? 1 : -1);
-      const bounceForceY =
-        collision.normal.y * view.physics.bounce * (isView1 ? 1 : -1);
-
-      const targetForce = {
-        x: bounceForceX,
-        y: bounceForceY,
-      };
-      // physics.reset();
-      physics.setForce(targetForce);
+      handleDamage(otherView.model.collisionDamage);
     }
+
+    const bounceForce = getBounceForce(view, collision.deltaTime);
+    console.log(collision.normal);
+    bounceForce.x *= collision.normal.x;
+    bounceForce.y *= collision.normal.y;
+    // console.log(bounceForce);
+    view.physics.setForce(bounceForce);
+  };
+
+  const handleDamage = (damage: number = 0) => {
+    const currentHealth = (view.model as EntityModel).health;
+    const newHealth = currentHealth - damage;
+
+    (view.model as EntityModel).health = newHealth;
+
+    const percentHealth = view.model.health / view.model.maxHealth;
+    const opacity = Math.max(0, percentHealth) ?? 0;
+
+    view.updateGeometryStyle({
+      fill: {
+        opacity,
+      },
+    });
   };
 
   const attachCollisionHandler = () => {

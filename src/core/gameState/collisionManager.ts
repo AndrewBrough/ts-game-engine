@@ -10,6 +10,7 @@ export type Collision = {
   view2: View;
   contactPoint: Position;
   normal: Position; // Normalized collision direction
+  deltaTime: number;
 };
 
 export type CollisionManager = ReturnType<typeof collisionManager>;
@@ -18,15 +19,15 @@ export const collisionManager = () => {
   const events = createEvents();
   const collisions: Collision[] = [];
 
-  events.addEvent('collisions', () => {
+  events.addEvent('collisions', (e: CustomEvent<{ deltaTime: number }>) => {
     // Get all views across all layers
     const allViews = getAllCollidableViews();
     for (const view of allViews) {
-      checkCollisions(view);
+      checkCollisions(view, e.detail.deltaTime);
     }
   });
 
-  const checkCollisions = (view: View) => {
+  const checkCollisions = (view: View, deltaTime: number) => {
     if (view.geometry) {
       // Only check for collisions for views on layers that are in the collision matrix
       const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);
@@ -52,11 +53,16 @@ export const collisionManager = () => {
               y: boundsOverlap?.top ?? 0,
             },
             normal,
+            deltaTime,
           };
           const hasCol = hasCollision(collision.id);
-          if (boundsOverlap && !hasCol) {
-            registerCollision(collision);
+          if (boundsOverlap) {
+            if (!hasCol) {
+              // console.log('registering collision', collision);
+              registerCollision(collision);
+            }
           } else if (hasCol) {
+            // console.log('unregistering collision', collision);
             unregisterCollision(collision);
           }
         }
@@ -79,13 +85,21 @@ export const collisionManager = () => {
     if (
       COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
     ) {
-      dispatchCollisionEvent(`${collision.view1.layer}-collide`, collision);
+      const event = `${collision.view1.layer}-collide`;
+      // console.log(event);
+      dispatchCollisionEvent(event, collision);
     }
-    if (
-      COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
-    ) {
-      dispatchCollisionEvent(`${collision.view2.layer}-collide`, collision);
-    }
+    // if (
+    //   COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
+    // ) {
+    //   const event = `${collision.view2.layer}-collide`;
+    //   console.log(event);
+    //   dispatchCollisionEvent(event, {
+    //     ...collision,
+    //     view1: collision.view2,
+    //     view2: collision.view1,
+    //   });
+    // }
   };
 
   const dispatchCollisionEvent = (event: string, collision: Collision) => {

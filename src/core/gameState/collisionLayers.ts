@@ -15,3 +15,5 @@ export const COLLISION_MATRIX: Record<CollisionLayer, CollisionLayer[]> = {
   PLAYER: ['DEFAULT', 'WALLS'],
   UI: [],
 };
+
+console.log({ COLLISION_MATRIX });

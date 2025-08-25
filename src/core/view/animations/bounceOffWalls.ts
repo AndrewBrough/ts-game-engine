@@ -7,36 +7,41 @@ export const bounceOffWalls = (entityView: EntityViewInstance) => {
 
   entityView.events.addEvent('update', (e: CustomEvent) => {
     const deltaTime = e.detail.deltaTime;
-    const currentForce = entityView.physics.getCurrentForce();
 
-    const bounceForce = {
-      x: (currentForce.x / 5) * entityView.physics.bounce * deltaTime,
-      y: (currentForce.y / 5) * entityView.physics.bounce * deltaTime,
-    };
-
-    console.log(entityView.geometry.x, entityView.geometry.y);
+    const bounceVector = { x: 0, y: 0 };
 
     if (entityView.geometry.x <= 0) {
-      console.log('bounce x', currentForce, entityView.geometry);
-      bounceForce.x *= -1;
-      entityView.physics.setForce(bounceForce);
+      bounceVector.x = -1;
     }
     if (entityView.geometry.x >= xMax) {
-      console.log('bounce x', currentForce, entityView.geometry);
-      bounceForce.x *= -1;
-      entityView.physics.setForce(bounceForce);
+      bounceVector.x = -1;
     }
     if (entityView.geometry.y <= 0) {
-      console.log('bounce y', currentForce, entityView.geometry);
-      bounceForce.y *= -1;
-      entityView.physics.setForce(bounceForce);
+      bounceVector.y = -1;
     }
     if (entityView.geometry.y >= yMax) {
-      console.log('bounce y', currentForce, entityView.geometry);
-      bounceForce.y *= -1;
-      entityView.physics.setForce(bounceForce);
+      bounceVector.y = -1;
     }
 
-    console.log(bounceForce);
+    if (bounceVector.x !== 0 || bounceVector.y !== 0) {
+      const bounceForce = getBounceForce(entityView, deltaTime);
+      bounceForce.x *= bounceVector.x;
+      bounceForce.y *= bounceVector.y;
+
+      entityView.physics.setForce(bounceForce);
+    }
   });
+};
+
+export const getBounceForce = (
+  entityView: EntityViewInstance,
+  deltaTime: number = 16.66
+) => {
+  const currentForce = entityView.physics.getCurrentForce();
+  const bounceForce = {
+    x: (currentForce.x / 5) * entityView.physics.bounce * deltaTime,
+    y: (currentForce.y / 5) * entityView.physics.bounce * deltaTime,
+  };
+  console.log(bounceForce);
+  return bounceForce;
 };

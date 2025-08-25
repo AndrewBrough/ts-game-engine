@@ -42,7 +42,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
 
   // const healthView = createHealthView(view);
   const physics = createPhysics(view.physics);
-  const collisionHandler = createCollisionHandler(view, physics);
+  const collisionHandler = createCollisionHandler({ ...view, physics });
 
   view.events.addEvent('update', () => {
     updatePhysics();
@@ -76,7 +76,6 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   const entityView = {
     ...view,
     physics,
-    collisionHandler,
   };
 
   bounceOffWalls(entityView);
