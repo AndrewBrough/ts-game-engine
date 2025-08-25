@@ -1,70 +1,46 @@
 import { getContext } from '../canvas/canvas';
-import { config } from '../config';
+import { defaultViewConfig } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial, DeepRequired } from '../types';
-import type {
-  View,
-  InteractiveView,
-  AnyViewInstance,
-  AnyView,
-  Position,
-} from './types';
+import type { View, InteractiveView, AnyView, Position } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
+import { Screen } from '../units';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
-export const createView = (
-  props: DeepPartial<View | InteractiveView> = config
-) => {
-  const mergedProps = deepMerge(config, props);
+export const createView = (props: DeepPartial<View> = {}) => {
+  const view = deepMerge(defaultViewConfig, props);
   const events = createEvents();
-
-  // Create mutable copies of all props that can be updated
-  const mutableProps: View | InteractiveView = {
-    ...mergedProps,
-    id: props.id ?? crypto.randomUUID(),
-    model: props.model ?? {},
-    layer: props.layer ?? 'DEFAULT',
-    scale: props.scale ?? 1,
-    relativeTo: mergedProps.relativeTo,
-    physics: mergedProps.physics ?? config.physics,
-    ...('handlers' in mergedProps && { handlers: mergedProps.handlers }),
-    interactive: true,
-  };
+  const screen = Screen();
 
   // Helper function to update the view in state
-  const updateViewInState = (view: DeepRequired<AnyView>) => {
-    const stateViews = getViewsOnLayer(mutableProps?.layer ?? 'DEFAULT');
-    const viewIndex = stateViews.findIndex(
-      (v: AnyView) => v.id === mutableProps.id
-    );
+  const updateViewInState = () => {
+    const stateViews = getViewsOnLayer(view?.layer ?? 'DEFAULT');
+    const viewIndex = stateViews.findIndex((v: AnyView) => v.id === view.id);
     if (viewIndex !== -1) {
       // Override view in state if it already exists
       stateViews[viewIndex] = {
-        ...stateViews[viewIndex],
         ...view,
       } as AnyView;
     } else {
-      // Add view to state if it doesn't exist
-      addView({ ...mutableProps, ...view } as AnyView);
+      addView(view);
     }
   };
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: Position) => {
     const { x, y } = newPosition;
-    const maxX = 100 - mutableProps.geometry.width;
-    const maxY = 100 - mutableProps.geometry.height;
-    console.log(maxX, maxY, x, y);
-    mutableProps.geometry.x = Math.max(0, Math.min(maxX, x));
-    mutableProps.geometry.y = Math.max(0, Math.min(maxY, y));
+    const maxX = screen.w - view.geometry.width;
+    const maxY = screen.h - view.geometry.height;
+    view.geometry.x = Math.max(0, Math.min(maxX, x));
+    view.geometry.y = Math.max(0, Math.min(maxY, y));
   };
 
   // Function to update fill color
   const updateFillColor = (fill: { color?: string; opacity?: number }) => {
-    mutableProps.fill.color = fill.color ?? mutableProps.fill.color;
-    mutableProps.fill.opacity = fill.opacity ?? mutableProps.fill.opacity;
+    view.fill.color = fill.color ?? view.fill.color;
+    view.fill.opacity = fill.opacity ?? view.fill.opacity;
   };
 
   // Function to update stroke color
@@ -73,35 +49,35 @@ export const createView = (
     opacity?: number;
     width?: number;
   }) => {
-    mutableProps.stroke.color = stroke.color ?? mutableProps.stroke.color;
-    mutableProps.stroke.opacity = stroke.opacity ?? mutableProps.stroke.opacity;
-    mutableProps.stroke.width = stroke.width ?? mutableProps.stroke.width;
+    view.stroke.color = stroke.color ?? view.stroke.color;
+    view.stroke.opacity = stroke.opacity ?? view.stroke.opacity;
+    view.stroke.width = stroke.width ?? view.stroke.width;
   };
 
   // Function to update stroke width
   const updateStrokeWidth = (width: number) => {
-    mutableProps.stroke.width = width;
+    view.stroke.width = width;
   };
 
   // Function to update shape size
   const updateSize = (width: number, height: number) => {
-    mutableProps.geometry.width = width;
-    mutableProps.geometry.height = height;
+    view.geometry.width = width;
+    view.geometry.height = height;
   };
 
   // Function to update scale
   const updateScale = (scale: number) => {
-    mutableProps.scale = scale;
+    view.scale = scale;
   };
 
   // Function to update text
   const updateText = (text: string | number) => {
-    mutableProps.textProps.text = text;
+    view.textProps.text = text;
   };
 
   // Function to update font size
   const updateFontSize = (fontSize: number) => {
-    mutableProps.textProps.fontSize = fontSize;
+    view.textProps.fontSize = fontSize;
   };
 
   // Debug function to draw anchor point and bounds
@@ -147,9 +123,9 @@ export const createView = (
       throw new Error('Context not found');
     }
 
-    ctx.fillStyle = mutableProps.fill.color;
-    ctx.strokeStyle = mutableProps.stroke.color;
-    ctx.lineWidth = mutableProps.stroke.width;
+    ctx.fillStyle = view.fill.color;
+    ctx.strokeStyle = view.stroke.color;
+    ctx.lineWidth = view.stroke.width;
 
     // const relativeTo = mutableProps.relativeTo;
     // const relativeAnchor = {
@@ -197,12 +173,12 @@ export const createView = (
     //   mutableProps.textProps;
     // const fontSizePx = convertFontSizeToPixels(mutableProps.textProps.fontSize);
 
-    const { x, y, width, height } = mutableProps.geometry;
+    const { x, y, width, height } = view.geometry;
 
     // const renderShape = () => {
-    ctx.globalAlpha = mutableProps.fill.opacity;
+    ctx.globalAlpha = view.fill.opacity;
     ctx.fillRect(x, y, width, height);
-    ctx.globalAlpha = mutableProps.stroke.opacity;
+    ctx.globalAlpha = view.stroke.opacity;
     ctx.strokeRect(x, y, width, height);
 
     // // case 'circle':
@@ -249,7 +225,7 @@ export const createView = (
 
   const update = () => {
     // drawDebugInfo();
-    updateViewInState(mutableProps);
+    updateViewInState();
   };
 
   const destroy = () => {
@@ -261,7 +237,7 @@ export const createView = (
   events.addEvent('render', render);
 
   const viewInstance = {
-    ...mutableProps,
+    ...view,
     update,
     destroy,
     events,

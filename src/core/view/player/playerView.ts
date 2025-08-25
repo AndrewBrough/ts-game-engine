@@ -1,24 +1,20 @@
+import { Screen } from '../../units';
 import { handleMove } from '../events/handleMove';
 import { createEntityView } from './entityView';
 
 export const createPlayerView = () => {
+  const screen = Screen();
+
   const view = createEntityView({
     id: 'player',
+    layer: 'PLAYER',
     model: {
-      speed: 1,
-      health: 100,
+      speed: 20,
       collisionDamage: 10,
     },
-    physics: {
-      dampening: 0.9,
-      bounce: 2,
-    },
-    layer: 'PLAYER',
     geometry: {
-      x: 40,
-      y: 40,
-      width: 10,
-      height: 10,
+      x: screen.center.x,
+      y: screen.center.y,
     },
     fill: {
       color: 'blue',

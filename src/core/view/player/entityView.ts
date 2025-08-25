@@ -1,24 +1,22 @@
-import { createModel } from '../../model/model';
 import { createPhysics } from '../../physics';
 import type { DeepPartial } from '../../types';
 import { createAnimatedView } from '../animatedView';
 import { createInteractiveView } from '../interactiveView';
 import { createCollisionHandler } from '../events/handleCollision';
-import type { EntityModel, InteractiveView, Position } from '../types';
+import type { InteractiveView } from '../types';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
 export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
-  const initialModel = createModel<EntityModel>({
-    health: 100,
-    speed: 1,
-    collisionDamage: 1,
-    ...props.model,
-  });
-
   const view = createInteractiveView({
     ...props,
-    model: { ...initialModel },
+    model: {
+      maxHealth: 100,
+      health: 100,
+      speed: 10,
+      collisionDamage: 1,
+      ...props.model,
+    },
   });
   // const healthView = createAnimatedView({
   //   id: `${view.props.id}-health`,
@@ -40,7 +38,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
   // });
 
   const physics = createPhysics(view.physics);
-  const collisionHandler = createCollisionHandler(view, physics, initialModel);
+  const collisionHandler = createCollisionHandler(view, physics);
 
   view.events.addEvent('update', () => {
     const force = physics.update();
@@ -52,31 +50,15 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
       });
     }
 
-    // const { health } = view.model as EntityModel;
-    // healthView.updateText(health.toString());
-    // healthView.updatePosition({
-    //   x: view.props.geometry.x,
-    //   y: view.props.geometry.y + 4,
-    // });
-    // healthView.update();
+    view.update();
   });
 
-  // Attach collision handler
   collisionHandler.attachCollisionHandler();
 
-  // Expose physics and collision methods for external use
   const entityView = {
     ...view,
-    model: { ...initialModel },
-    physics: {
-      applyForce: (force: Position) => physics.applyForce(force),
-      getCurrentForce: () => physics.getCurrentForce(),
-      reset: () => physics.reset(),
-    },
-    collision: {
-      detach: () => collisionHandler.detachCollisionHandler(),
-      attach: () => collisionHandler.attachCollisionHandler(),
-    },
+    physics,
+    collisionHandler,
   };
 
   return entityView;

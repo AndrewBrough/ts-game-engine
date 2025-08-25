@@ -1,16 +1,21 @@
-import type { Units } from '../config';
 import type { CollisionLayer } from '../gameState/collisionLayers';
 import type { AnimatedViewInstance } from './animatedView';
 import type { InteractiveViewInstance } from './interactiveView';
 import type { EntityViewInstance } from './player/entityView';
 import type { ViewInstance } from './view';
 
-export type View<T extends object = object> = {
+export type ViewModel = {
+  maxHealth: number;
+  health: number;
+  speed: number;
+  collisionDamage: number;
+};
+
+export type View<T extends ViewModel = ViewModel> = {
   id: string;
-  model: T | object;
+  model: T;
   layer: CollisionLayer;
   scale: number;
-  force: Position;
   fill: {
     color: string;
     opacity: number;
@@ -20,27 +25,7 @@ export type View<T extends object = object> = {
     opacity: number;
     width: number;
   };
-  /**
-   * Position to start drawing from
-   */
-  anchor?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center';
-  /**
-   * Relative to the anchor position
-   */
-  /**
-   * Position relative to screen corners or center (ignores anchor when used)
-   */
-  relativeTo?:
-    | 'top-right'
-    | 'top-left'
-    | 'bottom-right'
-    | 'bottom-left'
-    | 'center';
   geometry: Geometry;
-  /**
-   * Indicates if the shapeProps dimensions have been calculated from rendering
-   */
-  dimensionsCalculated?: boolean;
   textProps: {
     text: string | number;
     fontSize: number;
@@ -48,12 +33,11 @@ export type View<T extends object = object> = {
     fontWeight: string;
     fontStyle: string;
   };
-  /**
-   * Physics properties for entity movement and forces
-   */
   physics: {
-    dampening: number; // Air resistance factor (0-1, where 1 = no dampening, 0 = full stop)
-    bounce: number; // Bounce factor (0-1, where 1 = full bounce, 0 = no bounce)
+    speed: number;
+    force: Position;
+    dampening: number;
+    bounce: number;
   };
 };
 
@@ -62,7 +46,6 @@ export type Geometry = {
   y: number;
   width: number;
   height: number;
-  radius: number;
 };
 
 export type InteractiveView = AnimatedView & {

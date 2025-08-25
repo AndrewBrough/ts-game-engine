@@ -4,20 +4,13 @@ import { createAnimatedView } from '../view/animatedView';
 export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
-    geometry: {
-      x: 1,
-      y: 1,
-    },
-    anchor: 'top-left',
+    layer: 'UI',
     textProps: {
       text: 'FPS: 0',
       fontSize: 2,
       fontFamily: 'Arial',
       fontWeight: 'bold',
       fontStyle: 'normal',
-    },
-    fill: {
-      color: 'white',
     },
   });
 

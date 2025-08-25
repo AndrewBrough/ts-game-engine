@@ -8,16 +8,8 @@ export type CollisionHandler = ReturnType<typeof createCollisionHandler>;
 
 export const createCollisionHandler = (
   view: InteractiveViewInstance,
-  physics: PhysicsInstance,
-  initialModel: EntityModel
+  physics: PhysicsInstance
 ) => {
-  const collisionVector = createAnimatedView({
-    fill: {
-      color: 'cyan',
-      opacity: 1,
-    },
-  });
-
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
@@ -37,8 +29,7 @@ export const createCollisionHandler = (
 
       (view.model as EntityModel).health = newHealth;
 
-      const percentHealth =
-        (view.model as EntityModel).health / initialModel.health;
+      const percentHealth = view.model.health / view.model.maxHealth;
       const opacity = Math.max(0, percentHealth);
 
       view.updateFillColor({

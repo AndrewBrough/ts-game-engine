@@ -5,7 +5,7 @@ import {
 } from '../gameState/collisionManager';
 import { clearAllViews, getState } from '../gameState/gameState';
 import { createFpsView } from '../loop/fpsView';
-import { createDemoCubeView } from '../view/demoCubeView';
+import { createEnemyView } from '../view/demoCubeView';
 import { createPauseButton } from '../view/pauseButton';
 import { createPlayerView } from '../view/player/playerView';
 import type { View } from '../view/types';
@@ -27,10 +27,10 @@ export const createScene = (name: string = 'default') => {
 
   // createWorldBoundsView();
   createPlayerView();
-  createDemoCubeView();
+  createEnemyView();
 
-  createFpsView();
-  createPauseButton();
+  // createFpsView();
+  // createPauseButton();
 
   const destroy = () => {
     events.cleanup();

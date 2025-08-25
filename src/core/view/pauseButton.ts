@@ -6,28 +6,15 @@ import {
 import type { DeepPartial } from '../types';
 import type { InteractiveView } from './types';
 import { createInteractiveView } from './interactiveView';
-import { config } from '../config';
+import { defaultViewConfig } from '../config';
 
-export const createPauseButton = (
-  props: DeepPartial<InteractiveView> = {},
-  logicOrAnimation: 'logic' | 'animation' | 'both' = 'both'
-) => {
-  const defaultProps: DeepPartial<InteractiveView> = {
-    id: `pause-button-${logicOrAnimation}-${props.relativeTo}`,
-    relativeTo: 'top-right',
+export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
+  const viewInstance = createInteractiveView({
+    ...defaultViewConfig,
     layer: 'UI',
-    fill: {
-      color: 'white',
-    },
     handlers: {
       onClick: () => {
         handlePause();
-      },
-      onHover: () => {
-        scale(1.1);
-      },
-      onHoverOut: () => {
-        scale(1);
       },
       onKeyDown: event => {
         const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
@@ -36,18 +23,15 @@ export const createPauseButton = (
         }
       },
     },
-  };
-
-  const scale = (scale: number) => {
-    viewInstance.updateScale(scale);
-  };
-
-  const mergedProps = {
-    ...config,
-    ...defaultProps,
     ...props,
-  } as InteractiveView;
-  const viewInstance = createInteractiveView(mergedProps);
+  });
+
+  viewInstance.events.addEvent('hover', () => {
+    viewInstance.updateScale(1.1);
+  });
+  viewInstance.events.addEvent('hoverOut', () => {
+    viewInstance.updateScale(1);
+  });
 
   const handlePause = () => {
     const { timeScale, isLogicPaused } = getState();

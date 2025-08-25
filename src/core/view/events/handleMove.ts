@@ -10,7 +10,8 @@ export const handleMove = (view: EntityViewInstance) => {
       x: 0,
       y: 0,
     };
-    const speed = (view.model as EntityModel).speed;
+
+    const speed = view.model.speed;
 
     if (isKeyHeld('a') || isKeyHeld('ArrowLeft')) {
       movement.x = -speed;

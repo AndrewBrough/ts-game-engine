@@ -3,7 +3,7 @@ import { bounceOffWalls } from './animations/bounceOffWalls';
 import { screenSaver } from './animations/screenSaver';
 import { createEntityView } from './player/entityView';
 
-export const createDemoCubeView = (id?: string) => {
+export const createEnemyView = (id?: string) => {
   // Generate random positions between 0-100
   const randomX = Math.random() * 100;
   const randomY = Math.random() * 100;
@@ -14,16 +14,9 @@ export const createDemoCubeView = (id?: string) => {
   const entityView = createEntityView({
     id: cubeId,
     model: { health: 10, speed: 1 },
-    physics: {
-      dampening: 0.9,
-      bounce: 2,
-    },
-    layer: 'DEFAULT',
     geometry: {
       x: randomX,
       y: randomY,
-      width: 10,
-      height: 10,
     },
     fill: {
       color: 'red',

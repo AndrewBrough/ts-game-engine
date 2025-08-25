@@ -1,18 +1,20 @@
 import type { View } from './view/types';
+import { Screen } from './units';
 
-export type Units = 'px' | 'vh' | 'vw';
+const minSize = Screen().w / 10;
 
-export type Config = Omit<View, 'id' | 'layer' | 'model' | 'anchor'>;
-
-export const config: Config = {
-  scale: 1,
-  force: { x: 0, y: 0 },
-  physics: {
-    dampening: 0.9,
-    bounce: 2,
+export const defaultViewConfig: View = {
+  id: crypto.randomUUID(),
+  model: {
+    maxHealth: 100,
+    health: 100,
+    speed: 20,
+    collisionDamage: 0,
   },
+  scale: 1,
+  layer: 'DEFAULT',
   fill: {
-    color: 'transparent',
+    color: 'white',
     opacity: 1,
   },
   stroke: {
@@ -20,18 +22,23 @@ export const config: Config = {
     width: 1,
     opacity: 1,
   },
-  geometry: {
-    x: 0,
-    y: 0,
-    radius: 0,
-    width: 0,
-    height: 0,
-  },
   textProps: {
     text: '',
-    fontSize: 3,
+    fontSize: 32,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
+  },
+  geometry: {
+    x: Screen().center.x,
+    y: Screen().center.y,
+    width: minSize,
+    height: minSize,
+  },
+  physics: {
+    speed: 20,
+    force: { x: 0, y: 0 },
+    dampening: 0.9,
+    bounce: 10,
   },
 };
