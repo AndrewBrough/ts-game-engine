@@ -15,8 +15,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     model: {
       maxHealth: 100,
       health: 100,
-      speed: 10,
-      collisionDamage: 1,
+      collisionDamage: 10,
       ...props.model,
     },
     geometry: {

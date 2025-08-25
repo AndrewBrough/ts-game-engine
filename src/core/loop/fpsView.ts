@@ -29,7 +29,6 @@ export const createFpsView = () => {
   animatedView.addAnimation(() => {
     const fps = getState().fps;
     animatedView.updateText(`FPS: ${fps}`);
-    console.log(animatedView.geometry);
   });
 
   return animatedView;

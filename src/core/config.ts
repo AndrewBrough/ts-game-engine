@@ -35,7 +35,7 @@ export const defaultViewConfig: View = {
     shape: undefined,
   },
   physics: {
-    speed: 20,
+    speed: 1,
     force: { x: 0, y: 0 },
     dampening: 0.9,
     bounce: 10,

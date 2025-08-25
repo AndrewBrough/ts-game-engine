@@ -13,7 +13,6 @@ export const createEnemyView = (id?: string) => {
 
   const entityView = createEntityView({
     id: cubeId,
-    model: { health: 10, speed: 1 },
     geometry: {
       x: randomX,
       y: randomY,

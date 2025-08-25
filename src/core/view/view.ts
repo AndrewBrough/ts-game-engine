@@ -86,8 +86,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const renderShape = (mode: 'fill' | 'stroke' | 'both' = 'both') => {
       const { x, y, width, height } = view.geometry;
 
-      console.log(view.id, view.geometry);
-
       if (view.geometry.shape === 'rect') {
         if (mode === 'fill' || mode === 'both') {
           ctx.fillRect(x, y, width, height);
@@ -111,6 +109,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
             y + view.textProps.fontSize
           );
         }
+        // update size prop based on rendered text size
+        // not used by this renderer, but is helpful for referencing from other views
+        const metrics = ctx.measureText(view.textProps.text.toString());
+        const actualWidth = metrics.width;
+        const actualHeight =
+          metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent;
+        updateSize(actualWidth, actualHeight);
       }
     };
 
