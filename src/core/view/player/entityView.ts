@@ -17,6 +17,10 @@ export const createEntityView = (props: DeepPartial<InteractiveView> = {}) => {
       collisionDamage: 1,
       ...props.model,
     },
+    geometry: {
+      shape: 'rect',
+      ...props.geometry,
+    },
   });
   // const healthView = createAnimatedView({
   //   id: `${view.props.id}-health`,

@@ -24,7 +24,7 @@ export const defaultViewConfig: View = {
   },
   textProps: {
     text: '',
-    fontSize: 32,
+    fontSize: 16,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',

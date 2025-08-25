@@ -29,7 +29,7 @@ export const createScene = (name: string = 'default') => {
   createPlayerView();
   createEnemyView();
 
-  // createFpsView();
+  createFpsView();
   // createPauseButton();
 
   const destroy = () => {

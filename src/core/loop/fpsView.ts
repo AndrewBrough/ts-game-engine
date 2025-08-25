@@ -7,10 +7,10 @@ export const createFpsView = () => {
     layer: 'UI',
     textProps: {
       text: 'FPS: 0',
-      fontSize: 2,
-      fontFamily: 'Arial',
-      fontWeight: 'bold',
-      fontStyle: 'normal',
+    },
+    geometry: {
+      x: 0,
+      y: 0,
     },
   });
 

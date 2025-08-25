@@ -46,6 +46,7 @@ export type Geometry = {
   y: number;
   width: number;
   height: number;
+  shape?: 'rect' | 'circle' | 'text';
 };
 
 export type InteractiveView = AnimatedView & {

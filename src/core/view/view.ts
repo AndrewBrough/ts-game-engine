@@ -176,10 +176,28 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const { x, y, width, height } = view.geometry;
 
     // const renderShape = () => {
-    ctx.globalAlpha = view.fill.opacity;
-    ctx.fillRect(x, y, width, height);
-    ctx.globalAlpha = view.stroke.opacity;
-    ctx.strokeRect(x, y, width, height);
+
+    if (view.geometry.shape === 'rect') {
+      ctx.globalAlpha = view.fill.opacity;
+      ctx.fillRect(x, y, width, height);
+      ctx.globalAlpha = view.stroke.opacity;
+      ctx.strokeRect(x, y, width, height);
+    }
+
+    if (view.textProps.text) {
+      ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${view.textProps.fontSize}px ${view.textProps.fontFamily}`;
+      ctx.fillStyle = view.fill.color;
+      ctx.fillText(
+        view.textProps.text.toString(),
+        x,
+        y + view.textProps.fontSize
+      );
+      ctx.strokeText(
+        view.textProps.text.toString(),
+        x,
+        y + view.textProps.fontSize
+      );
+    }
 
     // // case 'circle':
     // //   ctx.globalAlpha = mutableProps.fill.opacity;
