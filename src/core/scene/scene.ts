@@ -26,8 +26,8 @@ export const createScene = (name: string = 'default') => {
   const collisions = collisionManager();
 
   // createWorldBoundsView();
-  createPlayerView();
-  createEnemyView();
+  // createPlayerView();
+  // createEnemyView();
 
   createFpsView();
   // createPauseButton();

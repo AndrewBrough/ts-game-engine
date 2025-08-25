@@ -60,6 +60,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
   const updateSize = (width: number, height: number) => {
     view.geometry.width = width;
     view.geometry.height = height;
+    console.log('updateSize', width, height);
   };
 
   // Function to update scale
@@ -83,52 +84,36 @@ export const createView = (props: DeepPartial<View> = {}) => {
       throw new Error('Context not found');
     }
 
-    const renderShape = (mode: 'fill' | 'stroke' | 'both' = 'both') => {
-      const { x, y, width, height } = view.geometry;
+    ctx.fillStyle = view.fill.color;
+    ctx.strokeStyle = view.stroke.color;
+    ctx.lineWidth = view.stroke.width;
+    ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${view.textProps.fontSize}px ${view.textProps.fontFamily}`;
 
-      if (view.geometry.shape === 'rect') {
-        if (mode === 'fill' || mode === 'both') {
-          ctx.fillRect(x, y, width, height);
-        }
-        if (mode === 'stroke' || mode === 'both') {
-          ctx.strokeRect(x, y, width, height);
-        }
-      }
-      if (view.geometry.shape === 'text' || view.textProps.text) {
-        if (mode === 'fill' || mode === 'both') {
-          ctx.fillText(
-            view.textProps.text.toString(),
-            x,
-            y + view.textProps.fontSize
-          );
-        }
-        if (mode === 'stroke' || mode === 'both') {
-          ctx.strokeText(
-            view.textProps.text.toString(),
-            x,
-            y + view.textProps.fontSize
-          );
-        }
-        // update size prop based on rendered text size
-        // not used by this renderer, but is helpful for referencing from other views
-        const metrics = ctx.measureText(view.textProps.text.toString());
-        const actualWidth = metrics.width;
-        const actualHeight =
-          metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent;
-        updateSize(actualWidth, actualHeight);
-      }
-    };
+    const { x, y, width, height } = view.geometry;
 
-    if (view.fill.color !== 'transparent' && view.fill.opacity !== 0) {
-      ctx.fillStyle = view.fill.color;
+    if (view.geometry.shape === 'rect') {
       ctx.globalAlpha = view.fill.opacity;
-      renderShape('fill');
-    }
-    if (view.stroke.color !== 'transparent' && view.stroke.opacity !== 0) {
-      ctx.strokeStyle = view.stroke.color;
+      ctx.fillRect(x, y, width, height);
       ctx.globalAlpha = view.stroke.opacity;
-      ctx.lineWidth = view.stroke.width;
-      renderShape('stroke');
+      ctx.strokeRect(x, y, width, height);
+    }
+
+    if (view.geometry.shape === 'text' || view.textProps.text) {
+      ctx.globalAlpha = view.fill.opacity;
+      ctx.fillText(view.textProps.text.toString(), x, y + view.geometry.height);
+      ctx.globalAlpha = view.stroke.opacity;
+      ctx.strokeText(
+        view.textProps.text.toString(),
+        x,
+        y + view.geometry.height
+      );
+      // update size prop based on rendered text size
+      // not used by this renderer, but is helpful for referencing from other views
+      const metrics = ctx.measureText(view.textProps.text.toString());
+      const actualWidth = metrics.width;
+      const actualHeight =
+        metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
+      updateSize(actualWidth, actualHeight);
     }
 
     // // case 'circle':

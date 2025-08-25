@@ -22,7 +22,7 @@ export const createFpsView = () => {
     stroke: {
       color: 'transparent',
       opacity: 0,
-      width: 1,
+      width: 0,
     },
   });
 

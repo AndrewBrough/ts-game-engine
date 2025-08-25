@@ -6,19 +6,19 @@ export const defaultViewConfig: View = {
   model: {
     maxHealth: 100,
     health: 100,
-    speed: 20,
-    collisionDamage: 1,
+    speed: 1,
+    collisionDamage: 0,
   },
   scale: 1,
   layer: 'DEFAULT',
   fill: {
-    color: 'white',
+    color: 'black',
     opacity: 1,
   },
   stroke: {
-    color: 'transparent',
+    color: 'white',
     width: 1,
-    opacity: 0,
+    opacity: 1,
   },
   textProps: {
     text: '',
