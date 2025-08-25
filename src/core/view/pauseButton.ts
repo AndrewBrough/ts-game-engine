@@ -84,7 +84,9 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
   const updateText = () => {
     const { timeScale, isLogicPaused } = getState();
     const paused = timeScale === 0 || isLogicPaused;
-    viewInstance.updateText(paused ? '▶' : '⏸');
+    viewInstance.updateText({
+      text: paused ? '▶' : '⏸',
+    });
     // if (logicOrAnimation === 'both') {
     //   viewInstance.updateText(paused ? 'Resume' : 'Pause');
     // }

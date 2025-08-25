@@ -1,4 +1,5 @@
 import { getState } from '../gameState/gameState';
+import { Screen } from '../units';
 import { createAnimatedView } from '../view/animatedView';
 
 export const createFpsView = () => {
@@ -7,28 +8,21 @@ export const createFpsView = () => {
     layer: 'UI',
     text: {
       text: 'FPS: 0',
-    },
-    geometry: {
-      width: 0,
-      height: 0,
-      x: 0,
-      y: 0,
-      shape: 'text',
-    },
-    fill: {
-      color: 'white',
-      opacity: 1,
-    },
-    stroke: {
-      color: 'transparent',
-      opacity: 0,
-      width: 0,
+      fontSize: Screen.percent(4).w,
+      style: {
+        fill: {
+          color: 'white',
+          opacity: 1,
+        },
+      },
     },
   });
 
   animatedView.addAnimation(() => {
     const fps = getState().fps;
-    animatedView.updateText(`${fps}`);
+    animatedView.updateText({
+      text: `${fps}`,
+    });
   });
 
   return animatedView;
