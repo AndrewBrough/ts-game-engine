@@ -7,6 +7,10 @@ export const createFpsView = () => {
     id: 'fps-view',
     layer: 'UI',
     text: {
+      offset: {
+        x: 0,
+        y: Screen.percent(4).w,
+      },
       text: 'FPS: 0',
       fontSize: Screen.percent(4).w,
       style: {
