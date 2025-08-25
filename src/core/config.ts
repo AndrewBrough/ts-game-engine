@@ -12,6 +12,12 @@ export const defaultViewConfig: View = {
   scale: 1,
   layer: 'DEFAULT',
   text: {
+    // offset: {
+    //   x: 0,
+    //   y: 0,
+    // },
+    // height: undefined,
+    // width: undefined,
     text: '',
     fontSize: Screen.percent(5).w,
     fontWeight: 'normal',

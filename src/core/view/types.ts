@@ -19,6 +19,8 @@ export type View<T extends ViewModel = ViewModel> = {
   geometry: Geometry;
   text: {
     offset?: Position | 'center';
+    height?: number;
+    width?: number;
     text: string | number;
     fontSize: number;
     fontFamily: string;

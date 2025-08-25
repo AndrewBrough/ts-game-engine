@@ -49,6 +49,10 @@ export const createView = (props: DeepPartial<View> = {}) => {
     view.geometry.height = height;
   };
 
+  const updateTextOffset = (offset: Position) => {
+    view.text.offset = offset;
+  };
+
   // Function to update scale
   const updateScale = (scale: number) => {
     view.scale = scale;
@@ -105,8 +109,29 @@ export const createView = (props: DeepPartial<View> = {}) => {
       }
     };
 
+    const updateTextSize = () => {
+      if (!view.text.height || !view.text.width) {
+        // update size prop based on rendered text size
+        // not used by this renderer, but is helpful for referencing from other views
+        const metrics = ctx.measureText(view.text.text.toString());
+        const actualWidth = metrics.width;
+        const actualHeight =
+          metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
+        updateTextOffset({
+          x: actualWidth / 2,
+          y: actualHeight / 2,
+        });
+        return {
+          width: actualWidth,
+          height: actualHeight,
+        };
+      }
+    };
+
     const drawText = () => {
       if (view.text.text) {
+        const textSize = updateTextSize() || { width: 0, height: 0 };
+
         ctx.fillStyle = view.text.style.fill.color;
         ctx.strokeStyle = view.text.style.stroke.color;
         ctx.lineWidth = view.text.style.stroke.width * view.scale;
@@ -114,35 +139,40 @@ export const createView = (props: DeepPartial<View> = {}) => {
           view.text.fontSize * view.scale
         }px ${view.text.fontFamily}`;
 
-        const tPos = (() => {
+        const tPos = () => {
           if (view.text.offset === 'center') {
+            console.log(view.text.width, view.text.height);
+            const finalOffset = {
+              x: w / 4 + (view.text.width ?? 0),
+              y: h / 1.275 + (view.text.height ?? 0),
+            };
             return {
-              x: x + w / 4,
-              y: y - h / 4,
+              x: x + finalOffset.x,
+              y: y + finalOffset.y,
             };
           }
+          console.log(view.text.offset, x, y);
           return {
             x: x + (view.text.offset?.x ?? 0),
             y: y + (view.text.offset?.y ?? 0),
           };
-        })();
-        console.log(x, y, tPos);
+        };
+        const finalTextPos = tPos();
+        console.log(finalTextPos);
 
         ctx.globalAlpha = view.text.style.fill.opacity;
-        ctx.fillText(view.text.text.toString(), tPos.x, tPos.y + h);
+        ctx.fillText(
+          view.text.text.toString(),
+          x + w / 2 - textSize?.width / 2,
+          y + h / 1.275
+        );
 
         ctx.globalAlpha = view.text.style.stroke.opacity;
-        ctx.strokeText(view.text.text.toString(), tPos.x, tPos.y + h);
-
-        if (view.geometry.height === 0) {
-          // update size prop based on rendered text size
-          // not used by this renderer, but is helpful for referencing from other views
-          const metrics = ctx.measureText(view.text.text.toString());
-          const actualWidth = metrics.width;
-          const actualHeight =
-            metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
-          updateSize(actualWidth, actualHeight);
-        }
+        ctx.strokeText(
+          view.text.text.toString(),
+          x + w / 2 - textSize?.width / 2,
+          y + h / 1.275
+        );
       }
     };
 
