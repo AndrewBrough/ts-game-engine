@@ -2,7 +2,7 @@ import { getContext } from '../canvas/canvas';
 import { defaultViewConfig } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
-import type { View, AnyView, Position } from './types';
+import type { View, AnyView, Position, StyleProps } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import { Screen } from '../units';
@@ -34,26 +34,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
     view.geometry.y = Math.max(0, Math.min(maxY, y));
   };
 
-  // Function to update fill color
-  const updateFillColor = (fill: { color?: string; opacity?: number }) => {
-    view.fill.color = fill.color ?? view.fill.color;
-    view.fill.opacity = fill.opacity ?? view.fill.opacity;
-  };
-
   // Function to update stroke color
-  const updateStrokeColor = (stroke: {
-    color?: string;
-    opacity?: number;
-    width?: number;
-  }) => {
-    view.stroke.color = stroke.color ?? view.stroke.color;
-    view.stroke.opacity = stroke.opacity ?? view.stroke.opacity;
-    view.stroke.width = stroke.width ?? view.stroke.width;
+  const updateGeometryStyle = (props: DeepPartial<StyleProps>) => {
+    view.geometry.style = deepMerge(view.geometry.style, props);
   };
 
-  // Function to update stroke width
-  const updateStrokeWidth = (width: number) => {
-    view.stroke.width = width;
+  const updateTextStyle = (props: DeepPartial<StyleProps>) => {
+    view.text.style = deepMerge(view.text.style, props);
   };
 
   // Function to update shape size
@@ -69,12 +56,12 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
   // Function to update text
   const updateText = (text: string | number) => {
-    view.textProps.text = text;
+    view.text.text = text;
   };
 
   // Function to update font size
   const updateFontSize = (fontSize: number) => {
-    view.textProps.fontSize = fontSize;
+    view.text.fontSize = fontSize;
   };
 
   const draw = () => {
@@ -83,37 +70,84 @@ export const createView = (props: DeepPartial<View> = {}) => {
       throw new Error('Context not found');
     }
 
-    ctx.fillStyle = view.fill.color;
-    ctx.strokeStyle = view.stroke.color;
-    ctx.lineWidth = view.stroke.width * view.scale;
-    ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${
-      view.textProps.fontSize * view.scale
-    }px ${view.textProps.fontFamily}`;
-
-    const { x, y, width, height } = view.geometry;
+    const { x: unscaledX, y: unscaledY, width, height } = view.geometry;
     const w = width * view.scale;
     const h = height * view.scale;
+    const scaledDiff = {
+      w: w - width,
+      h: h - height,
+    };
+    const x = unscaledX - scaledDiff.w;
+    const y = unscaledY - scaledDiff.h;
 
-    if (view.geometry.shape === 'rect') {
-      ctx.globalAlpha = view.fill.opacity;
-      ctx.fillRect(x, y, w, h);
-      ctx.globalAlpha = view.stroke.opacity;
-      ctx.strokeRect(x, y, w, h);
-    }
+    const drawGeometry = () => {
+      ctx.fillStyle = view.geometry.style.fill.color;
+      ctx.strokeStyle = view.geometry.style.stroke.color;
+      ctx.lineWidth = view.geometry.style.stroke.width * view.scale;
 
-    if (view.geometry.shape === 'text' || view.textProps.text) {
-      ctx.globalAlpha = view.fill.opacity;
-      ctx.fillText(view.textProps.text.toString(), x, y + h);
-      ctx.globalAlpha = view.stroke.opacity;
-      ctx.strokeText(view.textProps.text.toString(), x, y + h);
-      // update size prop based on rendered text size
-      // not used by this renderer, but is helpful for referencing from other views
-      const metrics = ctx.measureText(view.textProps.text.toString());
-      const actualWidth = metrics.width;
-      const actualHeight =
-        metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
-      updateSize(actualWidth, actualHeight);
-    }
+      if (view.geometry.shape === 'rect') {
+        ctx.globalAlpha = view.geometry.style.fill.opacity;
+        ctx.fillRect(x, y, w, h);
+
+        ctx.globalAlpha = view.geometry.style.stroke.opacity;
+        ctx.strokeRect(x, y, w, h);
+      }
+
+      if (view.geometry.shape === 'roundRect') {
+        ctx.globalAlpha = view.geometry.style.fill.opacity;
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, view.geometry.style.radii);
+        ctx.fill();
+
+        ctx.globalAlpha = view.geometry.style.stroke.opacity;
+        ctx.stroke();
+        ctx.closePath();
+      }
+    };
+
+    const drawText = () => {
+      if (view.text.text) {
+        ctx.fillStyle = view.text.style.fill.color;
+        ctx.strokeStyle = view.text.style.stroke.color;
+        ctx.lineWidth = view.text.style.stroke.width * view.scale;
+        ctx.font = `${view.text.fontWeight} ${view.text.fontStyle} ${
+          view.text.fontSize * view.scale
+        }px ${view.text.fontFamily}`;
+
+        const tPos = (() => {
+          if (view.text.offset === 'center') {
+            return {
+              x: x + w / 4,
+              y: y - h / 4,
+            };
+          }
+          return {
+            x: x + (view.text.offset?.x ?? 0),
+            y: y + (view.text.offset?.y ?? 0),
+          };
+        })();
+        console.log(x, y, tPos);
+
+        ctx.globalAlpha = view.text.style.fill.opacity;
+        ctx.fillText(view.text.text.toString(), tPos.x, tPos.y + h);
+
+        ctx.globalAlpha = view.text.style.stroke.opacity;
+        ctx.strokeText(view.text.text.toString(), tPos.x, tPos.y + h);
+
+        if (view.geometry.height === 0) {
+          // update size prop based on rendered text size
+          // not used by this renderer, but is helpful for referencing from other views
+          const metrics = ctx.measureText(view.text.text.toString());
+          const actualWidth = metrics.width;
+          const actualHeight =
+            metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
+          updateSize(actualWidth, actualHeight);
+        }
+      }
+    };
+
+    drawGeometry();
+    drawText();
 
     // // case 'circle':
     // //   ctx.globalAlpha = mutableProps.fill.opacity;
@@ -176,9 +210,8 @@ export const createView = (props: DeepPartial<View> = {}) => {
     destroy,
     events,
     updatePosition,
-    updateFillColor,
-    updateStrokeColor,
-    updateStrokeWidth,
+    updateGeometryStyle,
+    updateTextStyle,
     updateSize,
     updateScale,
     updateText,

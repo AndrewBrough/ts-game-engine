@@ -16,22 +16,15 @@ export type View<T extends ViewModel = ViewModel> = {
   model: T;
   layer: CollisionLayer;
   scale: number;
-  fill: {
-    color: string;
-    opacity: number;
-  };
-  stroke: {
-    color: string;
-    opacity: number;
-    width: number;
-  };
   geometry: Geometry;
-  textProps: {
+  text: {
+    offset?: Position | 'center';
     text: string | number;
     fontSize: number;
     fontFamily: string;
     fontWeight: string;
     fontStyle: string;
+    style: StyleProps;
   };
   physics: {
     speed: number;
@@ -41,12 +34,26 @@ export type View<T extends ViewModel = ViewModel> = {
   };
 };
 
+export type StyleProps = {
+  fill: {
+    color: string;
+    opacity: number;
+  };
+  stroke: {
+    color: string;
+    opacity: number;
+    width: number;
+  };
+  radii?: number;
+};
+
 export type Geometry = {
   x: number;
   y: number;
   width: number;
   height: number;
-  shape?: 'rect' | 'circle' | 'text';
+  shape?: 'rect' | 'roundRect';
+  style: StyleProps;
 };
 
 export type InteractiveView = AnimatedView & {

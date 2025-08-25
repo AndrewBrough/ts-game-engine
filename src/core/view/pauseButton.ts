@@ -6,20 +6,55 @@ import {
 import type { DeepPartial } from '../types';
 import type { InteractiveView } from './types';
 import { createInteractiveView } from './interactiveView';
+import { Screen } from '../units';
 
 export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
   const viewInstance = createInteractiveView({
     ...props,
     layer: 'UI',
+    text: {
+      offset: 'center',
+      text: '⏸',
+      fontSize: Screen.percent(4).w,
+      style: {
+        fill: {
+          color: 'black',
+          opacity: 1,
+        },
+      },
+    },
+    geometry: {
+      shape: 'roundRect',
+      width: Screen.percent(5).w,
+      height: Screen.percent(5).h,
+      x: Screen.w - Screen.percent(6).w,
+      y: Screen.percent(1).w,
+      style: {
+        fill: {
+          color: 'white',
+          opacity: 0.3,
+        },
+      },
+    },
     handlers: {
       onClick: () => {
         handlePause();
       },
       onHover: () => {
-        viewInstance.updateScale(1.1);
+        viewInstance.updateScale(1.05);
+        viewInstance.updateGeometryStyle({
+          fill: {
+            opacity: 1,
+          },
+        });
       },
       onHoverOut: () => {
         viewInstance.updateScale(1);
+        viewInstance.updateGeometryStyle({
+          fill: {
+            opacity: 0.3,
+          },
+        });
       },
       onKeyDown: event => {
         const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];

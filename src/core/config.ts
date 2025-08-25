@@ -11,21 +11,23 @@ export const defaultViewConfig: View = {
   },
   scale: 1,
   layer: 'DEFAULT',
-  fill: {
-    color: 'black',
-    opacity: 1,
-  },
-  stroke: {
-    color: 'white',
-    width: 1,
-    opacity: 1,
-  },
-  textProps: {
+  text: {
     text: '',
     fontSize: Screen.percent(5).w,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
+    style: {
+      fill: {
+        color: 'white',
+        opacity: 1,
+      },
+      stroke: {
+        color: 'white',
+        width: 1,
+        opacity: 0,
+      },
+    },
   },
   geometry: {
     x: 0,
@@ -33,6 +35,18 @@ export const defaultViewConfig: View = {
     width: 0,
     height: 0,
     shape: undefined,
+    style: {
+      fill: {
+        color: 'black',
+        opacity: 1,
+      },
+      stroke: {
+        color: 'white',
+        width: 1,
+        opacity: 1,
+      },
+      radii: 5,
+    },
   },
   physics: {
     speed: 1,

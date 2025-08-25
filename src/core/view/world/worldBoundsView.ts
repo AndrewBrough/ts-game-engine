@@ -21,7 +21,7 @@ const baseProps = {
     color: 'black',
     opacity: 1,
   },
-  textProps: {
+  text: {
     text: '',
   },
 } as DeepPartial<EntityView>;

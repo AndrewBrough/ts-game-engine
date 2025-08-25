@@ -5,7 +5,7 @@ export const createFpsView = () => {
   const animatedView = createAnimatedView({
     id: 'fps-view',
     layer: 'UI',
-    textProps: {
+    text: {
       text: 'FPS: 0',
     },
     geometry: {
