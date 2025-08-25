@@ -30,7 +30,7 @@ export const createScene = (name: string = 'default') => {
   // createEnemyView();
 
   createFpsView();
-  // createPauseButton();
+  createPauseButton();
 
   const destroy = () => {
     events.cleanup();

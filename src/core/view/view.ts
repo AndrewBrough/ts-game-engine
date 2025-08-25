@@ -85,27 +85,27 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
     ctx.fillStyle = view.fill.color;
     ctx.strokeStyle = view.stroke.color;
-    ctx.lineWidth = view.stroke.width;
-    ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${view.textProps.fontSize}px ${view.textProps.fontFamily}`;
+    ctx.lineWidth = view.stroke.width * view.scale;
+    ctx.font = `${view.textProps.fontWeight} ${view.textProps.fontStyle} ${
+      view.textProps.fontSize * view.scale
+    }px ${view.textProps.fontFamily}`;
 
     const { x, y, width, height } = view.geometry;
+    const w = width * view.scale;
+    const h = height * view.scale;
 
     if (view.geometry.shape === 'rect') {
       ctx.globalAlpha = view.fill.opacity;
-      ctx.fillRect(x, y, width, height);
+      ctx.fillRect(x, y, w, h);
       ctx.globalAlpha = view.stroke.opacity;
-      ctx.strokeRect(x, y, width, height);
+      ctx.strokeRect(x, y, w, h);
     }
 
     if (view.geometry.shape === 'text' || view.textProps.text) {
       ctx.globalAlpha = view.fill.opacity;
-      ctx.fillText(view.textProps.text.toString(), x, y + view.geometry.height);
+      ctx.fillText(view.textProps.text.toString(), x, y + h);
       ctx.globalAlpha = view.stroke.opacity;
-      ctx.strokeText(
-        view.textProps.text.toString(),
-        x,
-        y + view.geometry.height
-      );
+      ctx.strokeText(view.textProps.text.toString(), x, y + h);
       // update size prop based on rendered text size
       // not used by this renderer, but is helpful for referencing from other views
       const metrics = ctx.measureText(view.textProps.text.toString());
