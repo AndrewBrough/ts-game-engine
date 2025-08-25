@@ -12,14 +12,18 @@ export const createPlayerView = () => {
     geometry: {
       x: Screen.center.x,
       y: Screen.center.y,
-    },
-    fill: {
-      color: 'blue',
-    },
-    stroke: {
-      color: 'blue',
-      opacity: 1,
-      width: 2,
+      width: Screen.percent(10).w,
+      height: Screen.percent(10).w,
+      style: {
+        fill: {
+          color: 'blue',
+        },
+        stroke: {
+          color: 'blue',
+          opacity: 1,
+          width: 2,
+        },
+      },
     },
   });
 

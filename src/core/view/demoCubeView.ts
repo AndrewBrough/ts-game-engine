@@ -1,30 +1,51 @@
+import { Screen } from '../units';
 import { alwaysMoveForward } from './animations/alwaysMoveForward';
 import { bounceOffWalls } from './animations/bounceOffWalls';
 import { screenSaver } from './animations/screenSaver';
 import { createEntityView } from './player/entityView';
 
 export const createEnemyView = (id?: string) => {
-  // Generate random positions between 0-100
-  const randomX = Math.random() * 100;
-  const randomY = Math.random() * 100;
-
   // Use provided id or generate a unique one
   const cubeId = id || `demoCube-${crypto.randomUUID()}`;
 
   const entityView = createEntityView({
     id: cubeId,
     geometry: {
-      x: randomX,
-      y: randomY,
+      shape: 'rect',
+      width: Screen.percent(10).w,
+      height: Screen.percent(10).w,
+      style: {
+        fill: {
+          color: 'red',
+        },
+        stroke: {
+          color: 'red',
+          opacity: 1,
+          width: 2,
+        },
+      },
     },
-    fill: {
-      color: 'red',
+    text: {
+      text: 'Enemy',
+      fontSize: Screen.percent(3).w,
+      offset: 'center',
+      style: {
+        fill: {
+          color: 'black',
+          opacity: 1,
+        },
+        stroke: {
+          color: 'white',
+          opacity: 1,
+          width: 1,
+        },
+      },
     },
-    stroke: {
-      color: 'red',
-      opacity: 1,
-      width: 2,
-    },
+  });
+
+  entityView.updatePosition({
+    x: Math.random() * Screen.w,
+    y: Math.random() * Screen.h,
   });
 
   // screenSaver(entityView);

@@ -27,7 +27,7 @@ export const createScene = (name: string = 'default') => {
 
   // createWorldBoundsView();
   createPlayerView();
-  // createEnemyView();
+  createEnemyView();
 
   createFpsView();
   createPauseButton();

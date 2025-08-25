@@ -125,14 +125,12 @@ export const createView = (props: DeepPartial<View> = {}) => {
         const actualHeight =
           metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
         if (!view.text.height || !view.text.width) {
-          console.log('center');
           updateText({
             width: actualWidth,
             height: actualHeight,
           });
         }
         if (view.text.offset === 'center') {
-          console.log('not center');
           updateTextOffset({
             x: -actualWidth / 2,
             y: actualHeight / 2,
@@ -152,7 +150,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
     const drawText = () => {
       if (view.text.text) {
-        console.log(view.text.text);
         const textSize = updateTextSize() || { width: 0, height: 0 };
 
         ctx.fillStyle = view.text.style.fill.color;
@@ -180,7 +177,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
           };
         };
         const finalTextPos = tPos();
-        console.log(finalTextPos);
 
         ctx.globalAlpha = view.text.style.fill.opacity;
         ctx.fillText(view.text.text.toString(), finalTextPos.x, finalTextPos.y);

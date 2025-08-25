@@ -24,9 +24,24 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
       height: Screen.percent(20).w,
       ...props.geometry,
     },
+    text: {
+      fontSize: Screen.percent(3).w,
+      offset: 'center',
+      style: {
+        fill: {
+          color: 'black',
+          opacity: 1,
+        },
+        stroke: {
+          color: 'white',
+          opacity: 1,
+          width: 1,
+        },
+      },
+    },
   });
 
-  const healthView = createHealthView(view);
+  // const healthView = createHealthView(view);
   const physics = createPhysics(view.physics);
   const collisionHandler = createCollisionHandler(view, physics);
 
@@ -52,12 +67,14 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   };
 
   const updateHealth = () => {
-    healthView.updateText(view.model.health);
-    healthView.updatePosition({
-      x: view.geometry.x,
-      y: view.geometry.y,
+    view.updateText({
+      text: view.model.health,
     });
-    healthView.update();
+    // view.updatePosition({
+    //   x: view.geometry.x,
+    //   y: view.geometry.y,
+    // });
+    // healthView.update();
   };
 
   collisionHandler.attachCollisionHandler();
