@@ -32,6 +32,14 @@ export const createPhysics = (props: View['physics']) => {
     if (Math.abs(currentForce.x) < 0.01) currentForce.x = 0;
     if (Math.abs(currentForce.y) < 0.01) currentForce.y = 0;
 
+    // TODO investigate if this is a fun mechanic, wobbly movement when high speed
+    // if (Math.abs(currentForce.x) > 20)
+    //   currentForce.x = Math.sin(currentForce.x) * 2;
+    // if (Math.abs(currentForce.y) > 20)
+    //   currentForce.y = Math.sin(currentForce.y) * 2;
+
+    // console.log(currentForce);
+
     return currentForce;
   };
 
