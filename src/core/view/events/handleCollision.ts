@@ -30,11 +30,12 @@ export const createCollisionHandler = (
       (view.model as EntityModel).health = newHealth;
 
       const percentHealth = view.model.health / view.model.maxHealth;
-      const opacity = Math.max(0, percentHealth);
+      const opacity = Math.max(0, percentHealth) ?? 0;
 
-      view.updateFillColor({
-        color: view.fill.color,
-        opacity,
+      view.updateGeometryStyle({
+        fill: {
+          opacity,
+        },
       });
 
       // const currentForce = physics.getCurrentForce();

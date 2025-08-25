@@ -5,7 +5,7 @@ import {
 } from '../gameState/collisionManager';
 import { clearAllViews, getState } from '../gameState/gameState';
 import { createFpsView } from '../loop/fpsView';
-import { createEnemyView } from '../view/demoCubeView';
+import { createEnemyView } from '../view/createEnemyView';
 import { createPauseButton } from '../view/pauseButton';
 import { createPlayerView } from '../view/player/playerView';
 import type { View } from '../view/types';

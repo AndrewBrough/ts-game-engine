@@ -10,7 +10,7 @@ import { Screen } from '../units';
 export type ViewInstance = ReturnType<typeof createView>;
 
 export const createView = (props: DeepPartial<View> = {}) => {
-  const view = deepMerge({ ...defaultViewConfig }, { ...props }) as View;
+  const view = deepMerge(defaultViewConfig, props) as View;
   const events = createEvents();
 
   // Helper function to update the view in state
@@ -67,6 +67,9 @@ export const createView = (props: DeepPartial<View> = {}) => {
     view.text = {
       ...view.text,
       ...props,
+      style: {
+        ...view.text.style,
+      },
     } as View['text'];
   };
 

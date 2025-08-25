@@ -1,4 +1,4 @@
-import { createEnemyView } from '../view/demoCubeView';
+import { createEnemyView } from '../view/createEnemyView';
 import { createScene, type SceneInstance } from './scene';
 
 export const breakTheGameScene = (): SceneInstance => {

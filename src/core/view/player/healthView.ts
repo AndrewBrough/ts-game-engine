@@ -21,7 +21,6 @@ export const createHealthView = (props: DeepPartial<InteractiveView>) => {
     },
     geometry: {
       ...props.geometry,
-      shape: 'text',
       x: 0,
       y: 0,
       width: 0,

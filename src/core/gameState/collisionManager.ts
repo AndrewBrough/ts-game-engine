@@ -55,10 +55,8 @@ export const collisionManager = () => {
           };
           const hasCol = hasCollision(collision.id);
           if (boundsOverlap && !hasCol) {
-            console.log('collision', collision);
             registerCollision(collision);
           } else if (hasCol) {
-            console.log('unregistering collision', collision);
             unregisterCollision(collision);
           }
         }

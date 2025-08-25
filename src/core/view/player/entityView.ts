@@ -1,10 +1,8 @@
 import { createPhysics } from '../../physics';
 import type { DeepPartial } from '../../types';
-import { createAnimatedView } from '../animatedView';
 import { createInteractiveView } from '../interactiveView';
 import { createCollisionHandler } from '../events/handleCollision';
-import type { EntityModel, InteractiveView } from '../types';
-import { createHealthView } from './healthView';
+import type { InteractiveView } from '../types';
 import { Screen } from '../../units';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;

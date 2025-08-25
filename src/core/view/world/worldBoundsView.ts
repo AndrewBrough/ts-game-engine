@@ -36,13 +36,15 @@ export const createWorldBoundsView = () => {
       y: 0,
       width: 100,
       height: WALL_THICKNESS,
+      style: {
+        fill: {
+          color: 'blue',
+        },
+      },
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    fill: {
-      color: 'blue',
     },
   });
 
@@ -55,13 +57,15 @@ export const createWorldBoundsView = () => {
       y: 85,
       width: 100,
       height: WALL_THICKNESS,
+      style: {
+        fill: {
+          color: 'blue',
+        },
+      },
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    fill: {
-      color: 'blue',
     },
   });
 
@@ -78,9 +82,11 @@ export const createWorldBoundsView = () => {
       y: 0,
       width: WALL_THICKNESS,
       height: 100,
-    },
-    fill: {
-      color: 'orange',
+      style: {
+        fill: {
+          color: 'orange',
+        },
+      },
     },
   });
 
@@ -93,13 +99,15 @@ export const createWorldBoundsView = () => {
       y: 0,
       width: WALL_THICKNESS,
       height: 100,
+      style: {
+        fill: {
+          color: 'green',
+        },
+      },
     },
     physics: {
       dampening: 0.9,
       bounce: 200,
-    },
-    fill: {
-      color: 'green',
     },
   });
 };
