@@ -6,7 +6,7 @@ export const Screen = {
     y: window.innerHeight / 2,
   },
   percent: (percent: number = 20) => ({
-    w: window.innerWidth / percent,
-    h: window.innerHeight / percent,
+    w: (percent / 100) * window.innerWidth,
+    h: (percent / 100) * window.innerHeight,
   }),
 };

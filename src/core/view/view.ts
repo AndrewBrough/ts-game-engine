@@ -60,7 +60,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
   const updateSize = (width: number, height: number) => {
     view.geometry.width = width;
     view.geometry.height = height;
-    console.log('updateSize', width, height);
   };
 
   // Function to update scale

@@ -28,7 +28,7 @@ export const createFpsView = () => {
 
   animatedView.addAnimation(() => {
     const fps = getState().fps;
-    animatedView.updateText(`FPS: ${fps}`);
+    animatedView.updateText(`${fps}`);
   });
 
   return animatedView;

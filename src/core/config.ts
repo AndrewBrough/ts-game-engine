@@ -22,7 +22,7 @@ export const defaultViewConfig: View = {
   },
   textProps: {
     text: '',
-    fontSize: Screen.percent(20).w,
+    fontSize: Screen.percent(5).w,
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
