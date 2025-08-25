@@ -25,9 +25,9 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
     },
     geometry: {
       shape: 'roundRect',
-      width: Screen.percent(10).w,
-      height: Screen.percent(5).h,
-      x: Screen.w - Screen.percent(11).w,
+      width: Screen.percent(6).w,
+      height: Screen.percent(4.5).h,
+      x: Screen.w - Screen.percent(7).w,
       y: Screen.percent(1).w,
       style: {
         fill: {

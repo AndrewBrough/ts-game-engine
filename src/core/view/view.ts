@@ -141,37 +141,30 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
         const tPos = () => {
           if (view.text.offset === 'center') {
-            console.log(view.text.width, view.text.height);
             const finalOffset = {
-              x: w / 4 + (view.text.width ?? 0),
-              y: h / 1.275 + (view.text.height ?? 0),
+              x: x + w / 2 - (textSize?.width ?? 0) / 2,
+              y: y + h / 1.275,
             };
             return {
               x: x + finalOffset.x,
               y: y + finalOffset.y,
             };
           }
-          console.log(view.text.offset, x, y);
           return {
-            x: x + (view.text.offset?.x ?? 0),
-            y: y + (view.text.offset?.y ?? 0),
+            x: x + w / 2 - (textSize?.width ?? 0) / 2,
+            y: y + h / 1.275,
           };
         };
         const finalTextPos = tPos();
-        console.log(finalTextPos);
 
         ctx.globalAlpha = view.text.style.fill.opacity;
-        ctx.fillText(
-          view.text.text.toString(),
-          x + w / 2 - textSize?.width / 2,
-          y + h / 1.275
-        );
+        ctx.fillText(view.text.text.toString(), finalTextPos.x, finalTextPos.y);
 
         ctx.globalAlpha = view.text.style.stroke.opacity;
         ctx.strokeText(
           view.text.text.toString(),
-          x + w / 2 - textSize?.width / 2,
-          y + h / 1.275
+          finalTextPos.x,
+          finalTextPos.y
         );
       }
     };
