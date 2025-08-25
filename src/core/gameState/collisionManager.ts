@@ -124,6 +124,7 @@ export const collisionManager = () => {
       // console.log(event);
       dispatchCollisionEvent(event, collision);
     }
+    // We apparently don't need this, both views are registered in the matrix and will perform their own collision event if they are supposed to based on the matric.
     // if (
     //   COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
     // ) {
