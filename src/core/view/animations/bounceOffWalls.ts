@@ -1,21 +1,42 @@
 import type { EntityViewInstance } from '../player/entityView';
+import { Screen } from '../../units';
 
 export const bounceOffWalls = (entityView: EntityViewInstance) => {
+  const yMax = Screen.h - entityView.geometry.height;
+  const xMax = Screen.w - entityView.geometry.width;
+
   entityView.events.addEvent('update', (e: CustomEvent) => {
     const deltaTime = e.detail.deltaTime;
     const currentForce = entityView.physics.getCurrentForce();
-    const nextPosition = {
-      x: entityView.geometry.x + currentForce.x * deltaTime,
-      y: entityView.geometry.y + currentForce.y * deltaTime,
+
+    const bounceForce = {
+      x: (currentForce.x / 5) * entityView.physics.bounce * deltaTime,
+      y: (currentForce.y / 5) * entityView.physics.bounce * deltaTime,
     };
-    if (nextPosition.x <= 0 || nextPosition.x >= 100) {
-      // console.log('bounce x', currentForce, nextPosition);
-      currentForce.x = -currentForce.x * 2;
+
+    console.log(entityView.geometry.x, entityView.geometry.y);
+
+    if (entityView.geometry.x <= 0) {
+      console.log('bounce x', currentForce, entityView.geometry);
+      bounceForce.x *= -1;
+      entityView.physics.setForce(bounceForce);
     }
-    if (nextPosition.y <= 0 || nextPosition.y >= 100) {
-      // console.log('bounce y', currentForce, nextPosition);
-      currentForce.y = -currentForce.y * 2;
+    if (entityView.geometry.x >= xMax) {
+      console.log('bounce x', currentForce, entityView.geometry);
+      bounceForce.x *= -1;
+      entityView.physics.setForce(bounceForce);
     }
-    entityView.physics.applyForce(currentForce);
+    if (entityView.geometry.y <= 0) {
+      console.log('bounce y', currentForce, entityView.geometry);
+      bounceForce.y *= -1;
+      entityView.physics.setForce(bounceForce);
+    }
+    if (entityView.geometry.y >= yMax) {
+      console.log('bounce y', currentForce, entityView.geometry);
+      bounceForce.y *= -1;
+      entityView.physics.setForce(bounceForce);
+    }
+
+    console.log(bounceForce);
   });
 };

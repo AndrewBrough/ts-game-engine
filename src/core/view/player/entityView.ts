@@ -4,6 +4,7 @@ import { createInteractiveView } from '../interactiveView';
 import { createCollisionHandler } from '../events/handleCollision';
 import type { InteractiveView } from '../types';
 import { Screen } from '../../units';
+import { bounceOffWalls } from '../animations/bounceOffWalls';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
@@ -68,11 +69,6 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     view.updateText({
       text: view.model.health,
     });
-    // view.updatePosition({
-    //   x: view.geometry.x,
-    //   y: view.geometry.y,
-    // });
-    // healthView.update();
   };
 
   collisionHandler.attachCollisionHandler();
@@ -82,6 +78,8 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     physics,
     collisionHandler,
   };
+
+  bounceOffWalls(entityView);
 
   return entityView;
 };

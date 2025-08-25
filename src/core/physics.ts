@@ -47,5 +47,6 @@ export const createPhysics = (props: View['physics']) => {
     update,
     getCurrentForce,
     reset,
+    ...props,
   };
 };

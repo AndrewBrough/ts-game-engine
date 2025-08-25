@@ -52,6 +52,6 @@ export const defaultViewConfig: View = {
     speed: 1,
     force: { x: 0, y: 0 },
     dampening: 0.9,
-    bounce: 10,
+    bounce: 1,
   },
 };
