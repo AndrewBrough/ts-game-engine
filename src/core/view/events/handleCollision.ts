@@ -12,10 +12,8 @@ export type CollisionHandlerInstance = {
 
 export const createCollisionHandler = (view: EntityViewInstance) => {
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
-    console.log('handleCollide', view.id, e.detail);
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
-    console.log(view1.id, view2.id);
     const isView1 = view1.id === view.id;
     const isView2 = view2.id === view.id;
     if (!isView1 && !isView2) {
@@ -33,10 +31,9 @@ export const createCollisionHandler = (view: EntityViewInstance) => {
     bounceForce.x = Math.abs(bounceForce.x);
     bounceForce.y = Math.abs(bounceForce.y);
 
-    console.log(collision.normal, 'normal', view.id);
     bounceForce.x *= -collision.normal.x;
     bounceForce.y *= -collision.normal.y;
-    // console.log(bounceForce);
+
     view.physics.setForce(bounceForce);
   };
 

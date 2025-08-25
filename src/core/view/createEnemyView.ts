@@ -12,8 +12,6 @@ export const createEnemyView = (id?: string) => {
     id: cubeId,
     geometry: {
       shape: 'rect',
-      width: Screen.percent(10).w,
-      height: Screen.percent(10).w,
       style: {
         fill: {
           color: 'red',
@@ -42,8 +40,6 @@ export const createEnemyView = (id?: string) => {
       },
     },
   });
-
-  console.log(entityView);
 
   entityView.updatePosition({
     x: Math.random() * Screen.w,

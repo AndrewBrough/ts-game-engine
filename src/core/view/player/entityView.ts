@@ -17,10 +17,15 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
       collisionDamage: 10,
       ...props.model,
     },
+    physics: {
+      bounce: 2,
+      dampening: 0.85,
+      ...props.physics,
+    },
     geometry: {
       shape: 'rect',
-      width: Screen.percent(20).w,
-      height: Screen.percent(20).w,
+      width: Screen.percent(10).w,
+      height: Screen.percent(10).w,
       ...props.geometry,
     },
     text: {
