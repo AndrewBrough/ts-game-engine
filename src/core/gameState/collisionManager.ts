@@ -35,14 +35,49 @@ export const collisionManager = () => {
         if (v.geometry && v.id !== view.id) {
           const boundsOverlap = getOverlap(view.geometry, v.geometry);
 
-          // Calculate collision normal (direction from v to view)
-          const dx = view.geometry.x - v.geometry.x;
-          const dy = view.geometry.y - v.geometry.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const normal = {
-            x: distance > 0 ? dx / distance : 0,
-            y: distance > 0 ? dy / distance : 0,
-          };
+          // Calculate collision normal based on which side is colliding
+          let normal = { x: 0, y: 0 };
+
+          if (boundsOverlap) {
+            // Determine which side of view is colliding with v
+            const viewLeft = view.geometry.x;
+            const viewRight = view.geometry.x + view.geometry.width;
+            const viewTop = view.geometry.y;
+            const viewBottom = view.geometry.y + view.geometry.height;
+
+            const vLeft = v.geometry.x;
+            const vRight = v.geometry.x + v.geometry.width;
+            const vTop = v.geometry.y;
+            const vBottom = v.geometry.y + v.geometry.height;
+
+            // Calculate overlap amounts on each side
+            const overlapLeft = Math.abs(viewRight - vLeft);
+            const overlapRight = Math.abs(vRight - viewLeft);
+            const overlapTop = Math.abs(viewBottom - vTop);
+            const overlapBottom = Math.abs(vBottom - viewTop);
+
+            // Find the smallest overlap to determine the collision side
+            const minOverlap = Math.min(
+              overlapLeft,
+              overlapRight,
+              overlapTop,
+              overlapBottom
+            );
+
+            if (minOverlap === overlapLeft) {
+              // Collision on left side of view (view is to the right of v)
+              normal = { x: 1, y: 0 };
+            } else if (minOverlap === overlapRight) {
+              // Collision on right side of view (view is to the left of v)
+              normal = { x: -1, y: 0 };
+            } else if (minOverlap === overlapTop) {
+              // Collision on top side of view (view is below v)
+              normal = { x: 0, y: 1 };
+            } else if (minOverlap === overlapBottom) {
+              // Collision on bottom side of view (view is above v)
+              normal = { x: 0, y: -1 };
+            }
+          }
 
           const collision = {
             id: `${view.id}-${v.id}`,
