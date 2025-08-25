@@ -10,6 +10,9 @@ export const createEnemyView = (id?: string) => {
 
   const entityView = createEntityView({
     id: cubeId,
+    model: {
+      speed: 20,
+    },
     geometry: {
       shape: 'rect',
       style: {
@@ -47,7 +50,7 @@ export const createEnemyView = (id?: string) => {
   });
 
   // screenSaver(entityView);
-  // alwaysMoveForward(entityView);
+  alwaysMoveForward(entityView);
   bounceOffWalls(entityView);
 
   return entityView;
