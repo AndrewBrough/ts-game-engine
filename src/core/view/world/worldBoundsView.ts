@@ -21,7 +21,7 @@ const baseProps: DeepPartial<View> = {
     style: {
       fill: {
         color: 'white',
-        opacity: 1,
+        opacity: 0,
       },
       stroke: {
         color: 'white',
@@ -34,7 +34,7 @@ const baseProps: DeepPartial<View> = {
   },
 };
 
-export const createWorldBoundsView = (debugColors: boolean = false) => {
+export const createWorldBoundsView = () => {
   const topWall = createEntityView({
     ...baseProps,
     id: 'top-wall',

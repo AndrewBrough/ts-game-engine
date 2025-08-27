@@ -37,17 +37,17 @@ export const ballView = () => {
 
   // view.addComponent('wallBounce', addWallBounce(view));
   view.addComponent('collisionBounce', addCollisionBounce(view));
-  // view.addComponent('collisionDamage', addCollisionDamage(view));
+  view.addComponent('collisionDamage', addCollisionDamage(view));
 
-  // const collisions = view.getComponent<CollisionComponent>('collisions');
+  const collisions = view.getComponent<CollisionComponent>('collisions');
 
-  // if (!collisions) {
-  //   throw new Error('Collisions component not found');
-  // }
+  if (!collisions) {
+    throw new Error('Collisions component not found');
+  }
 
-  // collisions.addCollisionEvent((e: CustomEvent) => {
-  //   view.model.speed = Math.min(view.model.health, 10);
-  // });
+  collisions.addCollisionEvent((e: CustomEvent) => {
+    view.model.speed = Math.min(view.model.health, 10);
+  });
 
   return view;
 };
