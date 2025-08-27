@@ -10,6 +10,7 @@ import type { View } from '../../core/view/types';
 const basePlayerProps: DeepPartial<View> = {
   model: {
     score: 0,
+    speed: 7,
   },
   geometry: {
     shape: 'rect',
@@ -65,6 +66,9 @@ export const pong = () => {
   );
 
   const ball = createEnemyView({
+    model: {
+      speed: 5,
+    },
     geometry: {
       x: Screen.center.x - (basePlayerProps.geometry?.width ?? 0) / 2,
       y: Screen.center.y - (basePlayerProps.geometry?.height ?? 0) / 2,
@@ -95,7 +99,6 @@ export const pong = () => {
   });
 
   ball.collisionHandler.addCollisionEvent((e: CustomEvent) => {
-    console.log('ball collided', e);
     const collision = e.detail.collision;
 
     if (collision.view2.id === 'player-1') {
