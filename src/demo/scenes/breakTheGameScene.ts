@@ -7,12 +7,13 @@ export const breakTheGameScene = (): SceneInstance => {
   const scene = createScene('breakTheGame');
 
   const player = createPlayerView({
+    model: {
+      speed: 25,
+    },
     physics: {
-      bounce: 1,
+      bounce: 0.5,
     },
     geometry: {
-      width: 10,
-      height: 10,
       style: {
         fill: {
           color: 'blue',
@@ -21,13 +22,27 @@ export const breakTheGameScene = (): SceneInstance => {
     },
   });
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 10; i++) {
     const randomPos = {
       x: Math.random() * Screen.w,
       y: Math.random() * Screen.h,
     };
-    const enemy = createEnemyView();
-    enemy.updatePosition(randomPos);
+    createEnemyView({
+      geometry: {
+        x: randomPos.x,
+        y: randomPos.y,
+        style: {
+          fill: {
+            color: 'white',
+            opacity: 0.2,
+          },
+          stroke: {
+            color: 'white',
+            opacity: 1,
+          },
+        },
+      },
+    });
   }
 
   return scene;

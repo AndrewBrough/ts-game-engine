@@ -9,24 +9,29 @@ export const createPlayerView = (
   controls?: ControlProps
 ) => {
   const view = createEntityView({
-    id: 'player',
-    layer: 'PLAYER',
+    ...props,
+    id: props?.id ?? 'player',
+    layer: props?.layer ?? 'PLAYER',
     model: {
-      speed: 15,
+      ...props?.model,
+      speed: props?.model?.speed ?? 15,
     },
     geometry: {
+      ...props?.geometry,
       style: {
+        ...props?.geometry?.style,
         fill: {
-          color: 'blue',
+          ...props?.geometry?.style?.fill,
+          color: props?.geometry?.style?.fill?.color ?? 'blue',
         },
         stroke: {
-          color: 'blue',
-          opacity: 1,
-          width: 2,
+          ...props?.geometry?.style?.stroke,
+          color: props?.geometry?.style?.stroke?.color ?? 'blue',
+          opacity: props?.geometry?.style?.stroke?.opacity ?? 1,
+          width: props?.geometry?.style?.stroke?.width ?? 2,
         },
       },
     },
-    ...props,
   });
 
   handleMove(view, controls);

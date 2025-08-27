@@ -24,7 +24,7 @@ export const bounceOffWalls = (entityView: EntityViewInstance) => {
     }
 
     if (bounceVector.x !== 0 || bounceVector.y !== 0) {
-      const bounceForce = getBounceForce(entityView, deltaTime);
+      const bounceForce = getBounceForce(entityView, deltaTime, 1);
       bounceForce.x *= bounceVector.x * 100;
       bounceForce.y *= bounceVector.y * 100;
 
@@ -35,12 +35,19 @@ export const bounceOffWalls = (entityView: EntityViewInstance) => {
 
 export const getBounceForce = (
   entityView: EntityViewInstance,
-  deltaTime: number = 16.66
+  deltaTime: number = 16.66,
+  minBounce: number = 0
 ) => {
   const currentForce = entityView.physics.getCurrentForce();
   const bounceForce = {
-    x: (currentForce.x / 5) * entityView.physics.bounce * deltaTime,
-    y: (currentForce.y / 5) * entityView.physics.bounce * deltaTime,
+    x:
+      (currentForce.x / 5) *
+      Math.max(entityView.physics.bounce, minBounce) *
+      deltaTime,
+    y:
+      (currentForce.y / 5) *
+      Math.max(entityView.physics.bounce, minBounce) *
+      deltaTime,
   };
 
   return bounceForce;

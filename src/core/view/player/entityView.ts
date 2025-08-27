@@ -15,22 +15,22 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   const view = createInteractiveView({
     ...props,
     model: {
-      speed: 10,
-      maxHealth: 100,
-      health: 100,
-      collisionDamage: 10,
       ...props.model,
+      speed: props.model?.speed ?? 10,
+      maxHealth: props.model?.maxHealth ?? 100,
+      health: props.model?.health ?? 100,
+      collisionDamage: props.model?.collisionDamage ?? 10,
     },
     physics: {
-      bounce: 2,
-      dampening: 0.85,
       ...props.physics,
+      bounce: props.physics?.bounce ?? 2,
+      dampening: props.physics?.dampening ?? 0.85,
     },
     geometry: {
-      shape: 'rect',
-      width: Math.min(Screen.percent(5).w, 50),
-      height: Math.min(Screen.percent(5).w, 50),
       ...props.geometry,
+      shape: props.geometry?.shape ?? 'rect',
+      width: props.geometry?.width ?? Math.min(Screen.percent(5).w, 50),
+      height: props.geometry?.height ?? Math.min(Screen.percent(5).w, 50),
     },
   });
 
