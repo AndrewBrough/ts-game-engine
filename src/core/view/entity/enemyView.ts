@@ -7,6 +7,7 @@ import {
 } from '../components/movement';
 import { createEntityView } from './entityView';
 import type { View } from '../types';
+import { deepMerge } from '../../utils/deepMerge';
 
 // Create enemy-specific defaults
 const enemyDefaults: DeepPartial<View> = {
@@ -29,10 +30,11 @@ const enemyDefaults: DeepPartial<View> = {
 };
 
 export const createEnemyView = (props?: DeepPartial<View>) => {
+  const mergedProps = deepMerge(enemyDefaults, props);
   const view = createEntityView({
-    ...enemyDefaults,
-    ...props,
+    ...mergedProps,
   });
+  console.log(view);
 
   addForwardMovement(view);
 

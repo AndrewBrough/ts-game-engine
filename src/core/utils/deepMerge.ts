@@ -6,28 +6,30 @@
  */
 export function deepMerge<T extends Record<string, any>>(
   target: T,
-  source: any
+  ...sources: any[]
 ): T {
   const result = { ...target };
 
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const sourceValue = source[key];
-      const targetValue = (target as any)[key];
+  for (const source of sources) {
+    for (const key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        const sourceValue = source[key];
+        const targetValue = (target as any)[key];
 
-      if (
-        sourceValue &&
-        typeof sourceValue === 'object' &&
-        !Array.isArray(sourceValue) &&
-        targetValue &&
-        typeof targetValue === 'object' &&
-        !Array.isArray(targetValue)
-      ) {
-        // Recursively merge nested objects
-        (result as any)[key] = deepMerge(targetValue, sourceValue);
-      } else {
-        // For non-objects or arrays, use the source value
-        (result as any)[key] = sourceValue;
+        if (
+          sourceValue &&
+          typeof sourceValue === 'object' &&
+          !Array.isArray(sourceValue) &&
+          targetValue &&
+          typeof targetValue === 'object' &&
+          !Array.isArray(targetValue)
+        ) {
+          // Recursively merge nested objects
+          (result as any)[key] = deepMerge(targetValue, sourceValue);
+        } else {
+          // For non-objects or arrays, use the source value
+          (result as any)[key] = sourceValue;
+        }
       }
     }
   }

@@ -27,6 +27,7 @@ export const addComponents = () => {
 
   const addComponent = (name: string, component: Component) => {
     components[name] = component;
+    return component;
   };
 
   const getComponent = <T extends Component>(name: string): T | undefined => {

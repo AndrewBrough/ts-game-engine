@@ -22,12 +22,15 @@ export const breakTheGameScene = (): SceneInstance => {
     },
   });
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 2; i++) {
     const randomPos = {
       x: Math.random() * Screen.w,
       y: Math.random() * Screen.h,
     };
     createEnemyView({
+      model: {
+        speed: 5,
+      },
       geometry: {
         x: randomPos.x,
         y: randomPos.y,

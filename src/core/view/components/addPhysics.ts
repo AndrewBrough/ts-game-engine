@@ -28,6 +28,7 @@ export const addPhysics = (view: ViewInstance) => {
 
   return {
     ...physics,
+    id: crypto.randomUUID(),
     updatePhysics,
   };
 };

@@ -35,13 +35,9 @@ export const createEntityView = (props: DeepPartial<View>) => {
 
   view.addComponent('animations', addAnimations(view));
   view.addComponent('physics', addPhysics(view));
-  const collisions = addCollisions(view);
-  view.addComponent('collisions', collisions);
+  view.addComponent('collisions', addCollisions(view));
   view.addComponent('wallBounce', addWallBounce(view));
-  view.addComponent(
-    'collisionBounce',
-    addCollisionBounce(view, collisions.collisionHandlerEvent)
-  );
+  view.addComponent('collisionBounce', addCollisionBounce(view));
   view.addComponent('collisionDamage', addCollisionDamage(view));
 
   return view;

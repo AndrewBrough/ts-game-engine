@@ -1,11 +1,13 @@
-import type { Collision } from '../../../gameState/collisionManager';
-import type { EntityViewInstance } from '../../entity/entityView';
+import { getCollisionEventId } from '../../collision';
 import type { ViewInstance } from '../../view';
 import type { PhysicsComponent } from '../addPhysics';
 import { getBounceForce } from './addWallBounce';
 
-export const addCollisionBounce = (view: ViewInstance, event: string) => {
+export const addCollisionBounce = (view: ViewInstance) => {
+  const event = getCollisionEventId(view);
+
   view.events.addEvent(event, e => {
+    console.log(view);
     const collision = e.detail.collision;
     const bounceForce = getBounceForce(view, collision.deltaTime);
     bounceForce.x = Math.abs(bounceForce.x) * 100;

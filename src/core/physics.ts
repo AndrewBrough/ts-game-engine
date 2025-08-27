@@ -57,11 +57,11 @@ export const createPhysics = (view: View['physics']) => {
   };
 
   return {
+    id: crypto.randomUUID(),
     applyForce,
     setForce,
     update,
     getCurrentForce,
     reset,
-    ...view,
   };
 };
