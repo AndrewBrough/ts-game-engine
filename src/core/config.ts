@@ -17,6 +17,7 @@ export const defaultViewConfig: View = {
     fontWeight: 'normal',
     fontStyle: 'normal',
     fontFamily: 'Arial',
+    offset: 'center',
     style: {
       fill: {
         color: 'white',

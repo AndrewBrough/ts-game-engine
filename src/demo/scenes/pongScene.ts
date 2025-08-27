@@ -20,12 +20,10 @@ const basePlayerProps: DeepPartial<View> = {
     style: {
       fill: {
         color: 'white',
-        opacity: 1,
+        opacity: 0.7,
       },
       stroke: {
         color: 'white',
-        opacity: 1,
-        width: 1,
       },
     },
   },
@@ -81,20 +79,20 @@ export const pong = () => {
       shape: 'image',
       x: Screen.center.x - (basePlayerProps.geometry?.width ?? 0) / 2,
       y: Screen.center.y - (basePlayerProps.geometry?.height ?? 0) / 2,
+      width: Screen.percent(5).w,
+      height: Screen.percent(5).w,
       style: {
         fill: {
-          opacity: 0,
+          color: 'cornflowerblue',
+          opacity: 1,
         },
         stroke: {
           color: 'white',
           opacity: 1,
-          width: 1,
         },
       },
     },
   });
-
-  console.log(ball);
 
   const scoreBoard = createAnimatedView({
     id: 'score-board',
@@ -104,6 +102,7 @@ export const pong = () => {
       y: Screen.center.y,
     },
     text: {
+      offset: 'center',
       text: `${player1.model.score} - ${player2.model.score}`,
       fontSize: Screen.percent(2).w,
       style: {
@@ -113,6 +112,8 @@ export const pong = () => {
       },
     },
   });
+
+  scoreBoard.updateTextSize();
 
   ball.collisionHandler.addCollisionEvent((e: CustomEvent) => {
     const collision = e.detail.collision;

@@ -43,8 +43,6 @@ export const loadImage = (view: View): ImageLoader => {
                 `stroke='${viewToLoad.geometry.style.stroke.color}'`
               );
 
-            console.log('Modified SVG from data URL:', modifiedSvg);
-
             // Create a new data URL with the modified SVG
             const modifiedDataUrl = `data:image/svg+xml;base64,${btoa(
               modifiedSvg
@@ -89,8 +87,6 @@ export const loadImage = (view: View): ImageLoader => {
                 /stroke="currentColor"/g,
                 `stroke="${viewToLoad.geometry.style.stroke.color}"`
               );
-
-            console.log('Modified SVG from URL:', modifiedSvg);
 
             // Create a blob URL for the modified SVG
             const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });

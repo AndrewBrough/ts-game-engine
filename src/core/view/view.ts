@@ -1,4 +1,4 @@
-import { getContext } from '../canvas/canvas';
+import { CTX, getContext } from '../canvas/canvas';
 import { defaultViewConfig } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
@@ -84,10 +84,33 @@ export const createView = (props: DeepPartial<View> = {}) => {
     view.text = {
       ...view.text,
       ...props,
-      style: {
-        ...view.text.style,
-      },
     } as View['text'];
+  };
+
+  const updateTextSize = () => {
+    // update size prop based on rendered text size
+    // not used by this renderer, but is helpful for referencing from other views
+    const metrics = CTX.measureText(view.text.text.toString());
+    const actualWidth = metrics.width;
+    const actualHeight =
+      metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
+
+    if (view.text.offset === 'center') {
+      updateTextOffset({
+        x: -actualWidth,
+        y: actualHeight / 2,
+      });
+    } else {
+      // updateTextOffset({
+      //   x: 0,
+      //   y: actualHeight,
+      // });
+    }
+
+    return {
+      width: actualWidth,
+      height: actualHeight,
+    };
   };
 
   const draw = () => {
@@ -107,9 +130,8 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const y = unscaledY - scaledDiff.h;
 
     const drawImage = () => {
-      console.log(viewImage?.loadedImage);
       if (view.geometry.shape === 'image' && viewImage?.loadedImage) {
-        console.log(viewImage.loadedImage);
+        // ctx.globalAlpha = view.geometry.style.fill.opacity;
         ctx.drawImage(viewImage.loadedImage, x, y, w, h);
       }
     };
@@ -139,46 +161,11 @@ export const createView = (props: DeepPartial<View> = {}) => {
       }
     };
 
-    const updateTextSize = () => {
-      if (
-        !view.text.offset ||
-        view.text.offset === 'center' ||
-        !('x' in view.text.offset) ||
-        !('y' in view.text.offset)
-      ) {
-        // update size prop based on rendered text size
-        // not used by this renderer, but is helpful for referencing from other views
-        const metrics = ctx.measureText(view.text.text.toString());
-        const actualWidth = metrics.width;
-        const actualHeight =
-          metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
-        if (!view.text.height || !view.text.width) {
-          updateText({
-            width: actualWidth,
-            height: actualHeight,
-          });
-        }
-        if (view.text.offset === 'center') {
-          updateTextOffset({
-            x: -actualWidth / 2,
-            y: actualHeight / 2,
-          });
-        } else {
-          updateTextOffset({
-            x: 0,
-            y: actualHeight * 4,
-          });
-        }
-        return {
-          width: actualWidth,
-          height: actualHeight,
-        };
-      }
-    };
-
     const drawText = () => {
       if (view.text.text) {
-        const textSize = updateTextSize() || { width: 0, height: 0 };
+        if (view.text.offset === 'center') {
+          updateTextSize();
+        }
 
         ctx.fillStyle = view.text.style.fill.color;
         ctx.strokeStyle = view.text.style.stroke.color;
@@ -187,24 +174,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
           view.text.fontSize * view.scale
         }px ${view.text.fontFamily}`;
 
-        const tPos = () => {
-          if (view.text.offset === 'center') {
-            const finalOffset = {
-              x: x + w / 2 - (textSize?.width ?? 0) / 2,
-              y: y + h / 1.275,
-            };
-            return {
-              x: x + finalOffset.x + w,
-              y: y + finalOffset.y + h,
-            };
-          }
-
-          return {
-            x: x + w / 2 + (view.text.offset?.x ?? 0),
-            y: y + h / 2 + (view.text.offset?.y ?? 0),
-          };
-        };
-        const finalTextPos = tPos();
+        const finalTextPos =
+          view.text.offset === 'center'
+            ? { x: 0, y: 0 }
+            : {
+                x: x + (view.text.offset?.x ?? 0),
+                y: y + (view.text.offset?.y ?? 0),
+              };
 
         ctx.globalAlpha = view.text.style.fill.opacity;
         ctx.fillText(view.text.text.toString(), finalTextPos.x, finalTextPos.y);
@@ -285,6 +261,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     updatePosition,
     updateGeometryStyle,
     updateTextStyle,
+    updateTextSize,
     updateSize,
     updateScale,
     updateText,

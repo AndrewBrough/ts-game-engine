@@ -39,7 +39,6 @@ export const createCollisionHandler = (view: ViewInstance) => {
   const addCollisionEvent = (
     callback: (e: CustomEvent<{ collision: Collision }>) => void
   ) => {
-    console.log('addCollisionEvent');
     view.events.addEvent(collisionHandlerEvent, callback);
   };
 
