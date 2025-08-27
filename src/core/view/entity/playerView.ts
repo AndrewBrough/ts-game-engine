@@ -6,12 +6,6 @@ import { createEntityView } from './entityView';
 import type { DeepPartial } from '../../types';
 import type { View } from '../types';
 import { deepMerge } from '../../utils/deepMerge';
-import { addAnimations, addCollisions } from '../components';
-import {
-  addCollisionBounce,
-  addForwardMovement,
-  addWallBounce,
-} from '../components/movement';
 
 // Create player-specific defaults
 const playerDefaults: DeepPartial<View> = {

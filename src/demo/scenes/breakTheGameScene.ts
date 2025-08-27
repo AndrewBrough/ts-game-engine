@@ -1,5 +1,6 @@
 import { createScene, type SceneInstance } from '../../core/scene/scene';
 import { Screen } from '../../core/units';
+import { addHealthOpacityStyle } from '../../core/view/components/styles/addHealthOpacityStyle';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 
@@ -27,7 +28,8 @@ export const breakTheGameScene = (): SceneInstance => {
       x: Math.random() * Screen.w,
       y: Math.random() * Screen.h,
     };
-    createEnemyView({
+    const enemy = createEnemyView({
+      id: `enemy-${crypto.randomUUID()}`,
       model: {
         speed: 5,
       },
@@ -36,6 +38,7 @@ export const breakTheGameScene = (): SceneInstance => {
         y: randomPos.y,
       },
     });
+    enemy.addComponent('healthOpacityStyle', addHealthOpacityStyle(enemy));
   }
 
   return scene;

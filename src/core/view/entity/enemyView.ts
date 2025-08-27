@@ -34,10 +34,10 @@ export const createEnemyView = (props?: DeepPartial<View>) => {
   const mergedProps = deepMerge(enemyDefaults, props);
   const view = createEntityView({
     ...mergedProps,
+    id: `enemy-${crypto.randomUUID()}`,
   });
 
   view.addComponent('forwardMovement', addForwardMovement(view));
-  view.addComponent('healthOpacityStyle', addHealthOpacityStyle(view));
 
   return view;
 };

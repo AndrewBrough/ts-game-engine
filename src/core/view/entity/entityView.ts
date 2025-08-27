@@ -31,6 +31,7 @@ export const createEntityView = (props: DeepPartial<View>) => {
   const mergedProps = deepMerge(defaultViewProps, props);
   const view = createView({
     ...mergedProps,
+    id: mergedProps.id ?? `entity-${crypto.randomUUID()}`,
   });
 
   view.addComponent('animations', addAnimations(view));
