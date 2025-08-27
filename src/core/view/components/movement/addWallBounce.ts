@@ -1,6 +1,7 @@
 import { Screen } from '../../../units';
 import type { ViewInstance } from '../../view';
 import type { addPhysics, PhysicsComponent } from '../addPhysics';
+import { getBounceForce } from './getBounceForce';
 
 export const addWallBounce = (view: ViewInstance) => {
   const yMax = Screen.h - view.geometry.height;
@@ -26,27 +27,12 @@ export const addWallBounce = (view: ViewInstance) => {
 
     if (bounceVector.x !== 0 || bounceVector.y !== 0) {
       const bounceForce = getBounceForce(view, deltaTime, 1);
-      bounceForce.x *= bounceVector.x * 100;
-      bounceForce.y *= bounceVector.y * 100;
+      bounceForce.x *= bounceVector.x * 10;
+      bounceForce.y *= bounceVector.y * 10;
 
       view.getComponent<PhysicsComponent>('physics')?.applyForce(bounceForce);
     }
   });
 
   return {};
-};
-
-export const getBounceForce = (
-  view: ViewInstance,
-  deltaTime: number = 16.66,
-  minBounce: number = 0
-) => {
-  const physics = view.getComponent<PhysicsComponent>('physics');
-  const currentForce = physics?.getCurrentForce() || { x: 0, y: 0 };
-  const bounceForce = {
-    x: currentForce.x * Math.max(view.physics.bounce, minBounce) * deltaTime,
-    y: currentForce.y * Math.max(view.physics.bounce, minBounce) * deltaTime,
-  };
-
-  return bounceForce;
 };

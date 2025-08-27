@@ -5,9 +5,9 @@ export type PhysicsInstance = ReturnType<typeof createPhysics>;
 /**
  * Creates a physics object for handling forces and dampening
  */
-export const createPhysics = (view: View['physics']) => {
+export const createPhysics = (view: View) => {
   let currentForce: Position = { x: 0, y: 0 };
-  const dampening = view?.dampening ?? 0.95;
+  const dampening = view.physics.dampening ?? 0.95;
 
   const applyForce = (force: Position) => {
     const difference = {
@@ -34,9 +34,9 @@ export const createPhysics = (view: View['physics']) => {
     if (Math.abs(currentForce.y) < 0.01) currentForce.y = 0;
 
     // Cap max force that can be applied
-    if (Math.abs(currentForce.x) > view.speed * deltaTime * 2)
+    if (Math.abs(currentForce.x) > view.model.maxSpeed * deltaTime)
       currentForce.x *= dampening * 0.1;
-    if (Math.abs(currentForce.y) > view.speed * deltaTime * 2)
+    if (Math.abs(currentForce.y) > view.model.maxSpeed * deltaTime)
       currentForce.y *= dampening * 0.1;
 
     // TODO investigate if this is a fun mechanic, wobbly movement when high speed

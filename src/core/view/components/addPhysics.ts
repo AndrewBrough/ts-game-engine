@@ -4,7 +4,7 @@ import type { ViewInstance } from '../view';
 export type PhysicsComponent = ReturnType<typeof createPhysics>;
 
 export const addPhysics = (view: ViewInstance) => {
-  const physics = createPhysics(view.physics);
+  const physics = createPhysics(view);
 
   // functions to call on update event from game loop
   view.events.addEvent('update', e => {

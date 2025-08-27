@@ -14,7 +14,8 @@ const enemyDefaults: DeepPartial<View> = {
         color: 'red',
       },
       stroke: {
-        opacity: 0,
+        color: 'red',
+        opacity: 1,
       },
     },
   },

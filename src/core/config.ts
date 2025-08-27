@@ -7,6 +7,7 @@ export const defaultViewConfig: View = {
     maxHealth: 100,
     health: 100,
     speed: 1,
+    maxSpeed: 10,
     collisionDamage: 0,
   },
   scale: 1,

@@ -5,6 +5,7 @@ export type ViewModel = {
   maxHealth: number;
   health: number;
   speed: number;
+  maxSpeed: number;
   collisionDamage: number;
   [key: string]: any;
 };
