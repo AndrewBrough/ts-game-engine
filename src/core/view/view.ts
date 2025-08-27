@@ -84,20 +84,17 @@ export const createView = (props: DeepPartial<View> = {}) => {
     // update size prop based on rendered text size
     // not used by this renderer, but is helpful for referencing from other views
     const metrics = CTX.measureText(view.text.text.toString());
-    const actualWidth = metrics.width;
+    const actualWidth =
+      metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
     const actualHeight =
-      metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent;
+      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
-    if (view.text.offset === 'center') {
+    if (view.text.align === 'center' || view.text.verticalAlign === 'center') {
+      updateSize(actualWidth, actualHeight);
       updateTextOffset({
         x: -actualWidth / 2,
-        y: -actualHeight / 2,
+        y: actualHeight / 2,
       });
-    } else {
-      // updateTextOffset({
-      //   x: 0,
-      //   y: actualHeight,
-      // });
     }
 
     return {
@@ -123,10 +120,16 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const y = unscaledY - scaledDiff.h;
 
     const drawGeometry = () => {
-      if (mode === 'debug') {
+      if (mode === 'debug' && view.geometry.shape !== 'line') {
+        const boxOffset = Screen.percent(1).w;
         ctx.strokeStyle = 'violet';
         ctx.lineWidth = 2;
-        ctx.strokeRect(x - 5, y - 5, w + 10, h + 10);
+        ctx.strokeRect(
+          x - boxOffset,
+          y - boxOffset,
+          w + boxOffset * 2,
+          h + boxOffset * 2
+        );
         ctx.lineWidth = 1;
         ctx.strokeRect(x, y, w, h);
       }
@@ -177,10 +180,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
     const drawText = () => {
       if (view.text.text) {
-        if (view.text.offset === 'center') {
-          updateTextSize();
-        }
-
         ctx.fillStyle = view.text.style.fill.color;
         ctx.strokeStyle = view.text.style.stroke.color;
         ctx.lineWidth = view.text.style.stroke.width * view.scale;
@@ -188,13 +187,17 @@ export const createView = (props: DeepPartial<View> = {}) => {
           view.text.fontSize * view.scale
         }px ${view.text.fontFamily}`;
 
-        const finalTextPos =
-          view.text.offset === 'center'
-            ? { x: 0, y: 0 }
-            : {
-                x: x + (view.text.offset?.x ?? 0),
-                y: y + (view.text.offset?.y ?? 0),
-              };
+        if (
+          view.text.align === 'center' ||
+          view.text.verticalAlign === 'center'
+        ) {
+          updateTextSize();
+        }
+
+        const finalTextPos = {
+          x: x + (view.text.offset?.x ?? 0) * view.scale,
+          y: y + (view.text.offset?.y ?? 0) * view.scale,
+        };
 
         ctx.globalAlpha = view.text.style.fill.opacity;
         ctx.fillText(view.text.text.toString(), finalTextPos.x, finalTextPos.y);
@@ -204,6 +207,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
           view.text.text.toString(),
           finalTextPos.x,
           finalTextPos.y
+        );
+
+        ctx.strokeRect(
+          finalTextPos.x + 2,
+          finalTextPos.y,
+          w * view.scale + 2,
+          -h * view.scale
         );
       }
     };

@@ -22,7 +22,7 @@ export const pong = () => {
     ENEMY: ['DEFAULT', 'PLAYER'],
   });
 
-  const grid = gridView(15);
+  const grid = gridView();
 
   const { leftWall, rightWall } = createWorldBoundsView();
 

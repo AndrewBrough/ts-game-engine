@@ -14,12 +14,18 @@ export const scoreBoardView = (
       y: Screen.center.y,
     },
     text: {
-      offset: 'center',
+      align: 'center',
+      verticalAlign: 'center',
       text: `${player1.model.score} - ${player2.model.score}`,
-      fontSize: Screen.percent(2).w,
+      fontSize: Screen.percent(5).w,
       style: {
         fill: {
           color: 'white',
+        },
+        stroke: {
+          color: 'white',
+          width: 1,
+          opacity: 1,
         },
       },
     },

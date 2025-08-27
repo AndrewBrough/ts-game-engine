@@ -18,7 +18,9 @@ export type View<T extends ViewModel = ViewModel> = {
   imageUrl?: string;
   geometry: Geometry;
   text: {
-    offset?: Position | 'center';
+    align?: 'left' | 'center';
+    verticalAlign?: 'top' | 'center';
+    offset?: Position;
     height?: number;
     width?: number;
     text: string | number;

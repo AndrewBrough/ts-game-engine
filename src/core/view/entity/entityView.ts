@@ -13,7 +13,7 @@ export type EntityViewInstance = ViewInstance & {
   collisions: ReturnType<typeof addCollisions>;
 };
 
-const defaultViewProps: DeepPartial<View> = {
+export const defaultEntityProps: DeepPartial<View> = {
   model: {
     speed: 5,
     maxHealth: 100,
@@ -28,7 +28,7 @@ const defaultViewProps: DeepPartial<View> = {
 };
 
 export const createEntityView = (props: DeepPartial<View>) => {
-  const mergedProps = deepMerge(defaultViewProps, props);
+  const mergedProps = deepMerge(defaultEntityProps, props);
   const view = createView({
     ...mergedProps,
     id: props.id ?? `entity-${crypto.randomUUID()}`,

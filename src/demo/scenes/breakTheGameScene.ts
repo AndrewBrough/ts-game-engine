@@ -5,15 +5,15 @@ import {
   addCollisionBounce,
   addWallBounce,
 } from '../../core/view/components/movement';
-import { addHealthOpacityStyle } from '../../core/view/components/styles/addHealthOpacityStyle';
 import { gridView } from '../../core/view/debug/gridView';
 import { createEnemyView } from '../../core/view/entity/enemyView';
+import { defaultEntityProps } from '../../core/view/entity/entityView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 
 export const breakTheGameScene = (): SceneInstance => {
   const scene = createScene('breakTheGame');
 
-  const grid = gridView(15);
+  const grid = gridView();
 
   const player = createPlayerView({
     model: {
@@ -25,8 +25,8 @@ export const breakTheGameScene = (): SceneInstance => {
       bounce: 0.5,
     },
     geometry: {
-      x: Screen.w / 2,
-      y: Screen.h / 2,
+      x: Screen.w / 2 - (defaultEntityProps.geometry?.width ?? 0) / 2,
+      y: Screen.h / 2 - (defaultEntityProps.geometry?.height ?? 0) / 2,
       style: {
         fill: {
           color: 'blue',
@@ -38,9 +38,8 @@ export const breakTheGameScene = (): SceneInstance => {
   player.addComponent('wallbounce', addWallBounce(player));
   player.addComponent('collisionbounce', addCollisionBounce(player));
   player.addComponent('collisiondamage', addCollisionDamage(player));
-  player.addComponent('healthopacitystyle', addHealthOpacityStyle(player));
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 500; i++) {
     const randomPos = {
       x: Math.random() * Screen.w,
       y: Math.random() * Screen.h,
@@ -51,14 +50,13 @@ export const breakTheGameScene = (): SceneInstance => {
         collisionDamage: 10,
       },
       geometry: {
-        x: randomPos.x,
-        y: randomPos.y,
+        x: randomPos.x - (defaultEntityProps.geometry?.width ?? 0) / 2,
+        y: randomPos.y - (defaultEntityProps.geometry?.height ?? 0) / 2,
       },
     });
     enemy.addComponent('wallbounce', addWallBounce(enemy));
     enemy.addComponent('collisionbounce', addCollisionBounce(enemy));
     enemy.addComponent('collisiondamage', addCollisionDamage(enemy));
-    enemy.addComponent('healthOpacityStyle', addHealthOpacityStyle(enemy));
   }
 
   return scene;
