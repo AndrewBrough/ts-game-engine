@@ -19,18 +19,21 @@ const baseGridProps: DeepPartial<View> = {
   },
 };
 
-export const gridView = () => {
+// default to 10x10 grid
+// higher number = more dense grid
+export const gridView = (numLines: number = 10) => {
   const grid: ViewInstance[] = [];
+  const lines = 100 / numLines;
 
   // Create 10 vertical lines (straight down)
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i <= numLines; i++) {
     grid.push(
       createView({
         id: `grid-vertical-${i}`,
         ...baseGridProps,
         geometry: {
           ...baseGridProps.geometry,
-          x: Screen.percent(10).w * i,
+          x: Screen.percent(lines).w * i,
           y: 0,
           width: 0,
           height: Screen.h,
@@ -47,7 +50,7 @@ export const gridView = () => {
   }
 
   // Create 10 horizontal lines (straight across)
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i <= numLines; i++) {
     grid.push(
       createView({
         id: `grid-horizontal-${i}`,
@@ -55,7 +58,7 @@ export const gridView = () => {
         geometry: {
           ...baseGridProps.geometry,
           x: 0,
-          y: Screen.percent(10).h * i,
+          y: Screen.percent(lines).h * i,
           width: Screen.w,
           height: 0,
           style: {

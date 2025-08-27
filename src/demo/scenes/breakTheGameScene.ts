@@ -6,11 +6,14 @@ import {
   addWallBounce,
 } from '../../core/view/components/movement';
 import { addHealthOpacityStyle } from '../../core/view/components/styles/addHealthOpacityStyle';
+import { gridView } from '../../core/view/debug/gridView';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 
 export const breakTheGameScene = (): SceneInstance => {
   const scene = createScene('breakTheGame');
+
+  const grid = gridView(15);
 
   const player = createPlayerView({
     model: {

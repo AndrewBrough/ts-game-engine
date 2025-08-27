@@ -22,6 +22,8 @@ export const pong = () => {
     ENEMY: ['DEFAULT', 'PLAYER'],
   });
 
+  const grid = gridView(15);
+
   const { leftWall, rightWall } = createWorldBoundsView();
 
   // slow the ball when it hits a back wall
