@@ -35,17 +35,14 @@ export const Events = {
 export type EventName = keyof typeof Events | string;
 
 export const createEvents = () => {
-  const events = new Map<EventName, ((e: CustomEvent) => void)[]>();
-  const eventHandlers = new Map<EventName, ((e: CustomEvent) => void)[]>();
+  const events = new Map<EventName, ((e: any) => void)[]>();
+  const eventHandlers = new Map<EventName, ((e: any) => void)[]>();
 
-  const addEvent = (
-    event: EventName,
-    callback: (e: CustomEvent<any> | KeyboardEvent | MouseEvent) => void
-  ) => {
+  const addEvent = (event: EventName, callback: (e: any) => void) => {
     events.set(event, [...(events.get(event) ?? []), callback]);
 
     // Create a wrapper function that we can reference for removal
-    const handler = (e: CustomEvent) => {
+    const handler = (e: any) => {
       callback(e);
     };
 

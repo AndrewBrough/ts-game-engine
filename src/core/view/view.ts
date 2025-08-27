@@ -105,7 +105,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     };
   };
 
-  const draw = () => {
+  const draw = (mode: 'debug' | 'normal' = 'normal') => {
     const ctx = getContext();
     if (!ctx) {
       throw new Error('Context not found');
@@ -121,14 +121,15 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const x = unscaledX - scaledDiff.w;
     const y = unscaledY - scaledDiff.h;
 
-    const drawImage = () => {
-      if (view.geometry.shape === 'image' && viewImage?.loadedImage) {
-        // ctx.globalAlpha = view.geometry.style.fill.opacity;
-        ctx.drawImage(viewImage.loadedImage, x, y, w, h);
-      }
-    };
-
     const drawGeometry = () => {
+      if (mode === 'debug') {
+        ctx.strokeStyle = 'violet';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 5, y - 5, w + 10, h + 10);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, w, h);
+      }
+
       ctx.fillStyle = view.geometry.style.fill.color;
       ctx.strokeStyle = view.geometry.style.stroke.color;
       ctx.lineWidth = view.geometry.style.stroke.width * view.scale;
@@ -186,6 +187,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
       }
     };
 
+    const drawImage = () => {
+      if (view.geometry.shape === 'image' && viewImage?.loadedImage) {
+        ctx.globalAlpha = view.geometry.style.fill.opacity;
+        ctx.drawImage(viewImage.loadedImage, x, y, w, h);
+      }
+    };
+
     drawImage();
     drawGeometry();
     drawText();
@@ -229,13 +237,11 @@ export const createView = (props: DeepPartial<View> = {}) => {
   };
 
   const render = () => {
+    // draw('debug');
     draw();
   };
 
-  const update = () => {
-    // drawDebugInfo();
-    // updateViewInState();
-  };
+  const update = () => {};
 
   const cleanup = () => {
     console.log('cleanup view', view.id);

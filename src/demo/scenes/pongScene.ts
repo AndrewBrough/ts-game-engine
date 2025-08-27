@@ -3,11 +3,10 @@ import { createScene } from '../../core/scene/scene';
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
 import type { CollisionComponent } from '../../core/view/components';
-import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
-import boltSvg from '../assets/bolt.svg';
+import { ballView } from '../views/ballView';
 import { scoreBoardView } from '../views/scoreBoardView';
 
 const basePlayerProps: DeepPartial<View> = {
@@ -38,29 +37,18 @@ export const pong = () => {
   const scene = createScene('pong');
 
   setCollisionLayers({
-    DEFAULT: ['ENEMY'],
     PLAYER: ['DEFAULT', 'ENEMY'],
     ENEMY: ['DEFAULT', 'PLAYER'],
   });
 
   const { leftWall, rightWall } = createWorldBoundsView();
-  const LWCollisions = leftWall.getComponent<CollisionComponent>('collisions');
-  LWCollisions?.addCollisionEvent(e => {
-    console.log('left wall collision', e);
-  });
-
-  const RWCollisions = rightWall.getComponent<CollisionComponent>('collisions');
-  RWCollisions?.addCollisionEvent(e => {
-    console.log('right wall collision', e);
-  });
-
   const player1 = createPlayerView(
     {
       ...basePlayerProps,
       id: 'player-1',
       geometry: {
         ...basePlayerProps.geometry,
-        x: 10,
+        x: 20,
       },
     },
     {
@@ -75,7 +63,7 @@ export const pong = () => {
       id: 'player-2',
       geometry: {
         ...basePlayerProps.geometry,
-        x: Screen.w - (basePlayerProps.geometry?.width ?? 0) - 10,
+        x: Screen.w - (basePlayerProps.geometry?.width ?? 0) - 20,
       },
     },
     {
@@ -84,31 +72,8 @@ export const pong = () => {
     }
   );
 
-  const ball = createEnemyView({
-    model: {
-      speed: 5,
-    },
-    imageUrl: boltSvg,
-    geometry: {
-      shape: 'image',
-      x: Screen.center.x - (basePlayerProps.geometry?.width ?? 0) / 2,
-      y: Screen.center.y - (basePlayerProps.geometry?.height ?? 0) / 2,
-      width: Screen.percent(5).w,
-      height: Screen.percent(5).w,
-      style: {
-        fill: {
-          color: 'cornflowerblue',
-          opacity: 1,
-        },
-        stroke: {
-          color: 'white',
-          opacity: 1,
-        },
-      },
-    },
-  });
-
   const scoreBoard = scoreBoardView(player1, player2);
+  const ball = ballView();
 
   const collisions = ball.getComponent<CollisionComponent>('collisions');
 
@@ -118,9 +83,9 @@ export const pong = () => {
   collisions.addCollisionEvent((e: CustomEvent) => {
     const collision = e.detail.collision;
 
-    if (collision.view2.id === 'player-1') {
+    if (collision.view2.id === leftWall.id) {
       player1.model.score++;
-    } else if (collision.view2.id === 'player-2') {
+    } else if (collision.view2.id === rightWall.id) {
       player2.model.score++;
     }
 

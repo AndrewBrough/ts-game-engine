@@ -46,7 +46,7 @@ export const defaultViewConfig: View = {
         width: 1,
         opacity: 1,
       },
-      radii: 5,
+      radii: 0,
     },
   },
   physics: {
