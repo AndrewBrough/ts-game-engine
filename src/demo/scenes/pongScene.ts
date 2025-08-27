@@ -7,31 +7,8 @@ import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import { ballView } from '../views/ballView';
+import { basePlayerProps } from '../views/playerPaddleView';
 import { scoreBoardView } from '../views/scoreBoardView';
-
-const basePlayerProps: DeepPartial<View> = {
-  model: {
-    score: 0,
-    speed: 10,
-  },
-  geometry: {
-    shape: 'rect',
-    width: Screen.percent(1).w,
-    height: Screen.percent(20).h,
-    style: {
-      fill: {
-        color: 'white',
-        opacity: 0.7,
-      },
-      stroke: {
-        color: 'white',
-      },
-    },
-  },
-  physics: {
-    bounce: 0,
-  },
-};
 
 export const pong = () => {
   const scene = createScene('pong');
@@ -49,6 +26,12 @@ export const pong = () => {
       geometry: {
         ...basePlayerProps.geometry,
         x: 20,
+        style: {
+          ...basePlayerProps.geometry?.style,
+          fill: {
+            color: 'red',
+          },
+        },
       },
     },
     {
@@ -64,6 +47,11 @@ export const pong = () => {
       geometry: {
         ...basePlayerProps.geometry,
         x: Screen.w - (basePlayerProps.geometry?.width ?? 0) - 20,
+        style: {
+          fill: {
+            color: 'blue',
+          },
+        },
       },
     },
     {

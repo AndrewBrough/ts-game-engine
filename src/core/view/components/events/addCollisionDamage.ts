@@ -1,6 +1,4 @@
 import type { Collision } from '../../../gameState/collisionManager';
-import type { EntityViewInstance } from '../../entity/entityView';
-import type { EntityModel } from '../../types';
 import type { ViewInstance } from '../../view';
 
 export const addCollisionDamage = (view: ViewInstance) => {
@@ -12,8 +10,8 @@ export const addCollisionDamage = (view: ViewInstance) => {
   });
 
   const handleDamage = (collision: Collision) => {
-    const currentHealth = (collision.view2.model as EntityModel).health;
-    const damage = collision.view1.model.collisionDamage;
+    const currentHealth = view.model.health;
+    const damage = collision.view2.model.collisionDamage;
     const newHealth = currentHealth - damage;
     view.model.health = newHealth;
   };

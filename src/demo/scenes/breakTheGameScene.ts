@@ -1,5 +1,6 @@
 import { createScene, type SceneInstance } from '../../core/scene/scene';
 import { Screen } from '../../core/units';
+import { addWallBounce } from '../../core/view/components/movement';
 import { addHealthOpacityStyle } from '../../core/view/components/styles/addHealthOpacityStyle';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
@@ -37,6 +38,7 @@ export const breakTheGameScene = (): SceneInstance => {
         y: randomPos.y,
       },
     });
+    enemy.addComponent('wallbounce', addWallBounce(enemy));
     enemy.addComponent('healthOpacityStyle', addHealthOpacityStyle(enemy));
   }
 

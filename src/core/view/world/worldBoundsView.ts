@@ -10,8 +10,8 @@ const baseProps: DeepPartial<View> = {
   layer: 'DEFAULT',
   model: {
     speed: 0,
-    maxHealth: -1,
-    health: -1,
+    maxHealth: 0,
+    health: 0,
     collisionDamage: 0,
   },
   geometry: {
@@ -20,17 +20,16 @@ const baseProps: DeepPartial<View> = {
     height: WALL_THICKNESS_Y,
     style: {
       fill: {
-        color: 'black',
-        opacity: 0.7,
+        color: 'white',
+        opacity: 1,
       },
       stroke: {
-        color: 'black',
-        opacity: 1,
+        color: 'white',
+        opacity: 0,
       },
     },
   },
   physics: {
-    dampening: 0,
     bounce: 1,
   },
 };
@@ -41,13 +40,8 @@ export const createWorldBoundsView = (debugColors: boolean = false) => {
     id: 'top-wall',
     geometry: {
       ...baseProps.geometry,
-      y: 0,
+      y: -WALL_THICKNESS_X * 0.5,
       width: Screen.w,
-      style: {
-        fill: {
-          color: debugColors ? 'blue' : 'transparent',
-        },
-      },
     },
   });
 
@@ -55,13 +49,9 @@ export const createWorldBoundsView = (debugColors: boolean = false) => {
     ...baseProps,
     id: 'bottom-wall',
     geometry: {
-      y: Screen.percent(99).h,
+      ...baseProps.geometry,
+      y: Screen.percent(99).h + WALL_THICKNESS_X * 0.5,
       width: Screen.w,
-      style: {
-        fill: {
-          color: debugColors ? 'purple' : 'transparent',
-        },
-      },
     },
   });
 
@@ -70,13 +60,8 @@ export const createWorldBoundsView = (debugColors: boolean = false) => {
     id: 'left-wall',
     geometry: {
       ...baseProps.geometry,
-      y: 0,
+      x: -WALL_THICKNESS_X * 0.5,
       height: Screen.h,
-      style: {
-        fill: {
-          color: debugColors ? 'orange' : 'transparent',
-        },
-      },
     },
   });
 
@@ -85,13 +70,8 @@ export const createWorldBoundsView = (debugColors: boolean = false) => {
     id: 'right-wall',
     geometry: {
       ...baseProps.geometry,
-      x: Screen.percent(99).w,
+      x: Screen.percent(99).w + WALL_THICKNESS_X * 0.5,
       height: Screen.h,
-      style: {
-        fill: {
-          color: debugColors ? 'green' : 'transparent',
-        },
-      },
     },
   });
 

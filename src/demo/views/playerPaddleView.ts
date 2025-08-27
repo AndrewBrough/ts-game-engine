@@ -1,6 +1,7 @@
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
 import { deepMerge } from '../../core/utils/deepMerge';
+import { addCollisionDamage } from '../../core/view/components/events/addCollisionDamage';
 import type { ControlProps } from '../../core/view/components/input';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
@@ -10,7 +11,7 @@ export const playerPaddleView = (
   controls: ControlProps
 ) => {
   const mergedProps = deepMerge(basePlayerProps, props);
-  const paddle = createPlayerView(
+  const view = createPlayerView(
     {
       ...mergedProps,
     },
@@ -19,13 +20,14 @@ export const playerPaddleView = (
     }
   );
 
-  return paddle;
+  return view;
 };
 
-const basePlayerProps: DeepPartial<View> = {
+export const basePlayerProps: DeepPartial<View> = {
   model: {
     score: 0,
-    speed: 20,
+    speed: 30,
+    collisionDamage: -0.1, // heal the ball, ball goes faster based on health
   },
   geometry: {
     shape: 'rect',
@@ -34,10 +36,11 @@ const basePlayerProps: DeepPartial<View> = {
     style: {
       fill: {
         color: 'white',
-        opacity: 0.7,
+        opacity: 1,
       },
       stroke: {
         color: 'white',
+        opacity: 0,
       },
     },
   },
