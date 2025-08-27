@@ -13,9 +13,13 @@ export type ViewInstance = ReturnType<typeof createView> & {
 };
 
 export const createView = (props: DeepPartial<View> = {}) => {
-  const view = deepMerge({ ...defaultViewConfig }, props, {
-    id: crypto.randomUUID(),
-  }) as View;
+  const view = deepMerge(
+    { ...defaultViewConfig },
+    {
+      id: crypto.randomUUID(),
+    },
+    props
+  ) as View;
   const components = addComponents();
   const events = createEvents();
   const viewImage: ImageLoader | null = view.imageUrl ? loadImage(view) : null;
