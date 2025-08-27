@@ -26,7 +26,7 @@ export const playerPaddleView = (
 export const basePlayerProps: DeepPartial<View> = {
   model: {
     score: 0,
-    speed: 30,
+    speed: 20,
     collisionDamage: -1, // heal the ball, ball goes faster based on health
   },
   geometry: {

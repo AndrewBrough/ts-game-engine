@@ -1,10 +1,12 @@
 import { setCollisionLayers } from '../../core/gameState/collisionLayers';
+import type { Collision } from '../../core/gameState/collisionManager';
 import { createScene } from '../../core/scene/scene';
-import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
-import type { CollisionComponent } from '../../core/view/components';
+import type {
+  CollisionComponent,
+  PhysicsComponent,
+} from '../../core/view/components';
 import { createPlayerView } from '../../core/view/entity/playerView';
-import type { View } from '../../core/view/types';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import { givePoint } from '../scripts/points';
 import { ballView } from '../views/ballView';
@@ -77,26 +79,39 @@ export const pong = () => {
   const scoreBoard = scoreBoardView(player1, player2);
   const ball = ballView();
 
-  const collisions = ball.getComponent<CollisionComponent>('collisions');
+  const ballCollisions = ball.getComponent<CollisionComponent>('collisions');
 
-  if (!collisions) {
+  if (!ballCollisions) {
     throw new Error('Collisions component not found');
   }
-  collisions.addCollisionEvent((e: CustomEvent) => {
-    const collision = e.detail.collision;
+  ballCollisions.addCollisionEvent(
+    (e: CustomEvent<{ collision: Collision }>) => {
+      const collision = e.detail.collision;
+      const deltaTime = collision.deltaTime;
+      const otherView = collision.view2;
+      const otherPhysics = otherView.getComponent<PhysicsComponent>('physics');
 
-    if (collision.view2.id === leftWall.id) {
-      givePoint(player1);
-    } else if (collision.view2.id === rightWall.id) {
-      givePoint(player2);
+      if (collision.view2.id === leftWall.id) {
+        givePoint(player1);
+      } else if (collision.view2.id === rightWall.id) {
+        givePoint(player2);
+      }
+
+      scoreBoard.updateText({
+        text: `${player1.model.score} - ${player2.model.score}`,
+      });
+
+      ball.model.speed = Math.max(Math.min(ball.model.health, 10), 5);
+
+      // add force to the ball based on the collision normal + player current force
+      const playerForce = otherPhysics?.getCurrentForce() || { x: 0, y: 0 };
+      const ballForce = {
+        x: collision.normal.x * playerForce.x * deltaTime,
+        y: collision.normal.y * playerForce.y * deltaTime,
+      };
+      ball.getComponent<PhysicsComponent>('physics')?.applyForce(ballForce);
     }
-
-    scoreBoard.updateText({
-      text: `${player1.model.score} - ${player2.model.score}`,
-    });
-
-    ball.model.speed = Math.max(Math.min(ball.model.health, 10), 5);
-  });
+  );
 
   return scene;
 };

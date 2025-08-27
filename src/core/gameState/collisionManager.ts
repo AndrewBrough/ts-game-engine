@@ -9,11 +9,12 @@ import {
 import type { Position, View } from '../view/types';
 import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
 import { COLLISION_MATRIX } from './collisionLayers';
+import type { ViewInstance } from '../view/view';
 
 export type Collision = {
   id: string;
-  view1: View;
-  view2: View;
+  view1: ViewInstance;
+  view2: ViewInstance;
   contactPoint: Position;
   normal: Position; // Normalized collision direction
   deltaTime: number;
@@ -34,7 +35,7 @@ export const collisionManager = () => {
     }
   });
 
-  const checkCollisions = (view: View, deltaTime: number) => {
+  const checkCollisions = (view: ViewInstance, deltaTime: number) => {
     if (view.geometry) {
       // Only check for collisions for views on layers that are in the collision matrix
       const viewsOnMatrixLayers = getCollisionLayerViews(view.layer);

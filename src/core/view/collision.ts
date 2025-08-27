@@ -1,4 +1,5 @@
 import type { Geometry, Position, Size, View } from './types';
+import type { ViewInstance } from './view';
 
 export interface Bounds {
   left: number;
@@ -140,8 +141,8 @@ export const getMinOverlap = (view: View, v: View) => {
 };
 
 export const getCollision = (
-  view: View,
-  v: View,
+  view: ViewInstance,
+  v: ViewInstance,
   normal: Position,
   deltaTime: number,
   boundsOverlap: Bounds | null
