@@ -1,10 +1,8 @@
 import type { EntityViewInstance } from '../../entity/entityView';
+import type { ViewInstance } from '../../view';
 
-export const changeColorForHealth = (
-  view: EntityViewInstance,
-  event: string
-) => {
-  view.events.addEvent(event, () => {
+export const addHealthOpacityStyle = (view: ViewInstance) => {
+  view.events.addEvent('update', () => {
     const percentHealth = view.model.health / view.model.maxHealth;
     const opacity = Math.max(0, percentHealth) ?? 0;
 

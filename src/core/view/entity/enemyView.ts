@@ -8,6 +8,7 @@ import {
 import { createEntityView } from './entityView';
 import type { View } from '../types';
 import { deepMerge } from '../../utils/deepMerge';
+import { addHealthOpacityStyle } from '../components/styles/addHealthOpacityStyle';
 
 // Create enemy-specific defaults
 const enemyDefaults: DeepPartial<View> = {
@@ -34,9 +35,9 @@ export const createEnemyView = (props?: DeepPartial<View>) => {
   const view = createEntityView({
     ...mergedProps,
   });
-  console.log(view);
 
-  addForwardMovement(view);
+  view.addComponent('forwardMovement', addForwardMovement(view));
+  view.addComponent('healthOpacityStyle', addHealthOpacityStyle(view));
 
   return view;
 };

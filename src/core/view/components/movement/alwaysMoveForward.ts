@@ -33,4 +33,6 @@ export const addForwardMovement = (view: ViewInstance) => {
       y: currentForce.y + forceToAdd.y,
     });
   });
+
+  return {};
 };

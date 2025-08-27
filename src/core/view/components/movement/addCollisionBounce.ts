@@ -7,7 +7,6 @@ export const addCollisionBounce = (view: ViewInstance) => {
   const event = getCollisionEventId(view);
 
   view.events.addEvent(event, e => {
-    console.log(view);
     const collision = e.detail.collision;
     const bounceForce = getBounceForce(view, collision.deltaTime);
     bounceForce.x = Math.abs(bounceForce.x) * 100;

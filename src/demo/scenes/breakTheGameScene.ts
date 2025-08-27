@@ -22,7 +22,7 @@ export const breakTheGameScene = (): SceneInstance => {
     },
   });
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 50; i++) {
     const randomPos = {
       x: Math.random() * Screen.w,
       y: Math.random() * Screen.h,

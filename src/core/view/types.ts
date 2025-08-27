@@ -1,6 +1,5 @@
 import type { CollisionLayer } from '../gameState/collisionLayers';
 import type { ComponentRegistry } from './components/addComponents';
-import type { Component, createView } from './view';
 
 export type ViewModel = {
   maxHealth: number;
