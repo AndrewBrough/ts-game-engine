@@ -33,6 +33,7 @@ export const basePlayerProps: DeepPartial<View> = {
     shape: 'rect',
     width: Screen.percent(1).w,
     height: Screen.percent(20).h,
+    y: Screen.percent(50).h - Screen.percent(20).h / 2,
     style: {
       fill: {
         color: 'white',

@@ -20,6 +20,11 @@ export const pong = () => {
   });
 
   const { leftWall, rightWall } = createWorldBoundsView();
+
+  // slow the ball when it hits a back wall
+  leftWall.model.collisionDamage = 1;
+  rightWall.model.collisionDamage = 1;
+
   const player1 = createPlayerView(
     {
       ...basePlayerProps,
@@ -89,6 +94,8 @@ export const pong = () => {
     scoreBoard.updateText({
       text: `${player1.model.score} - ${player2.model.score}`,
     });
+
+    ball.model.speed = Math.max(Math.min(ball.model.health, 10), 5);
   });
 
   return scene;

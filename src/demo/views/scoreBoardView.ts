@@ -25,13 +25,5 @@ export const scoreBoardView = (
     },
   });
 
-  view.addComponent('animations', addAnimations(view));
-
-  view.events.addEvent('animate', e => {
-    view.updateText({
-      text: `${player1.model.score} - ${player2.model.score}`,
-    });
-  });
-
   return view;
 };

@@ -1,10 +1,6 @@
 import { Screen } from '../../core/units';
-import type { CollisionComponent } from '../../core/view/components';
 import { addCollisionDamage } from '../../core/view/components/events/addCollisionDamage';
-import {
-  addCollisionBounce,
-  addWallBounce,
-} from '../../core/view/components/movement';
+import { addCollisionBounce } from '../../core/view/components/movement';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import boltSvg from '../assets/bolt.svg';
 
@@ -38,16 +34,6 @@ export const ballView = () => {
   // view.addComponent('wallBounce', addWallBounce(view));
   view.addComponent('collisionBounce', addCollisionBounce(view));
   view.addComponent('collisionDamage', addCollisionDamage(view));
-
-  const collisions = view.getComponent<CollisionComponent>('collisions');
-
-  if (!collisions) {
-    throw new Error('Collisions component not found');
-  }
-
-  collisions.addCollisionEvent((e: CustomEvent) => {
-    view.model.speed = Math.min(view.model.health, 10);
-  });
 
   return view;
 };
