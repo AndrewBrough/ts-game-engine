@@ -20,18 +20,20 @@ export type Collision = {
   deltaTime: number;
 };
 
+export type CollisionEvent = CustomEvent<{ collision: Collision }>;
+export type DeltaTimeEvent = CustomEvent<{ deltaTime: number }>;
+
 export type CollisionManager = ReturnType<typeof collisionManager>;
 
 export const collisionManager = () => {
   const events = createEvents();
   const collisions: Collision[] = [];
 
-  events.addEvent('collisions', (e: Event) => {
-    const event = e as CustomEvent<{ deltaTime: number }>;
+  events.addEvent('collisions', (e: DeltaTimeEvent) => {
     // Get all views across all layers
     const allViews = getAllCollidableViews();
     for (const view of allViews) {
-      checkCollisions(view, event.detail.deltaTime);
+      checkCollisions(view, e.detail.deltaTime);
     }
   });
 

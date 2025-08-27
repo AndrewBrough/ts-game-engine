@@ -14,12 +14,16 @@ export const breakTheGameScene = (): SceneInstance => {
 
   const player = createPlayerView({
     model: {
-      speed: 25,
+      speed: 80,
+      maxSpeed: 100,
     },
     physics: {
+      dampening: 0.7,
       bounce: 0.5,
     },
     geometry: {
+      x: Screen.w / 2,
+      y: Screen.h / 2,
       style: {
         fill: {
           color: 'blue',

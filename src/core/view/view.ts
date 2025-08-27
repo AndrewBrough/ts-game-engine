@@ -7,6 +7,7 @@ import { createEvents, type EventName } from '../events/events';
 import { Screen } from '../units';
 import { loadImage, type ImageLoader } from './loadImage';
 import { addComponents } from './components/addComponents';
+import type { DeltaTimeEvent } from '../gameState/collisionManager';
 
 export type ViewInstance = ReturnType<typeof createView> & {
   handlers: Map<EventName, (e: CustomEvent) => void>;
@@ -89,8 +90,8 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
     if (view.text.offset === 'center') {
       updateTextOffset({
-        x: -actualWidth,
-        y: actualHeight / 2,
+        x: -actualWidth / 2,
+        y: -actualHeight / 2,
       });
     } else {
       // updateTextOffset({
@@ -236,12 +237,12 @@ export const createView = (props: DeepPartial<View> = {}) => {
     // renderShape();
   };
 
-  const render = () => {
+  const render = (e: DeltaTimeEvent) => {
     // draw('debug');
     draw();
   };
 
-  const update = () => {};
+  const update = (e: DeltaTimeEvent) => {};
 
   const cleanup = () => {
     console.log('cleanup view', view.id);

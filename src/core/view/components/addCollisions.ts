@@ -1,4 +1,7 @@
-import { type Collision } from '../../gameState/collisionManager';
+import {
+  type Collision,
+  type CollisionEvent,
+} from '../../gameState/collisionManager';
 import { getCollideEventId, getCollisionEventId } from '../collision';
 import type { ViewInstance } from '../view';
 
@@ -10,7 +13,7 @@ export const addCollisions = (view: ViewInstance) => {
   // Event sent from this handler to bind view event handlers to
   const collisionHandlerEvent = getCollisionEventId(view);
 
-  const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
+  const handleCollide = (e: CollisionEvent) => {
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
     const isView1 = view1.id === view.id;
@@ -30,7 +33,7 @@ export const addCollisions = (view: ViewInstance) => {
     view.events.removeEvent(collideEvent);
   };
 
-  const addCollisionEvent = (callback: (e: CustomEvent) => void) => {
+  const addCollisionEvent = (callback: (e: CollisionEvent) => void) => {
     view.events.addEvent(collisionHandlerEvent, e => callback(e as any));
   };
 

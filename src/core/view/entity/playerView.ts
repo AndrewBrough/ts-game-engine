@@ -11,9 +11,6 @@ import { deepMerge } from '../../utils/deepMerge';
 const playerDefaults: DeepPartial<View> = {
   id: `player-${crypto.randomUUID()}`,
   layer: 'PLAYER',
-  model: {
-    speed: 10,
-  },
   geometry: {
     style: {
       fill: {

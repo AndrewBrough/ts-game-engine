@@ -6,6 +6,7 @@ import type {
   CollisionComponent,
   PhysicsComponent,
 } from '../../core/view/components';
+import { gridView } from '../../core/view/debug/gridView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import { givePoint } from '../scripts/points';
@@ -109,6 +110,15 @@ export const pong = () => {
         x: collision.normal.x * playerForce.x * deltaTime,
         y: collision.normal.y * playerForce.y * deltaTime,
       };
+      const distanceFromCenterOfPaddle =
+        collision.contactPoint.x - (otherView.geometry?.width ?? 0) / 2;
+      const maxDistance = otherView.geometry?.width ?? 0;
+      const normalizedDistance = distanceFromCenterOfPaddle / maxDistance;
+      console.log(distanceFromCenterOfPaddle, maxDistance);
+      console.log(normalizedDistance);
+      ballForce.x *= normalizedDistance;
+      ballForce.y *= normalizedDistance;
+
       ball.getComponent<PhysicsComponent>('physics')?.applyForce(ballForce);
     }
   );

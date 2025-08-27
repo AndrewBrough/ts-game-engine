@@ -25,6 +25,8 @@ export type InputEventName = keyof typeof InputEvents;
 export const GameEvents = {
   update: 'update',
   render: 'render',
+  collisions: 'collisions',
+  deltaTime: 'deltaTime',
 };
 export type GameEventName = keyof typeof GameEvents;
 
