@@ -1,21 +1,12 @@
 import type { DeepPartial } from '../../types';
-import { addAnimations, addCollisions } from '../components';
-import {
-  addCollisionBounce,
-  addForwardMovement,
-  addWallBounce,
-} from '../components/movement';
+import { addForwardMovement } from '../components/movement';
 import { createEntityView } from './entityView';
 import type { View } from '../types';
 import { deepMerge } from '../../utils/deepMerge';
-import { addHealthOpacityStyle } from '../components/styles/addHealthOpacityStyle';
 
 // Create enemy-specific defaults
 const enemyDefaults: DeepPartial<View> = {
   layer: 'ENEMY',
-  model: {
-    speed: 10,
-  },
   geometry: {
     shape: 'rect',
     style: {

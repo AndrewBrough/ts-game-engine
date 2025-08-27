@@ -15,7 +15,7 @@ export type EntityViewInstance = ViewInstance & {
 
 const defaultViewProps: DeepPartial<View> = {
   model: {
-    speed: 10,
+    speed: 5,
     maxHealth: 100,
     health: 100,
     collisionDamage: 10,

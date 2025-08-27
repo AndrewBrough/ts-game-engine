@@ -27,14 +27,8 @@ export const createGame = () => {
 export const destroyGame = () => {
   // Stop the game loop
   gameLoop?.stop();
-
-  // Clean up all tracked event listeners
   cleanupEventListeners();
-
-  // Clear all views
   clearAllViews();
-
-  // Clear the canvas
   const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
   if (canvas) {
     canvas.remove();
@@ -42,10 +36,4 @@ export const destroyGame = () => {
 
   const sceneManager = getSceneManager();
   sceneManager.unloadAllScenes();
-};
-
-// Comprehensive cleanup that includes removing all window event listeners
-export const nuclearCleanup = () => {
-  // First do normal cleanup
-  destroyGame();
 };

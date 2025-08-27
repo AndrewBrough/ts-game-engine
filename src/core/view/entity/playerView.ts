@@ -12,7 +12,7 @@ const playerDefaults: DeepPartial<View> = {
   id: `player-${crypto.randomUUID()}`,
   layer: 'PLAYER',
   model: {
-    speed: 15,
+    speed: 10,
   },
   geometry: {
     style: {

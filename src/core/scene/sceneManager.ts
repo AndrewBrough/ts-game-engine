@@ -1,39 +1,42 @@
-import { pong } from '../../demo/scenes/pongScene';
-import { createScene, type SceneInstance } from './scene';
+import { destroyGame } from '../game/game';
+import { type SceneInstance } from './scene';
 
 export type SceneManager = ReturnType<typeof createSceneManager>;
 
 const createSceneManager = () => {
   const scenes: Record<string, () => SceneInstance> = {};
-  const loadedScenes: Set<SceneInstance> = new Set();
+  const loadedScenes: Record<string, SceneInstance> = {};
 
   const addScene = (sceneName: string, scene: () => SceneInstance) => {
     scenes[sceneName] = scene;
   };
 
   const loadScene = (sceneName: string) => {
+    if (Object.keys(loadedScenes).length > 0) {
+      unloadScene();
+      destroyGame();
+    }
     const scene = scenes[sceneName];
-    unloadScene(sceneName);
-
     const sceneInstance = scene();
-    loadedScenes.add(sceneInstance);
+    loadedScenes[sceneInstance.name] = sceneInstance;
     return sceneInstance;
   };
 
-  const unloadScene = (sceneName: string) => {
-    for (const scene of loadedScenes) {
-      if (scene.name === sceneName) {
-        console.log('unloadScene', scene.name);
-        scene.destroy();
-      }
+  const unloadScene = (sceneName?: string) => {
+    const sceneToUnload = sceneName ?? Object.keys(loadedScenes)[0];
+    if (!sceneToUnload) {
+      return;
     }
+    loadedScenes[sceneToUnload]?.destroy();
+    delete loadedScenes[sceneToUnload];
   };
 
   const unloadAllScenes = () => {
-    for (const scene of loadedScenes) {
-      console.log('unloadAllScene', scene.name);
-      unloadScene(scene.name);
+    for (const sceneName in loadedScenes) {
+      console.log('unloadAllScene', sceneName);
+      unloadScene(sceneName);
     }
+    destroyGame();
   };
 
   return {
