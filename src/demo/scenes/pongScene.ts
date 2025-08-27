@@ -6,6 +6,7 @@ import type { CollisionComponent } from '../../core/view/components';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
+import { givePoint } from '../scripts/points';
 import { ballView } from '../views/ballView';
 import { basePlayerProps } from '../views/playerPaddleView';
 import { scoreBoardView } from '../views/scoreBoardView';
@@ -31,6 +32,10 @@ export const pong = () => {
           fill: {
             color: 'red',
           },
+          stroke: {
+            color: 'red',
+            opacity: 1,
+          },
         },
       },
     },
@@ -50,6 +55,10 @@ export const pong = () => {
         style: {
           fill: {
             color: 'blue',
+          },
+          stroke: {
+            color: 'blue',
+            opacity: 1,
           },
         },
       },
@@ -72,9 +81,9 @@ export const pong = () => {
     const collision = e.detail.collision;
 
     if (collision.view2.id === leftWall.id) {
-      player1.model.score++;
+      givePoint(player1);
     } else if (collision.view2.id === rightWall.id) {
-      player2.model.score++;
+      givePoint(player2);
     }
 
     scoreBoard.updateText({

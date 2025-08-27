@@ -22,6 +22,8 @@ export type Component = {
 
 export type ComponentRegistry = Record<string, Component>;
 
+export type ComponentInstance = ReturnType<typeof addComponents>;
+
 export const addComponents = () => {
   const components: ComponentRegistry = {};
 

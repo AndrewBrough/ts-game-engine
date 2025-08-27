@@ -50,12 +50,20 @@ export const createEvents = () => {
     window.addEventListener(event, handler as EventListener);
   };
 
-  const removeEvent = (event: EventName) => {
+  const removeEvent = (event: EventName, callback?: (e: any) => void) => {
     const handlers = eventHandlers.get(event);
     if (handlers) {
-      handlers.forEach(handler => {
-        window.removeEventListener(event, handler as EventListener);
-      });
+      if (callback) {
+        handlers.forEach(handler => {
+          if (handler === callback) {
+            window.removeEventListener(event, handler as EventListener);
+          }
+        });
+      } else {
+        handlers.forEach(handler => {
+          window.removeEventListener(event, handler as EventListener);
+        });
+      }
       eventHandlers.delete(event);
     }
   };
