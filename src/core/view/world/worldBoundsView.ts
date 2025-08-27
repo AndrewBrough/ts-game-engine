@@ -1,113 +1,104 @@
 import type { DeepPartial } from '../../types';
+import { Screen } from '../../units';
 import { createEntityView } from '../entity/entityView';
 import type { View } from '../types';
 
-const WALL_THICKNESS = 5;
-const baseProps = {
-  layer: 'DEFAULT',
-  shape: 'rect',
-  relativeTo: 'center',
-  anchor: 'center',
-  geometry: {
-    width: 100,
-    height: WALL_THICKNESS,
-    units: ['vw', 'vh'],
-  },
-  fill: {
-    color: 'black',
-    opacity: 0.7,
-  },
-  stroke: {
-    color: 'black',
-    opacity: 1,
-  },
-  text: {
-    text: '',
-  },
-} as DeepPartial<View>;
+const WALL_THICKNESS_X = Screen.percent(1).w;
+const WALL_THICKNESS_Y = Screen.percent(1).h;
 
-export const createWorldBoundsView = () => {
-  createEntityView({
+const baseProps: DeepPartial<View> = {
+  layer: 'DEFAULT',
+  model: {
+    speed: 0,
+    maxHealth: -1,
+    health: -1,
+    collisionDamage: 0,
+  },
+  geometry: {
+    shape: 'rect',
+    width: WALL_THICKNESS_X,
+    height: WALL_THICKNESS_Y,
+    style: {
+      fill: {
+        color: 'black',
+        opacity: 0.7,
+      },
+      stroke: {
+        color: 'black',
+        opacity: 1,
+      },
+    },
+  },
+  physics: {
+    dampening: 0,
+    bounce: 1,
+  },
+};
+
+export const createWorldBoundsView = (debugColors: boolean = false) => {
+  const topWall = createEntityView({
     ...baseProps,
     id: 'top-wall',
     geometry: {
       ...baseProps.geometry,
-      x: 0,
       y: 0,
-      width: 100,
-      height: WALL_THICKNESS,
+      width: Screen.w,
       style: {
         fill: {
-          color: 'blue',
+          color: debugColors ? 'blue' : 'transparent',
         },
       },
     },
-    physics: {
-      dampening: 0.9,
-      bounce: 200,
-    },
   });
 
-  createEntityView({
+  const bottomWall = createEntityView({
     ...baseProps,
     id: 'bottom-wall',
     geometry: {
-      ...baseProps.geometry,
-      x: 0,
-      y: 85,
-      width: 100,
-      height: WALL_THICKNESS,
+      y: Screen.percent(99).h,
+      width: Screen.w,
       style: {
         fill: {
-          color: 'blue',
+          color: debugColors ? 'purple' : 'transparent',
         },
       },
     },
-    physics: {
-      dampening: 0.9,
-      bounce: 200,
-    },
   });
 
-  createEntityView({
+  const leftWall = createEntityView({
     ...baseProps,
     id: 'left-wall',
-    physics: {
-      dampening: 0.9,
-      bounce: 200,
-    },
     geometry: {
       ...baseProps.geometry,
-      x: 0,
       y: 0,
-      width: WALL_THICKNESS,
-      height: 100,
+      height: Screen.h,
       style: {
         fill: {
-          color: 'orange',
+          color: debugColors ? 'orange' : 'transparent',
         },
       },
     },
   });
 
-  createEntityView({
+  const rightWall = createEntityView({
     ...baseProps,
     id: 'right-wall',
     geometry: {
       ...baseProps.geometry,
-      x: 90,
-      y: 0,
-      width: WALL_THICKNESS,
-      height: 100,
+      x: Screen.percent(99).w,
+      height: Screen.h,
       style: {
         fill: {
-          color: 'green',
+          color: debugColors ? 'green' : 'transparent',
         },
       },
     },
-    physics: {
-      dampening: 0.9,
-      bounce: 200,
-    },
   });
+
+  return {
+    topWall,
+    bottomWall,
+    leftWall,
+    rightWall,
+  };
 };

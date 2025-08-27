@@ -6,6 +6,7 @@ import type { CollisionComponent } from '../../core/view/components';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
+import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import boltSvg from '../assets/bolt.svg';
 import { scoreBoardView } from '../views/scoreBoardView';
 
@@ -37,8 +38,20 @@ export const pong = () => {
   const scene = createScene('pong');
 
   setCollisionLayers({
+    DEFAULT: ['ENEMY'],
     PLAYER: ['DEFAULT', 'ENEMY'],
     ENEMY: ['DEFAULT', 'PLAYER'],
+  });
+
+  const { leftWall, rightWall } = createWorldBoundsView();
+  const LWCollisions = leftWall.getComponent<CollisionComponent>('collisions');
+  LWCollisions?.addCollisionEvent(e => {
+    console.log('left wall collision', e);
+  });
+
+  const RWCollisions = rightWall.getComponent<CollisionComponent>('collisions');
+  RWCollisions?.addCollisionEvent(e => {
+    console.log('right wall collision', e);
   });
 
   const player1 = createPlayerView(
@@ -98,6 +111,7 @@ export const pong = () => {
   const scoreBoard = scoreBoardView(player1, player2);
 
   const collisions = ball.getComponent<CollisionComponent>('collisions');
+
   if (!collisions) {
     throw new Error('Collisions component not found');
   }
