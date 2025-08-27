@@ -35,9 +35,9 @@ export const createPhysics = (view: View['physics']) => {
 
     // Cap max force that can be applied
     if (Math.abs(currentForce.x) > view.speed * deltaTime * 2)
-      currentForce.x *= dampening / 2;
+      currentForce.x *= dampening * 0.1;
     if (Math.abs(currentForce.y) > view.speed * deltaTime * 2)
-      currentForce.y *= dampening / 2;
+      currentForce.y *= dampening * 0.1;
 
     // TODO investigate if this is a fun mechanic, wobbly movement when high speed
     // if (Math.abs(currentForce.x) > 20)
