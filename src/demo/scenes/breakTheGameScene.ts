@@ -29,7 +29,6 @@ export const breakTheGameScene = (): SceneInstance => {
       y: Math.random() * Screen.h,
     };
     const enemy = createEnemyView({
-      id: `enemy-${crypto.randomUUID()}`,
       model: {
         speed: 5,
       },

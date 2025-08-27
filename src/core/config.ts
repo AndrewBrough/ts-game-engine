@@ -53,7 +53,7 @@ export const defaultViewConfig: View = {
     speed: 1, // how fast the view moves
     currentForce: { x: 0, y: 0 }, // how much force is applied to the view
     dampening: 0.9, // how much current force is reduced after every physics update (drag)
-    bounce: 1.1, // how much force is applied to current force when colliding with another view
+    bounce: 2, // how much force is applied to current force when colliding with another view
   },
   components: {},
 };

@@ -12,7 +12,6 @@ import { addHealthOpacityStyle } from '../components/styles/addHealthOpacityStyl
 
 // Create enemy-specific defaults
 const enemyDefaults: DeepPartial<View> = {
-  id: `enemy-${crypto.randomUUID()}`,
   layer: 'ENEMY',
   model: {
     speed: 10,
@@ -34,7 +33,7 @@ export const createEnemyView = (props?: DeepPartial<View>) => {
   const mergedProps = deepMerge(enemyDefaults, props);
   const view = createEntityView({
     ...mergedProps,
-    id: `enemy-${crypto.randomUUID()}`,
+    id: props?.id ?? `enemy-${crypto.randomUUID()}`,
   });
 
   view.addComponent('forwardMovement', addForwardMovement(view));
