@@ -4,7 +4,7 @@ import type { EntityView } from '../types';
 
 const WALL_THICKNESS = 5;
 const baseProps = {
-  layer: 'WALLS',
+  layer: 'DEFAULT',
   shape: 'rect',
   relativeTo: 'center',
   anchor: 'center',

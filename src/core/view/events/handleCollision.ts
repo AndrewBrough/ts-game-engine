@@ -25,7 +25,7 @@ export const createCollisionHandler = (view: ViewInstance) => {
       return;
     }
 
-    view.events.events.get(collisionHandlerEvent)?.forEach(cb => cb(e));
+    view.events.events?.get(collisionHandlerEvent)?.forEach(cb => cb(e));
   };
 
   const attachCollisionHandler = () => {
@@ -39,6 +39,7 @@ export const createCollisionHandler = (view: ViewInstance) => {
   const addCollisionEvent = (
     callback: (e: CustomEvent<{ collision: Collision }>) => void
   ) => {
+    console.log('addCollisionEvent');
     view.events.addEvent(collisionHandlerEvent, callback);
   };
 
