@@ -28,13 +28,13 @@ export const createCollisionHandler = (view: EntityViewInstance) => {
     }
 
     const bounceForce = getBounceForce(view, collision.deltaTime);
-    bounceForce.x = Math.abs(bounceForce.x);
-    bounceForce.y = Math.abs(bounceForce.y);
+    bounceForce.x = Math.abs(bounceForce.x) * 100;
+    bounceForce.y = Math.abs(bounceForce.y) * 100;
 
     bounceForce.x *= -collision.normal.x;
     bounceForce.y *= -collision.normal.y;
 
-    view.physics.setForce(bounceForce);
+    view.physics.applyForce(bounceForce);
   };
 
   const handleDamage = (damage: number = 0) => {

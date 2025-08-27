@@ -5,9 +5,9 @@ export type PhysicsInstance = ReturnType<typeof createPhysics>;
 /**
  * Creates a physics object for handling forces and dampening
  */
-export const createPhysics = (props: View['physics']) => {
+export const createPhysics = (view: View['physics']) => {
   let currentForce: Position = { x: 0, y: 0 };
-  const dampening = props?.dampening ?? 0.95;
+  const dampening = view?.dampening ?? 0.95;
 
   const applyForce = (force: Position) => {
     const difference = {
@@ -23,7 +23,8 @@ export const createPhysics = (props: View['physics']) => {
     currentForce.y = force.y;
   };
 
-  const update = () => {
+  const update = (e: CustomEvent) => {
+    const deltaTime = e.detail.deltaTime;
     // Apply dampening (air resistance)
     currentForce.x *= dampening;
     currentForce.y *= dampening;
@@ -31,6 +32,12 @@ export const createPhysics = (props: View['physics']) => {
     // Stop very small forces to prevent infinite micro-movements
     if (Math.abs(currentForce.x) < 0.01) currentForce.x = 0;
     if (Math.abs(currentForce.y) < 0.01) currentForce.y = 0;
+
+    // Cap max force that can be applied
+    if (Math.abs(currentForce.x) > view.speed * deltaTime * 2)
+      currentForce.x *= dampening / 2;
+    if (Math.abs(currentForce.y) > view.speed * deltaTime * 2)
+      currentForce.y *= dampening / 2;
 
     // TODO investigate if this is a fun mechanic, wobbly movement when high speed
     // if (Math.abs(currentForce.x) > 20)
@@ -55,6 +62,6 @@ export const createPhysics = (props: View['physics']) => {
     update,
     getCurrentForce,
     reset,
-    ...props,
+    ...view,
   };
 };

@@ -11,7 +11,7 @@ export const createEnemyView = (id?: string) => {
   const entityView = createEntityView({
     id: cubeId,
     model: {
-      speed: 20,
+      speed: 10,
     },
     geometry: {
       shape: 'rect',
@@ -49,9 +49,7 @@ export const createEnemyView = (id?: string) => {
     y: Math.random() * Screen.h,
   });
 
-  // screenSaver(entityView);
   alwaysMoveForward(entityView);
-  bounceOffWalls(entityView);
 
   return entityView;
 };

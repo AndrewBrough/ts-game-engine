@@ -12,6 +12,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   const view = createInteractiveView({
     ...props,
     model: {
+      speed: 10,
       maxHealth: 100,
       health: 100,
       collisionDamage: 10,
@@ -49,17 +50,17 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
   const physics = createPhysics(view.physics);
   const collisionHandler = createCollisionHandler({ ...view, physics });
 
-  view.events.addEvent('update', () => {
-    updatePhysics();
+  view.events.addEvent('update', (e: CustomEvent) => {
+    updatePhysics(e);
     updateHealth();
 
     // Update view so next render gets the above changes
     view.update();
   });
 
-  const updatePhysics = () => {
+  const updatePhysics = (e: CustomEvent) => {
     // get physics data updates
-    const force = physics.update();
+    const force = physics.update(e);
 
     // update view data if force is applied
     if (force.x !== 0 || force.y !== 0) {

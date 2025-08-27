@@ -7,11 +7,9 @@ export const createPlayerView = () => {
     id: 'player',
     layer: 'PLAYER',
     model: {
-      speed: 20,
+      speed: 15,
     },
     geometry: {
-      x: Screen.center.x,
-      y: Screen.center.y,
       style: {
         fill: {
           color: 'blue',
@@ -23,6 +21,11 @@ export const createPlayerView = () => {
         },
       },
     },
+  });
+
+  view.updatePosition({
+    x: Screen.center.x - view.geometry.width / 2,
+    y: Screen.center.y - view.geometry.height / 2,
   });
 
   handleMove(view);

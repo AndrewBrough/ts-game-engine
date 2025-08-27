@@ -25,10 +25,10 @@ export const bounceOffWalls = (entityView: EntityViewInstance) => {
 
     if (bounceVector.x !== 0 || bounceVector.y !== 0) {
       const bounceForce = getBounceForce(entityView, deltaTime);
-      bounceForce.x *= bounceVector.x;
-      bounceForce.y *= bounceVector.y;
+      bounceForce.x *= bounceVector.x * 100;
+      bounceForce.y *= bounceVector.y * 100;
 
-      entityView.physics.setForce(bounceForce);
+      entityView.physics.applyForce(bounceForce);
     }
   });
 };
