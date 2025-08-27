@@ -153,6 +153,26 @@ export const createView = (props: DeepPartial<View> = {}) => {
         ctx.stroke();
         ctx.closePath();
       }
+
+      if (view.geometry.shape === 'circle') {
+        ctx.globalAlpha = view.geometry.style.fill.opacity;
+        ctx.beginPath();
+        ctx.arc(x + w / 2, y + h / 2, w / 2, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.globalAlpha = view.geometry.style.stroke.opacity;
+        ctx.stroke();
+        ctx.closePath();
+      }
+
+      if (view.geometry.shape === 'line') {
+        ctx.globalAlpha = view.geometry.style.stroke.opacity;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + w, y + h);
+        ctx.stroke();
+        ctx.closePath();
+      }
     };
 
     const drawText = () => {

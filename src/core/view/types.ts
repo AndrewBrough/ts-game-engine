@@ -55,7 +55,7 @@ export type Geometry = {
   y: number;
   width: number;
   height: number;
-  shape?: 'rect' | 'roundRect' | 'image';
+  shape?: 'image' | 'rect' | 'roundRect' | 'line' | 'circle';
   style: StyleProps;
 };
 

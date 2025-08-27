@@ -22,6 +22,11 @@ export const demoScene = () => {
     physics: {
       dampening: 0.7,
     },
+    geometry: {
+      shape: 'circle',
+      width: Math.min(Screen.percent(7.5).w, 50),
+      height: Math.min(Screen.percent(7.5).w, 50),
+    },
   });
   player.addComponent('wallBounce', addWallBounce(player));
   player.addComponent('collisionBounce', addCollisionBounce(player));

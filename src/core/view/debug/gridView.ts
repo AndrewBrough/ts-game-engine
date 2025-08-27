@@ -8,11 +8,8 @@ const baseGridProps: DeepPartial<View> = {
   geometry: {
     width: 1,
     height: 1,
-    shape: 'rect',
+    shape: 'line',
     style: {
-      fill: {
-        opacity: 0,
-      },
       stroke: {
         color: 'cyan',
         opacity: 1,
@@ -23,22 +20,54 @@ const baseGridProps: DeepPartial<View> = {
 };
 
 export const gridView = () => {
-  const grid: ViewInstance[][] = [];
-  for (let i = 0; i < 10; i++) {
-    grid[i] = [];
-    for (let j = 0; j < 10; j++) {
-      grid[i][j] = createView({
-        id: `grid-${i}-${j}`,
+  const grid: ViewInstance[] = [];
+
+  // Create 10 vertical lines (straight down)
+  for (let i = 0; i < 11; i++) {
+    grid.push(
+      createView({
+        id: `grid-vertical-${i}`,
         ...baseGridProps,
         geometry: {
           ...baseGridProps.geometry,
           x: Screen.percent(10).w * i,
-          y: Screen.percent(10).h * j,
-          width: Screen.percent(10).w,
-          height: Screen.percent(10).h,
+          y: 0,
+          width: 0,
+          height: Screen.h,
+          style: {
+            ...baseGridProps.geometry?.style,
+            stroke: {
+              ...baseGridProps.geometry?.style?.stroke,
+              width: 1,
+            },
+          },
         },
-      });
-    }
+      })
+    );
+  }
+
+  // Create 10 horizontal lines (straight across)
+  for (let i = 0; i < 11; i++) {
+    grid.push(
+      createView({
+        id: `grid-horizontal-${i}`,
+        ...baseGridProps,
+        geometry: {
+          ...baseGridProps.geometry,
+          x: 0,
+          y: Screen.percent(10).h * i,
+          width: Screen.w,
+          height: 0,
+          style: {
+            ...baseGridProps.geometry?.style,
+            stroke: {
+              ...baseGridProps.geometry?.style?.stroke,
+              width: 1,
+            },
+          },
+        },
+      })
+    );
   }
 
   return grid;
