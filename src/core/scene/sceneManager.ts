@@ -1,4 +1,5 @@
 import { breakTheGameScene } from './breakTheGameScene';
+import { pong } from './pong';
 import { createScene, type SceneInstance } from './scene';
 
 export type SceneManager = ReturnType<typeof createSceneManager>;
@@ -6,6 +7,7 @@ export type SceneManager = ReturnType<typeof createSceneManager>;
 const SCENES = {
   TEST: createScene,
   BREAK_THE_ENGINE: breakTheGameScene,
+  PONG: pong,
 };
 
 export type SceneName = keyof typeof SCENES;

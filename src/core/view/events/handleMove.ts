@@ -1,8 +1,24 @@
 import type { EntityModel, Position } from '../types';
 import { isKeyHeld } from '../../input/keyboard';
 import type { EntityViewInstance } from '../player/entityView';
+import type { DeepRequired } from '../../types';
 
-export const handleMove = (view: EntityViewInstance) => {
+export type ControlProps = {
+  up?: string;
+  down?: string;
+  left?: string;
+  right?: string;
+};
+
+export const handleMove = (
+  view: EntityViewInstance,
+  controlProps: DeepRequired<ControlProps> = {
+    up: 'w',
+    down: 's',
+    left: 'a',
+    right: 'd',
+  }
+) => {
   view.events.addEvent('update', (e: CustomEvent) => {
     const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
 
@@ -13,16 +29,16 @@ export const handleMove = (view: EntityViewInstance) => {
 
     const speed = view.model.speed;
 
-    if (isKeyHeld('a') || isKeyHeld('ArrowLeft')) {
+    if (isKeyHeld(controlProps.left!)) {
       movement.x = -speed;
     }
-    if (isKeyHeld('d') || isKeyHeld('ArrowRight')) {
+    if (isKeyHeld(controlProps.right!)) {
       movement.x = speed;
     }
-    if (isKeyHeld('w') || isKeyHeld('ArrowUp')) {
+    if (isKeyHeld(controlProps.up ?? '')) {
       movement.y = -speed;
     }
-    if (isKeyHeld('s') || isKeyHeld('ArrowDown')) {
+    if (isKeyHeld(controlProps.down ?? '')) {
       movement.y = speed;
     }
 

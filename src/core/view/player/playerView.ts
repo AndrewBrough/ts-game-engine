@@ -1,8 +1,13 @@
 import { Screen } from '../../units';
-import { handleMove } from '../events/handleMove';
+import { handleMove, type ControlProps } from '../events/handleMove';
 import { createEntityView } from './entityView';
+import type { DeepPartial } from '../../types';
+import type { View } from '../types';
 
-export const createPlayerView = () => {
+export const createPlayerView = (
+  props?: DeepPartial<View>,
+  controls?: ControlProps
+) => {
   const view = createEntityView({
     id: 'player',
     layer: 'PLAYER',
@@ -21,14 +26,10 @@ export const createPlayerView = () => {
         },
       },
     },
+    ...props,
   });
 
-  view.updatePosition({
-    x: Screen.center.x - view.geometry.width / 2,
-    y: Screen.center.y - view.geometry.height / 2,
-  });
-
-  handleMove(view);
+  handleMove(view, controls);
 
   return view;
 };

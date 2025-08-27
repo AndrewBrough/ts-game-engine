@@ -11,6 +11,9 @@ export const devKeyboardShortcuts = () => {
     '0': () => {
       getSceneManager().unloadAllScenes();
     },
+    '3': () => {
+      getSceneManager().loadScene('PONG');
+    },
   };
 
   const bindShortcuts = () => {
