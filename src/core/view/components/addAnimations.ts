@@ -1,22 +1,17 @@
 import type { ViewInstance } from '../view';
 
 export const addAnimations = (view: ViewInstance) => {
+  const animations = {
+    id: crypto.randomUUID(),
+  };
+
   const animate = () => {
     view.update();
   };
 
-  const addAnimation = (
-    callback: (e: CustomEvent) => void,
-    event: 'animate' | 'update' | 'render' = 'animate'
-  ) => {
-    view.events.addEvent(event, e => callback(e as CustomEvent));
-  };
-
-  addAnimation((e: CustomEvent) => {
-    animate();
-  });
+  view.events.addEvent('animate', e => animate());
 
   return {
-    addAnimation,
+    ...animations,
   };
 };

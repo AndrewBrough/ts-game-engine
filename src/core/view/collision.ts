@@ -161,7 +161,8 @@ export const getCollision = (
   return collision;
 };
 
-export const getCollisionEvent = (view: View) => `${view.id}-collide`;
+export const getCollideEventId = (view: View) => `${view.id}-collide`;
+export const getCollisionEventId = (view: View) => `${view.id}-collision-event`;
 export const getCollisionId = (view1: View, view2: View) =>
   `${view1.id}-${view2.id}`;
 

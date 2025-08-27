@@ -1,13 +1,12 @@
 import { Screen } from '../../core/units';
 import { addAnimations } from '../../core/view/components/addAnimations';
-import type { EntityViewInstance } from '../../core/view/entity/entityView';
-import { createView } from '../../core/view/view';
+import { createView, type ViewInstance } from '../../core/view/view';
 
 export const scoreBoardView = (
-  player1: EntityViewInstance,
-  player2: EntityViewInstance
+  player1: ViewInstance,
+  player2: ViewInstance
 ) => {
-  const scoreBoard = createView({
+  const view = createView({
     id: 'score-board',
     layer: 'UI',
     geometry: {
@@ -26,7 +25,13 @@ export const scoreBoardView = (
     },
   });
 
-  addAnimations(scoreBoard);
+  view.addComponent('animations', addAnimations(view));
 
-  return scoreBoard;
+  view.events.addEvent('animate', e => {
+    view.updateText({
+      text: `${player1.model.score} - ${player2.model.score}`,
+    });
+  });
+
+  return view;
 };

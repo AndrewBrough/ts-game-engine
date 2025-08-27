@@ -2,6 +2,7 @@ import { setCollisionLayers } from '../../core/gameState/collisionLayers';
 import { createScene } from '../../core/scene/scene';
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
+import type { CollisionComponent } from '../../core/view/components';
 import { createEnemyView } from '../../core/view/entity/enemyView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
@@ -96,7 +97,11 @@ export const pong = () => {
 
   const scoreBoard = scoreBoardView(player1, player2);
 
-  ball.collisions.addCollisionEvent((e: CustomEvent) => {
+  const collisions = ball.getComponent<CollisionComponent>('collisions');
+  if (!collisions) {
+    throw new Error('Collisions component not found');
+  }
+  collisions.addCollisionEvent((e: CustomEvent) => {
     const collision = e.detail.collision;
 
     if (collision.view2.id === 'player-1') {

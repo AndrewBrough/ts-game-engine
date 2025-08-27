@@ -4,7 +4,7 @@ import { addAnimations } from '../view/components';
 import { createView } from '../view/view';
 
 export const createFpsView = () => {
-  const animatedView = createView({
+  const view = createView({
     id: 'fps-view',
     layer: 'UI',
     text: {
@@ -23,13 +23,14 @@ export const createFpsView = () => {
     },
   });
 
-  const { addAnimation } = addAnimations(animatedView);
-  addAnimation(() => {
+  view.addComponent('animations', addAnimations(view));
+
+  view.events.addEvent('animate', e => {
     const fps = getState().fps;
-    animatedView.updateText({
+    view.updateText({
       text: `${fps}`,
     });
   });
 
-  return animatedView;
+  return view;
 };

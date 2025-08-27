@@ -7,7 +7,6 @@ import { addPhysics } from '../components/addPhysics';
 import { addAnimations, addCollisions } from '../components';
 import { addWallBounce, addCollisionBounce } from '../components/movement';
 import { addCollisionDamage } from '../components/events/addCollisionDamage';
-import type { AnimationComponent } from '../components/example';
 
 export type EntityViewInstance = ViewInstance & {
   physics: ReturnType<typeof addPhysics>;

@@ -50,7 +50,6 @@ window.addEventListener('viewRemoved', handleViewRemoved as EventListener);
 
 // Helper function to get all views across all layers
 export const getAllViews = (): ViewInstance[] => {
-  console.log('getAllViews', gameState.views);
   return Object.values(gameState.views).flat();
 };
 
@@ -119,7 +118,7 @@ export const toggleTimeScale = () => {
 export const getCollisionLayerViews = (
   layer: CollisionLayer
 ): ViewInstance[] => {
-  const collidingViews = [];
+  const collidingViews: ViewInstance[] = [];
   const layers = COLLISION_MATRIX[layer];
 
   if (!layers) {

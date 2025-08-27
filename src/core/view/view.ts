@@ -6,7 +6,7 @@ import type { View, Position, StyleProps } from './types';
 import { createEvents, type EventName } from '../events/events';
 import { Screen } from '../units';
 import { loadImage, type ImageLoader } from './loadImage';
-import { addComponents } from './components/component';
+import { addComponents } from './components/addComponents';
 
 export type ViewInstance = ReturnType<typeof createView> & {
   handlers: Map<EventName, (e: CustomEvent) => void>;

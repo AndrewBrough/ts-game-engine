@@ -1,7 +1,7 @@
 import { createEvents } from '../events/events';
 import {
   getCollision,
-  getCollisionEvent,
+  getCollisionEventId,
   getMinOverlap,
   getOverlap,
   type Bounds,
@@ -70,6 +70,7 @@ export const collisionManager = () => {
   };
 
   const registerCollision = (collision: Collision) => {
+    console.log('registerCollision', collision);
     if (collisions.includes(collision)) {
       // already registered
       return;
@@ -80,7 +81,7 @@ export const collisionManager = () => {
     if (
       COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
     ) {
-      const event = getCollisionEvent(collision.view1); // must match handleCollision.collideEvent
+      const event = getCollisionEventId(collision.view1); // must match handleCollision.collideEvent
       dispatchCollisionEvent(event, collision);
     }
   };

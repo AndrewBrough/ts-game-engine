@@ -1,4 +1,5 @@
 import type { CollisionLayer } from '../gameState/collisionLayers';
+import type { ComponentRegistry } from './components/addComponents';
 import type { Component, createView } from './view';
 
 export type ViewModel = {
@@ -33,7 +34,7 @@ export type View<T extends ViewModel = ViewModel> = {
     dampening: number;
     bounce: number;
   };
-  components: Component[];
+  components: ComponentRegistry;
 };
 
 export type StyleProps = {

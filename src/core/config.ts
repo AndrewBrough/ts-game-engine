@@ -55,4 +55,5 @@ export const defaultViewConfig: View = {
     dampening: 0.9, // how much current force is reduced after every physics update (drag)
     bounce: 1.1, // how much force is applied to current force when colliding with another view
   },
+  components: {},
 };
