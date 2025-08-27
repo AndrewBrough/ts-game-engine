@@ -17,14 +17,10 @@ const defaultViewProps: DeepPartial<InteractiveView> = {
     health: 100,
     collisionDamage: 10,
   },
-  physics: {
-    bounce: 2,
-    dampening: 0.85,
-  },
   geometry: {
     shape: 'rect',
-    width: Math.min(Screen.percent(5).w, 50),
-    height: Math.min(Screen.percent(5).w, 50),
+    width: Math.min(Screen.percent(7.5).w, 50),
+    height: Math.min(Screen.percent(7.5).w, 50),
   },
 };
 
@@ -61,6 +57,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
 
   const entityView = {
     ...view,
+    collisionHandler,
     physics,
   };
 

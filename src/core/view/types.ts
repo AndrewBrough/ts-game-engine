@@ -9,6 +9,7 @@ export type ViewModel = {
   health: number;
   speed: number;
   collisionDamage: number;
+  [key: string]: any;
 };
 
 export type View<T extends ViewModel = ViewModel> = {
@@ -30,7 +31,7 @@ export type View<T extends ViewModel = ViewModel> = {
   };
   physics: {
     speed: number;
-    force: Position;
+    currentForce: Position;
     dampening: number;
     bounce: number;
   };

@@ -11,7 +11,7 @@ export const createPlayerView = (
 ) => {
   // Create player-specific defaults
   const playerDefaults: DeepPartial<View> = {
-    id: 'player',
+    id: `player-${crypto.randomUUID()}`,
     layer: 'PLAYER',
     model: {
       speed: 15,

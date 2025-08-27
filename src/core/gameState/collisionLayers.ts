@@ -1,6 +1,5 @@
 export const LAYERS = [
   'BACKGROUND',
-  'WALLS',
   'DEFAULT',
   'PLAYER',
   'ENEMY',
@@ -11,11 +10,18 @@ export type CollisionLayer = (typeof LAYERS)[number];
 
 export const COLLISION_MATRIX: Record<CollisionLayer, CollisionLayer[]> = {
   BACKGROUND: [],
-  WALLS: [],
   DEFAULT: ['DEFAULT'],
-  PLAYER: ['DEFAULT', 'WALLS'],
-  ENEMY: ['ENEMY', 'PLAYER', 'WALLS'],
+  PLAYER: ['DEFAULT', 'ENEMY'],
+  ENEMY: ['DEFAULT', 'PLAYER'],
   UI: [],
 };
 
-console.log({ COLLISION_MATRIX });
+export const setCollisionLayers = (
+  matrix: Partial<Record<CollisionLayer, CollisionLayer[]>>
+) => {
+  for (const layer in matrix) {
+    COLLISION_MATRIX[layer as CollisionLayer] =
+      matrix[layer as CollisionLayer] ??
+      COLLISION_MATRIX[layer as CollisionLayer];
+  }
+};

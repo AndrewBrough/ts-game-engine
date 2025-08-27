@@ -1,5 +1,8 @@
-import type { Collision } from '../../gameState/collisionManager';
-import type { EntityViewInstance } from '../player/entityView';
+import {
+  collisionManager,
+  type Collision,
+} from '../../gameState/collisionManager';
+import type { ViewInstance } from '../view';
 
 export type CollisionHandlerInstance = {
   handleCollide: (e: CustomEvent<{ collision: Collision }>) => void;
@@ -7,7 +10,7 @@ export type CollisionHandlerInstance = {
   detachCollisionHandler: () => void;
 };
 
-export const createCollisionHandler = (view: EntityViewInstance) => {
+export const createCollisionHandler = (view: ViewInstance) => {
   // Event received from collisionManager
   const collideEvent = `${view.id}-collide`;
   // Event sent from this handler to bind view event handlers to
