@@ -11,7 +11,7 @@ export const createFpsView = () => {
         x: 0,
         y: Screen.percent(4).w,
       },
-      text: 'FPS: 0',
+      text: '0',
       fontSize: Screen.percent(4).w,
       style: {
         fill: {

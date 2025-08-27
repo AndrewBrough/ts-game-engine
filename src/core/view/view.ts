@@ -262,6 +262,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     updateGeometryStyle,
     updateTextStyle,
     updateTextSize,
+    updateTextOffset,
     updateSize,
     updateScale,
     updateText,

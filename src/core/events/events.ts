@@ -15,7 +15,10 @@ export const createEvents = () => {
   const events = new Map<string, ((e: CustomEvent) => void)[]>();
   const eventHandlers = new Map<string, ((e: CustomEvent) => void)[]>();
 
-  const addEvent = (event: string, callback: (e: CustomEvent) => void) => {
+  const addEvent = (
+    event: string,
+    callback: (e: CustomEvent | KeyboardEvent | MouseEvent) => void
+  ) => {
     events.set(event, [...(events.get(event) ?? []), callback]);
 
     // Create a wrapper function that we can reference for removal
