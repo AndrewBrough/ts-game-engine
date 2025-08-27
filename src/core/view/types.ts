@@ -17,6 +17,7 @@ export type View<T extends ViewModel = ViewModel> = {
   model: T;
   layer: CollisionLayer;
   scale: number;
+  imageUrl?: string;
   geometry: Geometry;
   text: {
     offset?: Position | 'center';
@@ -55,7 +56,7 @@ export type Geometry = {
   y: number;
   width: number;
   height: number;
-  shape?: 'rect' | 'roundRect';
+  shape?: 'rect' | 'roundRect' | 'image';
   style: StyleProps;
 };
 

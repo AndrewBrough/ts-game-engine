@@ -6,12 +6,22 @@ import type { View, AnyView, Position, StyleProps } from './types';
 import { addView, getViewsOnLayer } from '../gameState/gameState';
 import { createEvents } from '../events/events';
 import { Screen } from '../units';
+import { loadImage, type ImageLoader } from './loadImage';
 
 export type ViewInstance = ReturnType<typeof createView>;
 
 export const createView = (props: DeepPartial<View> = {}) => {
   const view = deepMerge(defaultViewConfig, props) as View;
   const events = createEvents();
+
+  const viewImage: ImageLoader | null = view.imageUrl ? loadImage(view) : null;
+
+  // Wait for the image to load initially
+  if (viewImage) {
+    viewImage.image.catch(error => {
+      console.error('Failed to load initial image:', error);
+    });
+  }
 
   // Helper function to update the view in state
   const updateViewInState = () => {
@@ -37,6 +47,13 @@ export const createView = (props: DeepPartial<View> = {}) => {
   // Function to update stroke color
   const updateGeometryStyle = (props: DeepPartial<StyleProps>) => {
     view.geometry.style = deepMerge(view.geometry.style, props);
+
+    // If we have an image and the style changed, reload it to update colors
+    if (viewImage && (props.fill || props.stroke)) {
+      viewImage.reload(view).catch(error => {
+        console.error('Failed to reload image:', error);
+      });
+    }
   };
 
   const updateTextStyle = (props: DeepPartial<StyleProps>) => {
@@ -88,6 +105,14 @@ export const createView = (props: DeepPartial<View> = {}) => {
     };
     const x = unscaledX - scaledDiff.w;
     const y = unscaledY - scaledDiff.h;
+
+    const drawImage = () => {
+      console.log(viewImage?.loadedImage);
+      if (view.geometry.shape === 'image' && viewImage?.loadedImage) {
+        console.log(viewImage.loadedImage);
+        ctx.drawImage(viewImage.loadedImage, x, y, w, h);
+      }
+    };
 
     const drawGeometry = () => {
       ctx.fillStyle = view.geometry.style.fill.color;
@@ -193,6 +218,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
       }
     };
 
+    drawImage();
     drawGeometry();
     drawText();
 
@@ -263,6 +289,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     updateScale,
     updateText,
     updateFontSize,
+    viewImage,
   };
 
   return viewInstance;

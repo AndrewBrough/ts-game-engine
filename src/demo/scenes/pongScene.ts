@@ -6,6 +6,7 @@ import { createAnimatedView } from '../../core/view/animatedView';
 import { createEnemyView } from '../../core/view/createEnemyView';
 import { createPlayerView } from '../../core/view/player/playerView';
 import type { View } from '../../core/view/types';
+import boltSvg from '../assets/bolt.svg';
 
 const basePlayerProps: DeepPartial<View> = {
   model: {
@@ -19,6 +20,12 @@ const basePlayerProps: DeepPartial<View> = {
     style: {
       fill: {
         color: 'white',
+        opacity: 1,
+      },
+      stroke: {
+        color: 'white',
+        opacity: 1,
+        width: 1,
       },
     },
   },
@@ -69,16 +76,25 @@ export const pong = () => {
     model: {
       speed: 5,
     },
+    imageUrl: boltSvg,
     geometry: {
+      shape: 'image',
       x: Screen.center.x - (basePlayerProps.geometry?.width ?? 0) / 2,
       y: Screen.center.y - (basePlayerProps.geometry?.height ?? 0) / 2,
       style: {
         fill: {
-          color: 'red',
+          opacity: 0,
+        },
+        stroke: {
+          color: 'white',
+          opacity: 1,
+          width: 1,
         },
       },
     },
   });
+
+  console.log(ball);
 
   const scoreBoard = createAnimatedView({
     id: 'score-board',
