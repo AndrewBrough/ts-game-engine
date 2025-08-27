@@ -25,11 +25,12 @@ export const collisionManager = () => {
   const events = createEvents();
   const collisions: Collision[] = [];
 
-  events.addEvent('collisions', (e: CustomEvent<{ deltaTime: number }>) => {
+  events.addEvent('collisions', (e: Event) => {
+    const event = e as CustomEvent<{ deltaTime: number }>;
     // Get all views across all layers
     const allViews = getAllCollidableViews();
     for (const view of allViews) {
-      checkCollisions(view, e.detail.deltaTime);
+      checkCollisions(view, event.detail.deltaTime);
     }
   });
 

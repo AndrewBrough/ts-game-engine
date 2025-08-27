@@ -2,16 +2,16 @@ import { setCollisionLayers } from '../../core/gameState/collisionLayers';
 import { createScene } from '../../core/scene/scene';
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
-import { createAnimatedView } from '../../core/view/animatedView';
-import { createEnemyView } from '../../core/view/createEnemyView';
-import { createPlayerView } from '../../core/view/player/playerView';
+import { createEnemyView } from '../../core/view/entity/enemyView';
+import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
 import boltSvg from '../assets/bolt.svg';
+import { scoreBoardView } from '../views/scoreBoardView';
 
 const basePlayerProps: DeepPartial<View> = {
   model: {
     score: 0,
-    speed: 7,
+    speed: 10,
   },
   geometry: {
     shape: 'rect',
@@ -94,28 +94,9 @@ export const pong = () => {
     },
   });
 
-  const scoreBoard = createAnimatedView({
-    id: 'score-board',
-    layer: 'UI',
-    geometry: {
-      x: Screen.center.x,
-      y: Screen.center.y,
-    },
-    text: {
-      offset: 'center',
-      text: `${player1.model.score} - ${player2.model.score}`,
-      fontSize: Screen.percent(2).w,
-      style: {
-        fill: {
-          color: 'white',
-        },
-      },
-    },
-  });
+  const scoreBoard = scoreBoardView(player1, player2);
 
-  scoreBoard.updateTextSize();
-
-  ball.collisionHandler.addCollisionEvent((e: CustomEvent) => {
+  ball.collisions.addCollisionEvent((e: CustomEvent) => {
     const collision = e.detail.collision;
 
     if (collision.view2.id === 'player-1') {

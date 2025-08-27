@@ -1,6 +1,6 @@
 import type { DeepPartial } from '../../types';
-import { createEntityView } from '../player/entityView';
-import type { EntityView } from '../types';
+import { createEntityView } from '../entity/entityView';
+import type { View } from '../types';
 
 const WALL_THICKNESS = 5;
 const baseProps = {
@@ -24,7 +24,7 @@ const baseProps = {
   text: {
     text: '',
   },
-} as DeepPartial<EntityView>;
+} as DeepPartial<View>;
 
 export const createWorldBoundsView = () => {
   createEntityView({

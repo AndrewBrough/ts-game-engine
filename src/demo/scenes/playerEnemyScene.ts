@@ -1,6 +1,6 @@
 import { Screen } from '../../core/units';
-import { createEnemyView } from '../../core/view/createEnemyView';
-import { createPlayerView } from '../../core/view/player/playerView';
+import { createEnemyView } from '../../core/view/entity/enemyView';
+import { createPlayerView } from '../../core/view/entity/playerView';
 import { createScene } from '../../core/scene/scene';
 
 export const demoScene = () => {

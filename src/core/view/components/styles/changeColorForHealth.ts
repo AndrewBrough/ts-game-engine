@@ -1,4 +1,4 @@
-import type { EntityViewInstance } from '../player/entityView';
+import type { EntityViewInstance } from '../../entity/entityView';
 
 export const changeColorForHealth = (
   view: EntityViewInstance,

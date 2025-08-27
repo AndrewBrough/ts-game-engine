@@ -1,8 +1,8 @@
 import {
   collisionManager,
   type Collision,
-} from '../../gameState/collisionManager';
-import type { ViewInstance } from '../view';
+} from '../../../gameState/collisionManager';
+import type { ViewInstance } from '../../view';
 
 export type CollisionHandlerInstance = {
   handleCollide: (e: CustomEvent<{ collision: Collision }>) => void;
@@ -29,7 +29,7 @@ export const createCollisionHandler = (view: ViewInstance) => {
   };
 
   const attachCollisionHandler = () => {
-    view.events.addEvent(collideEvent, handleCollide);
+    view.events.addEvent(collideEvent, e => handleCollide(e as any));
   };
 
   const detachCollisionHandler = () => {
@@ -39,7 +39,7 @@ export const createCollisionHandler = (view: ViewInstance) => {
   const addCollisionEvent = (
     callback: (e: CustomEvent<{ collision: Collision }>) => void
   ) => {
-    view.events.addEvent(collisionHandlerEvent, callback);
+    view.events.addEvent(collisionHandlerEvent, e => callback(e as any));
   };
 
   const removeCollisionEvent = (

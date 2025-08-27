@@ -1,10 +1,10 @@
 import { createModel } from '../model/model';
-import type { AnyView } from '../view/types';
+import type { ViewInstance } from '../view/view';
 import { COLLISION_MATRIX, type CollisionLayer } from './collisionLayers';
 
 export type GameState = {
   score: number;
-  views: Record<CollisionLayer, AnyView[]>;
+  views: Record<CollisionLayer, ViewInstance[]>;
   fps: number;
   isLogicPaused: boolean;
   timeScale: number;
@@ -12,15 +12,13 @@ export type GameState = {
 
 const gameState = createModel<GameState>({
   score: 0,
-  views: {} as Record<CollisionLayer, AnyView[]>,
+  views: {} as Record<CollisionLayer, ViewInstance[]>,
   fps: 0,
   isLogicPaused: false,
   timeScale: 1,
 });
 
-export const getState = () => gameState;
-
-export const addView = (view: AnyView) => {
+export const addView = (view: ViewInstance) => {
   const layer = view.layer;
   if (!gameState.views[layer]) {
     gameState.views[layer] = [];
@@ -28,19 +26,35 @@ export const addView = (view: AnyView) => {
   gameState.views[layer].push(view);
 };
 
-export const removeView = (view: AnyView) => {
+export const removeView = (view: ViewInstance) => {
   const layer = view.layer;
   if (gameState.views[layer]) {
     gameState.views[layer] = gameState.views[layer].filter(v => v !== view);
   }
 };
 
+export const getState = () => {
+  return gameState;
+};
+
+const handleViewAdded = (e: CustomEvent<{ view: ViewInstance }>) => {
+  addView(e.detail.view);
+};
+
+const handleViewRemoved = (e: CustomEvent<{ view: ViewInstance }>) => {
+  removeView(e.detail.view);
+};
+
+window.addEventListener('viewAdded', handleViewAdded as EventListener);
+window.addEventListener('viewRemoved', handleViewRemoved as EventListener);
+
 // Helper function to get all views across all layers
-export const getAllViews = (): AnyView[] => {
+export const getAllViews = (): ViewInstance[] => {
+  console.log('getAllViews', gameState.views);
   return Object.values(gameState.views).flat();
 };
 
-export const getAllCollidableViews = (): AnyView[] => {
+export const getAllCollidableViews = (): ViewInstance[] => {
   const views = Object.keys(gameState.views).map(layer => {
     if (COLLISION_MATRIX[layer as CollisionLayer].length > 0) {
       return gameState.views[layer as CollisionLayer];
@@ -51,7 +65,7 @@ export const getAllCollidableViews = (): AnyView[] => {
   return views.flat();
 };
 
-export const updateView = (view: AnyView) => {
+export const updateView = (view: ViewInstance) => {
   const layer = view.layer;
   const stateViews = getViewsOnLayer(layer);
   const viewIndex = stateViews.findIndex(v => v.id === view.id);
@@ -61,7 +75,7 @@ export const updateView = (view: AnyView) => {
 };
 
 // Helper function to get views on a specific layer
-export const getViewsOnLayer = (layer: CollisionLayer): AnyView[] => {
+export const getViewsOnLayer = (layer: CollisionLayer): ViewInstance[] => {
   return gameState.views[layer] || [];
 };
 
@@ -71,12 +85,15 @@ export const clearAllViews = () => {
 
   // Clean up all views
   for (const view of allViews) {
+    console.log('clearAllViews', view);
+    // Call view-specific cleanup if it exists
+    view.destroy();
     // Remove view from game state
     removeView(view);
   }
 
   // Clear all layers
-  gameState.views = {} as Record<CollisionLayer, AnyView[]>;
+  gameState.views = {} as Record<CollisionLayer, ViewInstance[]>;
 };
 
 export const updateFPS = (fps: number) => {
@@ -99,7 +116,9 @@ export const toggleTimeScale = () => {
   setTimeScale(gameState.timeScale === 1 ? 0 : 1);
 };
 
-export const getCollisionLayerViews = (layer: CollisionLayer): AnyView[] => {
+export const getCollisionLayerViews = (
+  layer: CollisionLayer
+): ViewInstance[] => {
   const collidingViews = [];
   const layers = COLLISION_MATRIX[layer];
 

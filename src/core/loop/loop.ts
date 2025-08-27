@@ -8,6 +8,11 @@ export const createLoop = () => {
   let fpsStartTime = 0;
   const targetFPS = -1;
   const targetFrameTime = 1000 / targetFPS; // 16.67ms for 60 FPS
+  let shutdown = false;
+
+  const stop = () => {
+    shutdown = true;
+  };
 
   const loop = () => {
     const { isLogicPaused, timeScale } = getState();
@@ -67,12 +72,15 @@ export const createLoop = () => {
     }
 
     // Continue the loop
-    window.requestAnimationFrame(loop);
+    if (!shutdown) {
+      window.requestAnimationFrame(loop);
+    }
   };
 
   loop();
 
   return {
     loop,
+    stop,
   };
 };

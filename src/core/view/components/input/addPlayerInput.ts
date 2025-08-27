@@ -1,7 +1,9 @@
-import type { EntityModel, Position } from '../types';
-import { isKeyHeld } from '../../input/keyboard';
-import type { EntityViewInstance } from '../player/entityView';
-import type { DeepRequired } from '../../types';
+import type { EntityModel, Position } from '../../types';
+import { isKeyHeld } from '../../../input/keyboard';
+import type { EntityViewInstance } from '../../entity/entityView';
+import type { DeepRequired } from '../../../types';
+import type { PhysicsComponent } from '../addPhysics';
+import type { ViewInstance } from '../../view';
 
 export type ControlProps = {
   up?: string;
@@ -10,8 +12,8 @@ export type ControlProps = {
   right?: string;
 };
 
-export const handleMove = (
-  view: EntityViewInstance,
+export const addPlayerInput = (
+  view: ViewInstance,
   controlProps: DeepRequired<ControlProps> = {
     up: 'w',
     down: 's',
@@ -19,7 +21,7 @@ export const handleMove = (
     right: 'd',
   }
 ) => {
-  view.events.addEvent('update', (e: CustomEvent) => {
+  view.events.addEvent('update', e => {
     const deltaTime = e.detail?.deltaTime || 16; // Default to 16ms (60fps)
 
     const movement: Position = {
@@ -46,7 +48,8 @@ export const handleMove = (
   });
 
   const move = (vector: Position, deltaTime: number) => {
-    view.physics.applyForce({
+    const physics = view.getComponent<PhysicsComponent>('physics');
+    physics?.applyForce({
       x: vector.x * deltaTime,
       y: vector.y * deltaTime,
     });

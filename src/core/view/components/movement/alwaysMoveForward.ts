@@ -1,16 +1,23 @@
-import type { EntityViewInstance } from '../player/entityView';
+import type { EntityViewInstance } from '../../entity/entityView';
+import type { ViewInstance } from '../../view';
+import type { PhysicsComponent } from '../addPhysics';
 
-export const alwaysMoveForward = (view: EntityViewInstance) => {
+export const addForwardMovement = (view: ViewInstance) => {
+  const physics = view.getComponent<PhysicsComponent>('physics');
+  if (!physics) {
+    throw new Error('Physics component not found');
+  }
+
   // kick off in a random direction
   const randomDirection = {
     x: Math.random() * view.model.speed * 100,
     y: Math.random() * view.model.speed * 100,
   };
-  view.physics.applyForce(randomDirection);
+  physics?.applyForce(randomDirection);
 
-  view.events.addEvent('update', (e: CustomEvent) => {
+  view.events.addEvent('update', e => {
     const deltaTime = e.detail.deltaTime;
-    const currentForce = view.physics.getCurrentForce();
+    const currentForce = physics.getCurrentForce();
     const direction = {
       x: currentForce.x / Math.sqrt(currentForce.x * currentForce.x),
       y: currentForce.y / Math.sqrt(currentForce.y * currentForce.y),
@@ -21,7 +28,7 @@ export const alwaysMoveForward = (view: EntityViewInstance) => {
       y: direction.y * view.model.speed * deltaTime,
     };
 
-    view.physics.applyForce({
+    physics.applyForce({
       x: currentForce.x + forceToAdd.x,
       y: currentForce.y + forceToAdd.y,
     });

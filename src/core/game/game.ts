@@ -2,6 +2,11 @@ import { createCanvas } from '../canvas/canvas';
 import { bindKeyboard } from '../input/keyboard';
 import { bindMouse } from '../input/mouse';
 import { createLoop } from '../loop/loop';
+import { cleanupEventListeners } from '../events/events';
+import { clearAllViews } from '../gameState/gameState';
+import { getSceneManager } from '../scene/sceneManager';
+
+let gameLoop: ReturnType<typeof createLoop> | null = null;
 
 export const createGame = () => {
   const canvas = createCanvas('app');
@@ -9,10 +14,38 @@ export const createGame = () => {
   const keyboard = bindKeyboard();
   const loop = createLoop();
 
+  gameLoop = loop;
+
   return {
     canvas,
     mouse,
     keyboard,
     loop,
   };
+};
+
+export const destroyGame = () => {
+  // Stop the game loop
+  gameLoop?.stop();
+
+  // Clean up all tracked event listeners
+  cleanupEventListeners();
+
+  // Clear all views
+  clearAllViews();
+
+  // Clear the canvas
+  const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+  if (canvas) {
+    canvas.remove();
+  }
+
+  const sceneManager = getSceneManager();
+  sceneManager.unloadAllScenes();
+};
+
+// Comprehensive cleanup that includes removing all window event listeners
+export const nuclearCleanup = () => {
+  // First do normal cleanup
+  destroyGame();
 };

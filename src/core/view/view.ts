@@ -2,18 +2,20 @@ import { CTX, getContext } from '../canvas/canvas';
 import { defaultViewConfig } from '../config';
 import { deepMerge } from '../utils/deepMerge';
 import type { DeepPartial } from '../types';
-import type { View, AnyView, Position, StyleProps } from './types';
-import { addView, getViewsOnLayer } from '../gameState/gameState';
-import { createEvents } from '../events/events';
+import type { View, Position, StyleProps } from './types';
+import { createEvents, type EventName } from '../events/events';
 import { Screen } from '../units';
 import { loadImage, type ImageLoader } from './loadImage';
+import { addComponents } from './components/component';
 
-export type ViewInstance = ReturnType<typeof createView>;
+export type ViewInstance = ReturnType<typeof createView> & {
+  handlers: Map<EventName, (e: CustomEvent) => void>;
+};
 
 export const createView = (props: DeepPartial<View> = {}) => {
-  const view = deepMerge(defaultViewConfig, props) as View;
+  const view = deepMerge({ ...defaultViewConfig }, props) as View;
+  const components = addComponents();
   const events = createEvents();
-
   const viewImage: ImageLoader | null = view.imageUrl ? loadImage(view) : null;
 
   // Wait for the image to load initially
@@ -22,18 +24,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
       console.error('Failed to load initial image:', error);
     });
   }
-
-  // Helper function to update the view in state
-  const updateViewInState = () => {
-    const stateViews = getViewsOnLayer(view?.layer ?? 'DEFAULT');
-    const viewIndex = stateViews.findIndex((v: AnyView) => v.id === view.id);
-    if (viewIndex !== -1) {
-      // Override view in state if it already exists
-      stateViews[viewIndex] = view;
-    } else {
-      addView(view);
-    }
-  };
 
   // Function to update the position and trigger a redraw
   const updatePosition = (newPosition: Position) => {
@@ -242,12 +232,17 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
   const update = () => {
     // drawDebugInfo();
-    updateViewInState();
+    // updateViewInState();
+  };
+
+  const cleanup = () => {
+    console.log('cleanup view', view.id);
   };
 
   const destroy = () => {
-    events.removeEvent('update');
-    events.removeEvent('render');
+    console.log('destroy view', view.id);
+    events.cleanup();
+    cleanup();
   };
 
   events.addEvent('update', update);
@@ -255,7 +250,9 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
   const viewInstance = {
     ...view,
+    ...components,
     update,
+    cleanup,
     destroy,
     events,
     updatePosition,
@@ -268,7 +265,12 @@ export const createView = (props: DeepPartial<View> = {}) => {
     updateText,
     updateFontSize,
     viewImage,
+    handlers: new Map(),
   };
+
+  window.dispatchEvent(
+    new CustomEvent('viewAdded', { detail: { view: viewInstance } })
+  );
 
   return viewInstance;
 };

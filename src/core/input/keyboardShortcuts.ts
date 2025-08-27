@@ -22,9 +22,21 @@ export const keyboardShortcuts = () => {
     handlers.delete(key);
   };
 
+  const cleanup = () => {
+    for (const [key, handler] of handlers) {
+      window.removeEventListener(
+        'keydown',
+        handler as unknown as EventListener
+      );
+    }
+    shortcuts.clear();
+    handlers.clear();
+  };
+
   return {
     shortcuts,
     addShortcut,
     removeShortcut,
+    cleanup,
   };
 };

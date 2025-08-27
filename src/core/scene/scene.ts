@@ -26,9 +26,17 @@ export const createScene = (name: string = 'default') => {
   createPauseButton();
 
   const destroy = () => {
+    // Clean up scene-specific events
     events.cleanup();
     collisions.events.cleanup();
+
+    // Clear all views and their resources
     clearAllViews();
+
+    // Reset game state to initial values
+    state.score = 0;
+    state.isLogicPaused = false;
+    state.timeScale = 1;
   };
 
   return {

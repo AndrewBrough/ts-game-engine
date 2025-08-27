@@ -1,32 +1,24 @@
+import type { EventName } from '../events/events';
 import { getAllViews } from '../gameState/gameState';
-import type { AnyView, InteractiveView } from '../view/types';
+import type { ViewInstance } from '../view/view';
 import { getInteractiveViews, locateView } from './targeting';
 
-let hoveredView: AnyView | null = null;
+let hoveredView: ViewInstance | null = null;
 
 // Helper function to get interactive views with specific handlers
-const getViewsWithHandler = (
-  handlerName: keyof NonNullable<InteractiveView['handlers']>
-) => {
-  return getAllViews().filter((view: AnyView) => {
-    if ('handlers' in view) {
-      const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlerName in handlers) {
-        return true;
-      }
-    }
-    return false;
+const getViewsWithHandler = (handlerName: EventName) => {
+  return getAllViews().filter((view: ViewInstance) => {
+    return view.handlers.has(handlerName);
   });
 };
 
 // Click handler
 const handleClick = (e: MouseEvent) => {
-  const viewsWithClick = getViewsWithHandler('onClick');
+  const viewsWithClick = getViewsWithHandler('click');
   const view = locateView({ x: e.clientX, y: e.clientY }, viewsWithClick);
 
-  if (view && 'handlers' in view) {
-    const handlers = view.handlers as Record<string, (e: Event) => void>;
-    handlers.onClick(e);
+  if (view) {
+    view.handlers.get('click')?.(e as unknown as CustomEvent);
   }
 };
 
@@ -39,69 +31,47 @@ const handleMouseMove = (e: MouseEvent) => {
 
   // Handle hover out for previous hovered view
   if (hoveredView && (!view || view.id !== hoveredView.id)) {
-    if ('handlers' in hoveredView) {
-      const handlers = hoveredView.handlers as Record<
-        string,
-        (e: Event) => void
-      >;
-      if (handlers.onHoverOut) {
-        handlers.onHoverOut(e);
-      }
-    }
+    hoveredView.handlers.get('mouseout')?.(e as unknown as CustomEvent);
     hoveredView = null;
   }
 
   // Handle hover for new view
   if (view && view.id !== hoveredView?.id) {
     hoveredView = view;
-    if ('handlers' in view) {
-      const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlers.onHover) {
-        handlers.onHover(e);
-      }
-    }
+    view.handlers.get('mouseover')?.(e as unknown as CustomEvent);
   }
 
   // Handle mousemove for current view
-  if (view && 'handlers' in view) {
-    const handlers = view.handlers as Record<string, (e: Event) => void>;
-    if (handlers.onMouseMove) {
-      handlers.onMouseMove(e);
-    }
+  if (view) {
+    view.handlers.get('mousemove')?.(e as unknown as CustomEvent);
   }
 };
 
 // Touch start handler
 const handleTouchStart = (e: TouchEvent) => {
-  const viewsWithTouchStart = getViewsWithHandler('onTouchStart');
+  const viewsWithTouchStart = getViewsWithHandler('touchstart');
   const touch = e.touches[0];
   const view = locateView(
     { x: touch.clientX, y: touch.clientY },
     viewsWithTouchStart
   );
 
-  if (view && 'handlers' in view) {
-    const handlers = view.handlers as Record<string, (e: Event) => void>;
-    if (handlers.onTouchStart) {
-      handlers.onTouchStart(e);
-    }
+  if (view) {
+    view.handlers.get('touchstart')?.(e as unknown as CustomEvent);
   }
 };
 
 // Touch end handler
 const handleTouchEnd = (e: TouchEvent) => {
-  const viewsWithTouchEnd = getViewsWithHandler('onTouchEnd');
+  const viewsWithTouchEnd = getViewsWithHandler('touchend');
   const touch = e.changedTouches[0];
   const view = locateView(
     { x: touch.clientX, y: touch.clientY },
     viewsWithTouchEnd
   );
 
-  if (view && 'handlers' in view) {
-    const handlers = view.handlers as Record<string, (e: Event) => void>;
-    if (handlers.onTouchEnd) {
-      handlers.onTouchEnd(e);
-    }
+  if (view) {
+    view.handlers.get('touchend')?.(e as unknown as CustomEvent);
   }
 };
 
@@ -110,4 +80,11 @@ export const bindMouse = () => {
   window.addEventListener('mousemove', handleMouseMove);
   window.addEventListener('touchstart', handleTouchStart);
   window.addEventListener('touchend', handleTouchEnd);
+};
+
+export const unbindMouse = () => {
+  window.removeEventListener('click', handleClick);
+  window.removeEventListener('mousemove', handleMouseMove);
+  window.removeEventListener('touchstart', handleTouchStart);
+  window.removeEventListener('touchend', handleTouchEnd);
 };

@@ -1,11 +1,12 @@
 import { getState } from '../gameState/gameState';
-import type { AnyView, Position } from '../view/types';
+import type { Position } from '../view/types';
+import type { ViewInstance } from '../view/view';
 
 // Helper function to get interactive views
 export const getInteractiveViews = () => {
   return Object.values(getState().views)
     .flat()
-    .filter((view: AnyView) => {
+    .filter((view: ViewInstance) => {
       if ('interactive' in view) {
         return view.interactive === true;
       }
@@ -15,7 +16,7 @@ export const getInteractiveViews = () => {
 
 export const locateView = (
   inputPosition: Position,
-  viewsToCheck: AnyView[] = getInteractiveViews()
+  viewsToCheck: ViewInstance[] = getInteractiveViews()
 ) => {
   return viewsToCheck.find(v => {
     const { x, y, width, height } = v.geometry;

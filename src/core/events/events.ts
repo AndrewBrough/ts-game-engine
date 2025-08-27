@@ -11,13 +11,36 @@ export const cleanupEventListeners = () => {
   eventInstances.clear();
 };
 
+export const InputEvents = {
+  click: 'click',
+  mouseover: 'mouseover',
+  mouseout: 'mouseout',
+  keydown: 'keydown',
+  keyup: 'keyup',
+  touchstart: 'touchstart',
+  touchend: 'touchend',
+};
+export type InputEventName = keyof typeof InputEvents;
+
+export const GameEvents = {
+  update: 'update',
+  render: 'render',
+};
+export type GameEventName = keyof typeof GameEvents;
+
+export const Events = {
+  ...GameEvents,
+  ...InputEvents,
+};
+export type EventName = keyof typeof Events | string;
+
 export const createEvents = () => {
-  const events = new Map<string, ((e: CustomEvent) => void)[]>();
-  const eventHandlers = new Map<string, ((e: CustomEvent) => void)[]>();
+  const events = new Map<EventName, ((e: CustomEvent) => void)[]>();
+  const eventHandlers = new Map<EventName, ((e: CustomEvent) => void)[]>();
 
   const addEvent = (
-    event: string,
-    callback: (e: CustomEvent | KeyboardEvent | MouseEvent) => void
+    event: EventName,
+    callback: (e: CustomEvent<any> | KeyboardEvent | MouseEvent) => void
   ) => {
     events.set(event, [...(events.get(event) ?? []), callback]);
 
@@ -30,7 +53,7 @@ export const createEvents = () => {
     window.addEventListener(event, handler as EventListener);
   };
 
-  const removeEvent = (event: string) => {
+  const removeEvent = (event: EventName) => {
     const handlers = eventHandlers.get(event);
     if (handlers) {
       handlers.forEach(handler => {

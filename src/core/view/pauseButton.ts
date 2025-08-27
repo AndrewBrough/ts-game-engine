@@ -4,12 +4,13 @@ import {
   toggleLogicPaused,
 } from '../gameState/gameState';
 import type { DeepPartial } from '../types';
-import type { InteractiveView } from './types';
-import { createInteractiveView } from './interactiveView';
 import { Screen } from '../units';
+import { addInputHandlers } from './components';
+import type { View } from './types';
+import { createView } from './view';
 
-export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
-  const viewInstance = createInteractiveView({
+export const createPauseButton = (props: DeepPartial<View> = {}) => {
+  const viewInstance = createView({
     ...props,
     id: 'pauseButton',
     layer: 'UI',
@@ -37,38 +38,37 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
         },
       },
     },
-    handlers: {
-      onClick: () => {
-        handlePause();
-      },
-      onHover: () => {
-        console.log('onHover', viewInstance.id);
-        viewInstance.updateScale(1.05);
-        viewInstance.updateGeometryStyle({
-          fill: {
-            opacity: 1,
-          },
-        });
-      },
-      onHoverOut: () => {
-        viewInstance.updateScale(1);
-        viewInstance.updateGeometryStyle({
-          fill: {
-            opacity: 0.3,
-          },
-        });
-      },
-    },
   });
 
-  viewInstance.events.addEvent('onKeyDown', e => {
-    if (!(e as KeyboardEvent).key) return;
+  const { addHandler, handlers } = addInputHandlers();
+  addHandler('click', 'click', () => {
+    handlePause();
+  });
+  addHandler('mouseover', 'mouseover', () => {
+    viewInstance.updateGeometryStyle({
+      fill: {
+        opacity: 1,
+      },
+    });
+  });
+  addHandler('mouseout', 'mouseout', (e: CustomEvent) => {
+    viewInstance.updateGeometryStyle({
+      fill: {
+        opacity: 0.3,
+      },
+    });
+  });
+  addHandler('keydown', 'keydown', e => {
+    console.log('keydown', e);
+    if (!(e as unknown as KeyboardEvent).key) return;
 
     const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
-    if (keys.includes((e as KeyboardEvent).key)) {
+    if (keys.includes((e as unknown as KeyboardEvent).key)) {
       handlePause();
     }
   });
+
+  viewInstance.events.addEvent('keydown', e => {});
 
   const handlePause = () => {
     const { timeScale, isLogicPaused } = getState();
@@ -108,5 +108,5 @@ export const createPauseButton = (props: DeepPartial<InteractiveView> = {}) => {
   updateText();
   viewInstance.update();
 
-  return viewInstance;
+  return { ...viewInstance, handlers };
 };

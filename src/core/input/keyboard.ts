@@ -1,5 +1,6 @@
+import type { EventName } from '../events/events';
 import { getAllViews } from '../gameState/gameState';
-import type { AnyView, InteractiveView } from '../view/types';
+import type { ViewInstance } from '../view/view';
 
 const heldKeys = new Set<string>();
 let currentDeltaTime = 16; // Default to 16ms (60fps)
@@ -10,14 +11,10 @@ export const updateDeltaTime = (deltaTime: number) => {
 };
 
 // Helper function to get interactive views with specific handlers
-const getViewsWithHandler = (
-  handlerName: keyof NonNullable<InteractiveView['handlers']>
-) => {
-  return getAllViews().filter((view: AnyView) => {
+const getViewsWithHandler = (handlerName: EventName) => {
+  return getAllViews().filter((view: ViewInstance) => {
     if ('handlers' in view) {
-      const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlerName in handlers) return false;
-      return handlers[handlerName] !== undefined;
+      return view.handlers.has(handlerName);
     }
     return false;
   });
@@ -31,8 +28,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
   const viewsWithKeyDown = getViewsWithHandler('onKeyDown');
   for (const view of viewsWithKeyDown) {
     if ('handlers' in view) {
-      const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlers.onKeyDown) {
+      if (view.handlers.has('keydown')) {
         // Create a CustomEvent with deltaTime from the game loop
         const customEvent = new CustomEvent('keydown', {
           detail: {
@@ -46,7 +42,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
             repeat: e.repeat,
           },
         });
-        handlers.onKeyDown(customEvent);
+        view.handlers.get('keydown')?.(customEvent);
       }
     }
   }
@@ -60,8 +56,7 @@ const handleKeyUp = (e: KeyboardEvent) => {
   const viewsWithKeyUp = getViewsWithHandler('onKeyUp');
   for (const view of viewsWithKeyUp) {
     if ('handlers' in view) {
-      const handlers = view.handlers as Record<string, (e: Event) => void>;
-      if (handlers.onKeyUp) {
+      if (view.handlers.has('keyup')) {
         // Create a CustomEvent with deltaTime from the game loop
         const customEvent = new CustomEvent('keyup', {
           detail: {
@@ -75,7 +70,7 @@ const handleKeyUp = (e: KeyboardEvent) => {
             repeat: e.repeat,
           },
         });
-        handlers.onKeyUp(customEvent);
+        view.handlers.get('keyup')?.(customEvent);
       }
     }
   }
@@ -94,4 +89,9 @@ export const getHeldKeys = (): Set<string> => {
 export const bindKeyboard = () => {
   window.addEventListener('keydown', handleKeyDown);
   window.addEventListener('keyup', handleKeyUp);
+};
+
+export const unbindKeyboard = () => {
+  window.removeEventListener('keydown', handleKeyDown);
+  window.removeEventListener('keyup', handleKeyUp);
 };

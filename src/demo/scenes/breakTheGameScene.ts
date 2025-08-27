@@ -1,7 +1,7 @@
 import { createScene, type SceneInstance } from '../../core/scene/scene';
 import { Screen } from '../../core/units';
-import { createEnemyView } from '../../core/view/createEnemyView';
-import { createPlayerView } from '../../core/view/player/playerView';
+import { createEnemyView } from '../../core/view/entity/enemyView';
+import { createPlayerView } from '../../core/view/entity/playerView';
 
 export const breakTheGameScene = (): SceneInstance => {
   const scene = createScene('breakTheGame');
