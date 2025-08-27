@@ -31,16 +31,6 @@ export const breakTheGameScene = (): SceneInstance => {
       geometry: {
         x: randomPos.x,
         y: randomPos.y,
-        style: {
-          fill: {
-            color: 'white',
-            opacity: 0.2,
-          },
-          stroke: {
-            color: 'white',
-            opacity: 1,
-          },
-        },
       },
     });
   }

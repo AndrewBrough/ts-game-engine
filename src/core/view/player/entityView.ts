@@ -5,33 +5,33 @@ import { createCollisionHandler } from '../events/handleCollision';
 import type { InteractiveView } from '../types';
 import { Screen } from '../../units';
 import { bounceOffWalls } from '../animations/bounceOffWalls';
-import { changeColorForHealth } from '../animations/changeColorForHealth';
 import { bounceOnCollision } from '../animations/bounceOnCollision';
-import { collisionDamage } from '../events/collisionDamage';
+import { deepMerge } from '../../utils/deepMerge';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
+const defaultViewProps: DeepPartial<InteractiveView> = {
+  model: {
+    speed: 10,
+    maxHealth: 100,
+    health: 100,
+    collisionDamage: 10,
+  },
+  physics: {
+    bounce: 2,
+    dampening: 0.85,
+  },
+  geometry: {
+    shape: 'rect',
+    width: Math.min(Screen.percent(5).w, 50),
+    height: Math.min(Screen.percent(5).w, 50),
+  },
+};
+
 export const createEntityView = (props: DeepPartial<InteractiveView>) => {
+  const mergedProps = deepMerge(defaultViewProps, props);
   const view = createInteractiveView({
-    ...props,
-    model: {
-      ...props.model,
-      speed: props.model?.speed ?? 10,
-      maxHealth: props.model?.maxHealth ?? 100,
-      health: props.model?.health ?? 100,
-      collisionDamage: props.model?.collisionDamage ?? 10,
-    },
-    physics: {
-      ...props.physics,
-      bounce: props.physics?.bounce ?? 2,
-      dampening: props.physics?.dampening ?? 0.85,
-    },
-    geometry: {
-      ...props.geometry,
-      shape: props.geometry?.shape ?? 'rect',
-      width: props.geometry?.width ?? Math.min(Screen.percent(5).w, 50),
-      height: props.geometry?.height ?? Math.min(Screen.percent(5).w, 50),
-    },
+    ...mergedProps,
   });
 
   const physics = createPhysics(view.physics);

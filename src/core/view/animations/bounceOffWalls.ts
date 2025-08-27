@@ -41,11 +41,11 @@ export const getBounceForce = (
   const currentForce = entityView.physics.getCurrentForce();
   const bounceForce = {
     x:
-      (currentForce.x / 5) *
+      currentForce.x *
       Math.max(entityView.physics.bounce, minBounce) *
       deltaTime,
     y:
-      (currentForce.y / 5) *
+      currentForce.y *
       Math.max(entityView.physics.bounce, minBounce) *
       deltaTime,
   };
