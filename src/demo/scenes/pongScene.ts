@@ -1,15 +1,15 @@
-import type { DeepPartial } from '../types';
-import { Screen } from '../units';
-import { createEnemyView } from '../view/createEnemyView';
-import { createPlayerView } from '../view/player/playerView';
-import type { View } from '../view/types';
-import { createScene } from './scene';
+import { createScene } from '../../core/scene/scene';
+import type { DeepPartial } from '../../core/types';
+import { Screen } from '../../core/units';
+import { createEnemyView } from '../../core/view/createEnemyView';
+import { createPlayerView } from '../../core/view/player/playerView';
+import type { View } from '../../core/view/types';
 
 const basePlayerProps: DeepPartial<View> = {
   geometry: {
     shape: 'rect',
     width: Screen.percent(1).w,
-    height: Screen.percent(10).h,
+    height: Screen.percent(20).h,
     style: {
       fill: {
         color: 'white',
@@ -52,9 +52,12 @@ export const pong = () => {
     }
   );
 
-  console.log(player.geometry, player2.geometry);
-
   const ball = createEnemyView();
+
+  ball.updatePosition({
+    x: Screen.center.x - ball.geometry.width / 2,
+    y: Screen.center.y - ball.geometry.height / 2,
+  });
 
   return scene;
 };

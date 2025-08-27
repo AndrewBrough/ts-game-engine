@@ -5,6 +5,9 @@ import { createCollisionHandler } from '../events/handleCollision';
 import type { InteractiveView } from '../types';
 import { Screen } from '../../units';
 import { bounceOffWalls } from '../animations/bounceOffWalls';
+import { changeColorForHealth } from '../animations/changeColorForHealth';
+import { bounceOnCollision } from '../animations/bounceOnCollision';
+import { collisionDamage } from '../events/collisionDamage';
 
 export type EntityViewInstance = ReturnType<typeof createEntityView>;
 
@@ -25,35 +28,20 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     },
     geometry: {
       shape: 'rect',
-      width: Math.min(Screen.percent(5).w, 20),
-      height: Math.min(Screen.percent(5).w, 20),
+      width: Math.min(Screen.percent(5).w, 50),
+      height: Math.min(Screen.percent(5).w, 50),
       ...props.geometry,
     },
-    // text: {
-    //   fontSize: Math.min(Screen.percent(2).w, 12),
-    //   offset: 'center',
-    //   style: {
-    //     fill: {
-    //       color: 'black',
-    //       opacity: 1,
-    //     },
-    //     stroke: {
-    //       color: 'white',
-    //       opacity: 1,
-    //       width: 1,
-    //     },
-    //   },
-    // },
   });
 
-  // const healthView = createHealthView(view);
   const physics = createPhysics(view.physics);
   const collisionHandler = createCollisionHandler({ ...view, physics });
+  collisionHandler.attachCollisionHandler();
+  const { collisionHandlerEvent } = collisionHandler;
 
+  // functions to call on update event from game loop
   view.events.addEvent('update', (e: CustomEvent) => {
     updatePhysics(e);
-    // updateHealth();
-
     // Update view so next render gets the above changes
     view.update();
   });
@@ -71,20 +59,15 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     }
   };
 
-  // const updateHealth = () => {
-  //   view.updateText({
-  //     text: view.model.health,
-  //   });
-  // };
-
-  collisionHandler.attachCollisionHandler();
-
   const entityView = {
     ...view,
     physics,
   };
 
+  bounceOnCollision(entityView, collisionHandlerEvent);
   bounceOffWalls(entityView);
+  // collisionDamage(entityView);
+  // changeColorForHealth(entityView, collisionHandlerEvent);
 
   return entityView;
 };

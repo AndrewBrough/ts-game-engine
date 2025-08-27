@@ -5,7 +5,7 @@ import { createView } from './view';
 export type AnimatedViewInstance = ReturnType<typeof createAnimatedView>;
 
 export const createAnimatedView = (props: DeepPartial<InteractiveView>) => {
-  const viewInstance = createView({ ...props });
+  const viewInstance = createView(props);
 
   const animate = () => {
     viewInstance.update();

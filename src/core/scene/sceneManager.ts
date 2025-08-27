@@ -1,45 +1,42 @@
-import { breakTheGameScene } from './breakTheGameScene';
-import { pong } from './pong';
+import { pong } from '../../demo/scenes/pongScene';
 import { createScene, type SceneInstance } from './scene';
 
 export type SceneManager = ReturnType<typeof createSceneManager>;
 
-const SCENES = {
-  TEST: createScene,
-  BREAK_THE_ENGINE: breakTheGameScene,
-  PONG: pong,
-};
-
-export type SceneName = keyof typeof SCENES;
-
 const createSceneManager = () => {
-  const scenes: Set<SceneInstance> = new Set();
+  const scenes: Record<string, () => SceneInstance> = {};
+  const loadedScenes: Set<SceneInstance> = new Set();
 
-  const loadScene = (sceneName: SceneName) => {
-    const createScene = SCENES[sceneName];
+  const addScene = (sceneName: string, scene: () => SceneInstance) => {
+    scenes[sceneName] = scene;
+  };
+
+  const loadScene = (sceneName: string) => {
+    const scene = scenes[sceneName];
     unloadScene(sceneName);
 
-    const sceneInstance = createScene();
-    scenes.add(sceneInstance);
+    const sceneInstance = scene();
+    loadedScenes.add(sceneInstance);
     return sceneInstance;
   };
 
   const unloadScene = (sceneName: string) => {
-    for (const scene of scenes) {
+    for (const scene of loadedScenes) {
       if (scene.name === sceneName) {
         scene.destroy();
-        scenes.delete(scene);
+        loadedScenes.delete(scene);
       }
     }
   };
 
   const unloadAllScenes = () => {
-    for (const scene of scenes) {
+    for (const scene of loadedScenes) {
       unloadScene(scene.name);
     }
   };
 
   return {
+    addScene,
     loadScene,
     unloadScene,
     unloadAllScenes,

@@ -1,15 +1,12 @@
+import type { DeepPartial } from '../types';
 import { Screen } from '../units';
 import { alwaysMoveForward } from './animations/alwaysMoveForward';
-import { bounceOffWalls } from './animations/bounceOffWalls';
-import { screenSaver } from './animations/screenSaver';
 import { createEntityView } from './player/entityView';
+import type { View } from './types';
 
-export const createEnemyView = (id?: string) => {
-  // Use provided id or generate a unique one
-  const cubeId = id || `demoCube-${crypto.randomUUID()}`;
-
+export const createEnemyView = (props?: DeepPartial<View>) => {
   const entityView = createEntityView({
-    id: cubeId,
+    id: `enemy-${crypto.randomUUID()}`,
     model: {
       speed: 10,
     },
@@ -18,35 +15,19 @@ export const createEnemyView = (id?: string) => {
       style: {
         fill: {
           color: 'red',
+          ...props?.geometry?.style?.fill,
         },
         stroke: {
           color: 'red',
           opacity: 1,
           width: 2,
+          ...props?.geometry?.style?.stroke,
         },
+        ...props?.geometry?.style,
       },
+      ...props?.geometry,
     },
-    // text: {
-    //   text: 'Enemy',
-    //   fontSize: Screen.percent(3).w,
-    //   offset: 'center',
-    //   style: {
-    //     fill: {
-    //       color: 'black',
-    //       opacity: 1,
-    //     },
-    //     stroke: {
-    //       color: 'white',
-    //       opacity: 1,
-    //       width: 1,
-    //     },
-    //   },
-    // },
-  });
-
-  entityView.updatePosition({
-    x: Math.random() * Screen.w,
-    y: Math.random() * Screen.h,
+    ...props,
   });
 
   alwaysMoveForward(entityView);

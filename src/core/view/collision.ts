@@ -1,4 +1,4 @@
-import type { Geometry, Position, Size } from './types';
+import type { Geometry, Position, Size, View } from './types';
 
 export interface Bounds {
   left: number;
@@ -89,6 +89,81 @@ export const getOverlap = (
     centerY: overlapTop + overlapHeight / 2,
   };
 };
+
+/**
+ * Get the minimum overlap between two views
+ */
+export const getMinOverlap = (view: View, v: View) => {
+  const viewLeft = view.geometry.x;
+  const viewRight = view.geometry.x + view.geometry.width;
+  const viewTop = view.geometry.y;
+  const viewBottom = view.geometry.y + view.geometry.height;
+
+  const vLeft = v.geometry.x;
+  const vRight = v.geometry.x + v.geometry.width;
+  const vTop = v.geometry.y;
+  const vBottom = v.geometry.y + v.geometry.height;
+
+  // Calculate overlap amounts on each side
+  const overlapLeft = Math.abs(viewRight - vLeft);
+  const overlapRight = Math.abs(vRight - viewLeft);
+  const overlapTop = Math.abs(viewBottom - vTop);
+  const overlapBottom = Math.abs(vBottom - viewTop);
+
+  // Find the smallest overlap to determine the collision side
+  const minOverlap = Math.min(
+    overlapLeft,
+    overlapRight,
+    overlapTop,
+    overlapBottom
+  );
+
+  let normal = { x: 0, y: 0 };
+  if (minOverlap === overlapLeft) {
+    // Collision on left side of view (view is to the right of v)
+    normal = { x: 1, y: 0 };
+  } else if (minOverlap === overlapRight) {
+    // Collision on right side of view (view is to the left of v)
+    normal = { x: -1, y: 0 };
+  } else if (minOverlap === overlapTop) {
+    // Collision on top side of view (view is below v)
+    normal = { x: 0, y: 1 };
+  } else if (minOverlap === overlapBottom) {
+    // Collision on bottom side of view (view is above v)
+    normal = { x: 0, y: -1 };
+  }
+
+  return {
+    minOverlap,
+    normal,
+  };
+};
+
+export const getCollision = (
+  view: View,
+  v: View,
+  normal: Position,
+  deltaTime: number,
+  boundsOverlap: Bounds | null
+) => {
+  const collision = {
+    id: getCollisionId(view, v),
+    view1: view,
+    view2: v,
+    contactPoint: {
+      x: boundsOverlap?.left ?? 0,
+      y: boundsOverlap?.top ?? 0,
+    },
+    normal,
+    deltaTime,
+  };
+
+  return collision;
+};
+
+export const getCollisionEvent = (view: View) => `${view.id}-collide`;
+export const getCollisionId = (view1: View, view2: View) =>
+  `${view1.id}-${view2.id}`;
 
 /**
  * Check if bounds are within screen boundaries

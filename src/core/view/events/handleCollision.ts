@@ -1,7 +1,4 @@
 import type { Collision } from '../../gameState/collisionManager';
-import type { EntityModel, View } from '../types';
-import type { PhysicsInstance } from '../../physics';
-import { getBounceForce } from '../animations/bounceOffWalls';
 import type { EntityViewInstance } from '../player/entityView';
 
 export type CollisionHandlerInstance = {
@@ -11,6 +8,11 @@ export type CollisionHandlerInstance = {
 };
 
 export const createCollisionHandler = (view: EntityViewInstance) => {
+  // Event received from collisionManager
+  const collideEvent = `${view.id}-collide`;
+  // Event sent from this handler to bind view event handlers to
+  const collisionHandlerEvent = `${view.id}-collision-event`;
+
   const handleCollide = (e: CustomEvent<{ collision: Collision }>) => {
     const collision = e.detail?.collision;
     const { view1, view2 } = collision;
@@ -20,50 +22,36 @@ export const createCollisionHandler = (view: EntityViewInstance) => {
       return;
     }
 
-    const otherView = isView1 ? view2 : view1;
-
-    // calc damage and apply health changes
-    if (otherView.model && 'collisionDamage' in otherView.model) {
-      handleDamage(otherView.model.collisionDamage);
-    }
-
-    const bounceForce = getBounceForce(view, collision.deltaTime);
-    bounceForce.x = Math.abs(bounceForce.x) * 100;
-    bounceForce.y = Math.abs(bounceForce.y) * 100;
-
-    bounceForce.x *= -collision.normal.x;
-    bounceForce.y *= -collision.normal.y;
-
-    view.physics.applyForce(bounceForce);
-  };
-
-  const handleDamage = (damage: number = 0) => {
-    const currentHealth = (view.model as EntityModel).health;
-    const newHealth = currentHealth - damage;
-
-    (view.model as EntityModel).health = newHealth;
-
-    const percentHealth = view.model.health / view.model.maxHealth;
-    const opacity = Math.max(0, percentHealth) ?? 0;
-
-    view.updateGeometryStyle({
-      fill: {
-        opacity,
-      },
-    });
+    view.events.events.get(collisionHandlerEvent)?.forEach(cb => cb(e));
   };
 
   const attachCollisionHandler = () => {
-    view.events.addEvent(`${view.layer}-collide`, handleCollide);
+    view.events.addEvent(collideEvent, handleCollide);
   };
 
   const detachCollisionHandler = () => {
-    view.events.removeEvent(`${view.layer}-collide`);
+    view.events.removeEvent(collideEvent);
+  };
+
+  const addCollisionEvent = (
+    callback: (e: CustomEvent<{ collision: Collision }>) => void
+  ) => {
+    view.events.addEvent(collisionHandlerEvent, callback);
+  };
+
+  const removeCollisionEvent = (
+    callback: (e: CustomEvent<{ collision: Collision }>) => void
+  ) => {
+    view.events.removeEvent(collisionHandlerEvent);
   };
 
   return {
     handleCollide,
     attachCollisionHandler,
     detachCollisionHandler,
+    addCollisionEvent,
+    removeCollisionEvent,
+    collideEvent,
+    collisionHandlerEvent,
   };
 };

@@ -1,5 +1,11 @@
 import { createEvents } from '../events/events';
-import { getOverlap, type Bounds } from '../view/collision';
+import {
+  getCollision,
+  getCollisionEvent,
+  getMinOverlap,
+  getOverlap,
+  type Bounds,
+} from '../view/collision';
 import type { Position, View } from '../view/types';
 import { getAllCollidableViews, getCollisionLayerViews } from './gameState';
 import { COLLISION_MATRIX } from './collisionLayers';
@@ -34,62 +40,14 @@ export const collisionManager = () => {
       for (const v of viewsOnMatrixLayers) {
         if (v.geometry && v.id !== view.id) {
           const boundsOverlap = getOverlap(view.geometry, v.geometry);
-
-          // Calculate collision normal based on which side is colliding
-          let normal = { x: 0, y: 0 };
-
-          if (boundsOverlap) {
-            // Determine which side of view is colliding with v
-            const viewLeft = view.geometry.x;
-            const viewRight = view.geometry.x + view.geometry.width;
-            const viewTop = view.geometry.y;
-            const viewBottom = view.geometry.y + view.geometry.height;
-
-            const vLeft = v.geometry.x;
-            const vRight = v.geometry.x + v.geometry.width;
-            const vTop = v.geometry.y;
-            const vBottom = v.geometry.y + v.geometry.height;
-
-            // Calculate overlap amounts on each side
-            const overlapLeft = Math.abs(viewRight - vLeft);
-            const overlapRight = Math.abs(vRight - viewLeft);
-            const overlapTop = Math.abs(viewBottom - vTop);
-            const overlapBottom = Math.abs(vBottom - viewTop);
-
-            // Find the smallest overlap to determine the collision side
-            const minOverlap = Math.min(
-              overlapLeft,
-              overlapRight,
-              overlapTop,
-              overlapBottom
-            );
-
-            if (minOverlap === overlapLeft) {
-              // Collision on left side of view (view is to the right of v)
-              normal = { x: 1, y: 0 };
-            } else if (minOverlap === overlapRight) {
-              // Collision on right side of view (view is to the left of v)
-              normal = { x: -1, y: 0 };
-            } else if (minOverlap === overlapTop) {
-              // Collision on top side of view (view is below v)
-              normal = { x: 0, y: 1 };
-            } else if (minOverlap === overlapBottom) {
-              // Collision on bottom side of view (view is above v)
-              normal = { x: 0, y: -1 };
-            }
-          }
-
-          const collision = {
-            id: `${view.id}-${v.id}`,
-            view1: view,
-            view2: v,
-            contactPoint: {
-              x: boundsOverlap?.left ?? 0,
-              y: boundsOverlap?.top ?? 0,
-            },
+          const { normal } = getMinOverlap(view, v);
+          const collision = getCollision(
+            view,
+            v,
             normal,
             deltaTime,
-          };
+            boundsOverlap
+          );
           const hasCol = hasCollision(collision.id);
           if (boundsOverlap) {
             if (!hasCol) {
@@ -116,26 +74,14 @@ export const collisionManager = () => {
       return;
     }
     collisions.push(collision);
-    // dispatch collision events for both views
+
+    // dispatch collision event for first view
     if (
       COLLISION_MATRIX[collision.view1.layer].includes(collision.view2.layer)
     ) {
-      const event = `${collision.view1.layer}-collide`;
-      // console.log(event);
+      const event = getCollisionEvent(collision.view1); // must match handleCollision.collideEvent
       dispatchCollisionEvent(event, collision);
     }
-    // We apparently don't need this, both views are registered in the matrix and will perform their own collision event if they are supposed to based on the matric.
-    // if (
-    //   COLLISION_MATRIX[collision.view2.layer].includes(collision.view1.layer)
-    // ) {
-    //   const event = `${collision.view2.layer}-collide`;
-    //   console.log(event);
-    //   dispatchCollisionEvent(event, {
-    //     ...collision,
-    //     view1: collision.view2,
-    //     view2: collision.view1,
-    //   });
-    // }
   };
 
   const dispatchCollisionEvent = (event: string, collision: Collision) => {

@@ -1,13 +1,6 @@
-import { createCanvas } from './core/canvas/canvas';
-import { bindMouse } from './core/input/mouse';
-import { createLoop } from './core/loop/loop';
-import { bindKeyboard } from './core/input/keyboard';
-import { devKeyboardShortcuts } from './core/input/devKeyboardShortcuts';
+import demoGame from './demo';
+import game from './demo';
 
 window.onload = () => {
-  createCanvas('app');
-  bindMouse();
-  bindKeyboard();
-  createLoop();
-  devKeyboardShortcuts();
+  demoGame();
 };
