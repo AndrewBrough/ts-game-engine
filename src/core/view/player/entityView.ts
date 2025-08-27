@@ -25,25 +25,25 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     },
     geometry: {
       shape: 'rect',
-      width: Screen.percent(10).w,
-      height: Screen.percent(10).w,
+      width: Math.min(Screen.percent(5).w, 20),
+      height: Math.min(Screen.percent(5).w, 20),
       ...props.geometry,
     },
-    text: {
-      fontSize: Screen.percent(3).w,
-      offset: 'center',
-      style: {
-        fill: {
-          color: 'black',
-          opacity: 1,
-        },
-        stroke: {
-          color: 'white',
-          opacity: 1,
-          width: 1,
-        },
-      },
-    },
+    // text: {
+    //   fontSize: Math.min(Screen.percent(2).w, 12),
+    //   offset: 'center',
+    //   style: {
+    //     fill: {
+    //       color: 'black',
+    //       opacity: 1,
+    //     },
+    //     stroke: {
+    //       color: 'white',
+    //       opacity: 1,
+    //       width: 1,
+    //     },
+    //   },
+    // },
   });
 
   // const healthView = createHealthView(view);
@@ -52,7 +52,7 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
 
   view.events.addEvent('update', (e: CustomEvent) => {
     updatePhysics(e);
-    updateHealth();
+    // updateHealth();
 
     // Update view so next render gets the above changes
     view.update();
@@ -71,11 +71,11 @@ export const createEntityView = (props: DeepPartial<InteractiveView>) => {
     }
   };
 
-  const updateHealth = () => {
-    view.updateText({
-      text: view.model.health,
-    });
-  };
+  // const updateHealth = () => {
+  //   view.updateText({
+  //     text: view.model.health,
+  //   });
+  // };
 
   collisionHandler.attachCollisionHandler();
 

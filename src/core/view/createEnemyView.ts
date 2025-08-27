@@ -26,22 +26,22 @@ export const createEnemyView = (id?: string) => {
         },
       },
     },
-    text: {
-      text: 'Enemy',
-      fontSize: Screen.percent(3).w,
-      offset: 'center',
-      style: {
-        fill: {
-          color: 'black',
-          opacity: 1,
-        },
-        stroke: {
-          color: 'white',
-          opacity: 1,
-          width: 1,
-        },
-      },
-    },
+    // text: {
+    //   text: 'Enemy',
+    //   fontSize: Screen.percent(3).w,
+    //   offset: 'center',
+    //   style: {
+    //     fill: {
+    //       color: 'black',
+    //       opacity: 1,
+    //     },
+    //     stroke: {
+    //       color: 'white',
+    //       opacity: 1,
+    //       width: 1,
+    //     },
+    //   },
+    // },
   });
 
   entityView.updatePosition({
