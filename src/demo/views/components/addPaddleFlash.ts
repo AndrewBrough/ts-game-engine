@@ -1,44 +1,46 @@
 import type { ViewInstance } from '../../../core/view/view';
 
+const TIME_TO_FLASH = 800;
+
 export const addPaddleFlash = (playerView: ViewInstance) => {
   let elapsedTime = 0;
-  let isPaused = false;
-  let timeoutId: number | null = null;
   const originalOpacity = playerView.geometry.style.fill.opacity;
 
-  const pause = () => {
-    isPaused = true;
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
+  const stop = () => {
+    playerView.geometry.style.fill.opacity = originalOpacity;
   };
 
   const play = () => {
-    isPaused = false;
-    // Start the timeout when play is called
-    timeoutId = setTimeout(() => {
-      console.log('timeout');
-      playerView.geometry.style.fill.opacity = originalOpacity;
-      pause();
-    }, 1000);
+    elapsedTime = 0;
   };
 
   const modulateOpacity = (e: CustomEvent) => {
-    if (isPaused) return;
-
     elapsedTime += e.detail.deltaTime;
+
+    // magic number for opacity
+    // makes animation end when opacity 1 almost back to original
+    if (
+      elapsedTime >= TIME_TO_FLASH &&
+      playerView.geometry.style.fill.opacity >= 0.95 // magic number, fragile
+    ) {
+      stop();
+      return;
+    }
+
     // Use Math.sin to get values between -1 and 1, then map to 0-1
-    const sinValue = Math.sin(elapsedTime * 0.01); // Slower frequency
-    playerView.geometry.style.fill.opacity = 1 - (sinValue + 1) / 2; // Map -1,1 to 0,1
+    const sinValue = Math.sin(elapsedTime * 0.02); // Slower frequency
+    const targetOpacity = 1 - (sinValue + 1) / 2; // Map -1,1 to 0,1
+    playerView.geometry.style.fill.opacity = targetOpacity;
+
+    if (elapsedTime >= TIME_TO_FLASH && targetOpacity >= 0.95) {
+      stop();
+    }
   };
 
   playerView.events.addEvent('update', modulateOpacity);
 
-  play();
-
   return {
-    pause,
     play,
+    stop,
   };
 };
