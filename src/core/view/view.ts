@@ -89,11 +89,27 @@ export const createView = (props: DeepPartial<View> = {}) => {
     const actualHeight =
       metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
+    updateText({
+      width: actualWidth,
+      height: actualHeight,
+    });
     if (view.text.align === 'center' || view.text.verticalAlign === 'center') {
-      updateSize(actualWidth, actualHeight);
       updateTextOffset({
         x: -actualWidth / 2,
         y: actualHeight / 2,
+      });
+    } else if (
+      view.text.align === 'center-within' ||
+      view.text.verticalAlign === 'center-within'
+    ) {
+      updateTextOffset({
+        x: view.geometry.width / 2 - actualWidth / 2,
+        y: view.geometry.height / 2 - actualHeight / 2 + actualHeight,
+      });
+    } else {
+      updateTextOffset({
+        x: 0,
+        y: actualHeight,
       });
     }
 
@@ -187,16 +203,11 @@ export const createView = (props: DeepPartial<View> = {}) => {
           view.text.fontSize * view.scale
         }px ${view.text.fontFamily}`;
 
-        if (
-          view.text.align === 'center' ||
-          view.text.verticalAlign === 'center'
-        ) {
-          updateTextSize();
-        }
+        const size = updateTextSize();
 
         const finalTextPos = {
-          x: x + (view.text.offset?.x ?? 0) * view.scale,
-          y: y + (view.text.offset?.y ?? 0) * view.scale,
+          x: x + (view.text.offset?.x ?? 0),
+          y: y + (view.text.offset?.y ?? 0),
         };
 
         ctx.globalAlpha = view.text.style.fill.opacity;
@@ -209,12 +220,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
           finalTextPos.y
         );
 
-        ctx.strokeRect(
-          finalTextPos.x + 2,
-          finalTextPos.y,
-          w * view.scale + 2,
-          -h * view.scale
-        );
+        ctx.strokeRect(finalTextPos.x, finalTextPos.y, size.width, size.height);
       }
     };
 

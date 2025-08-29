@@ -8,18 +8,20 @@ export const createFpsView = () => {
     id: 'fps-view',
     layer: 'UI',
     text: {
-      offset: {
-        x: 0,
-        y: Screen.percent(4).w,
-      },
       text: '0',
       fontSize: Screen.percent(4).w,
+      align: 'left',
+      verticalAlign: 'top',
       style: {
         fill: {
           color: 'white',
           opacity: 1,
         },
       },
+    },
+    geometry: {
+      x: Screen.percent(1).w,
+      y: Screen.percent(1).w,
     },
   });
 

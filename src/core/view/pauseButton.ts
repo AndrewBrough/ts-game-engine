@@ -15,7 +15,8 @@ export const createPauseButton = (props: DeepPartial<View> = {}) => {
     id: 'pauseButton',
     layer: 'UI',
     text: {
-      offset: 'center',
+      align: 'center-within',
+      verticalAlign: 'center-within',
       text: '⏸',
       fontSize: Screen.percent(4).w,
       style: {
@@ -27,9 +28,9 @@ export const createPauseButton = (props: DeepPartial<View> = {}) => {
     },
     geometry: {
       shape: 'roundRect',
-      width: Screen.percent(6).w,
-      height: Screen.percent(4.5).h,
-      x: Screen.w - Screen.percent(7).w,
+      width: Screen.percent(4).w,
+      height: Screen.percent(4).h,
+      x: Screen.w - Screen.percent(5).w,
       y: Screen.percent(1).w,
       style: {
         fill: {
@@ -106,7 +107,9 @@ export const createPauseButton = (props: DeepPartial<View> = {}) => {
   };
 
   updateText();
-  viewInstance.update();
+  viewInstance.update(
+    new CustomEvent('deltaTime', { detail: { deltaTime: 0 } })
+  );
 
   return { ...viewInstance, handlers };
 };
