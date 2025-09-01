@@ -45,8 +45,6 @@ export const createPhysics = (view: View) => {
     // if (Math.abs(currentForce.y) > 20)
     //   currentForce.y = Math.sin(currentForce.y) * 2;
 
-    // console.log(currentForce);
-
     return currentForce;
   };
 

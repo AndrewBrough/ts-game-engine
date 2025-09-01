@@ -9,6 +9,4 @@ export const startRound = () => {
   };
 
   const result = startTimer(3);
-
-  console.log(result);
 };

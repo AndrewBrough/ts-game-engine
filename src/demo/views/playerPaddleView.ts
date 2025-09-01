@@ -5,6 +5,7 @@ import { addCollisionDamage } from '../../core/view/components/events/addCollisi
 import type { ControlProps } from '../../core/view/components/input';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
+import { addPaddleFlash } from './components/addPaddleFlash';
 
 export const playerPaddleView = (
   props: DeepPartial<View>,
@@ -20,7 +21,17 @@ export const playerPaddleView = (
     }
   );
 
-  return view;
+  const givePoint = (points: number = 0) => {
+    view.model.score += points;
+
+    if (!view.hasComponent('flashPaddle')) {
+      view.addComponent('flashPaddle', addPaddleFlash(view));
+    } else {
+      view.getComponent('flashPaddle')?.play();
+    }
+  };
+
+  return { ...view, givePoint };
 };
 
 export const basePlayerProps: DeepPartial<View> = {

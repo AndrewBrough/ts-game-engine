@@ -33,7 +33,6 @@ const createSceneManager = () => {
 
   const unloadAllScenes = () => {
     for (const sceneName in loadedScenes) {
-      console.log('unloadAllScene', sceneName);
       unloadScene(sceneName);
     }
     destroyGame();

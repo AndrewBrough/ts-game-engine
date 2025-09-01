@@ -30,9 +30,17 @@ export const ballView = () => {
       },
     },
   });
-
-  // view.addComponent('wallBounce', addWallBounce(view));
   view.addComponent('collisionBounce', addCollisionBounce(view));
+  view.addComponent(
+    'collisionBounce',
+    addCollisionBounce(view, {
+      viewIds: ['player-1', 'player-2'],
+      forceMultiplier: {
+        x: 0,
+        y: -10,
+      },
+    })
+  );
   view.addComponent('collisionDamage', addCollisionDamage(view));
 
   return view;

@@ -60,7 +60,6 @@ export const createPauseButton = (props: DeepPartial<View> = {}) => {
     });
   });
   addHandler('keydown', 'keydown', e => {
-    console.log('keydown', e);
     if (!(e as unknown as KeyboardEvent).key) return;
 
     const keys = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
@@ -74,7 +73,6 @@ export const createPauseButton = (props: DeepPartial<View> = {}) => {
   const handlePause = () => {
     const { timeScale, isLogicPaused } = getState();
     const paused = timeScale === 0 || isLogicPaused;
-    console.log('paused', paused);
 
     if (paused) {
       toggleLogicPaused();

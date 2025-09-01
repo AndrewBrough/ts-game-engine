@@ -9,9 +9,8 @@ import type {
 import { gridView } from '../../core/view/debug/gridView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
-import { givePoint } from '../scripts/points';
 import { ballView } from '../views/ballView';
-import { basePlayerProps } from '../views/playerPaddleView';
+import { basePlayerProps, playerPaddleView } from '../views/playerPaddleView';
 import { scoreBoardView } from '../views/scoreBoardView';
 
 export const pong = () => {
@@ -22,7 +21,7 @@ export const pong = () => {
     ENEMY: ['DEFAULT', 'PLAYER'],
   });
 
-  const grid = gridView();
+  gridView();
 
   const { leftWall, rightWall } = createWorldBoundsView();
 
@@ -30,7 +29,7 @@ export const pong = () => {
   leftWall.model.collisionDamage = 1;
   rightWall.model.collisionDamage = 1;
 
-  const player1 = createPlayerView(
+  const player1 = playerPaddleView(
     {
       ...basePlayerProps,
       id: 'player-1',
@@ -55,7 +54,7 @@ export const pong = () => {
     }
   );
 
-  const player2 = createPlayerView(
+  const player2 = playerPaddleView(
     {
       ...basePlayerProps,
       id: 'player-2',
@@ -90,14 +89,11 @@ export const pong = () => {
   ballCollisions.addCollisionEvent(
     (e: CustomEvent<{ collision: Collision }>) => {
       const collision = e.detail.collision;
-      const deltaTime = collision.deltaTime;
-      const otherView = collision.view2;
-      const otherPhysics = otherView.getComponent<PhysicsComponent>('physics');
 
       if (collision.view2.id === leftWall.id) {
-        givePoint(player1);
+        player1.givePoint();
       } else if (collision.view2.id === rightWall.id) {
-        givePoint(player2);
+        player2.givePoint();
       }
 
       scoreBoard.updateText({
@@ -105,23 +101,6 @@ export const pong = () => {
       });
 
       ball.model.speed = Math.max(Math.min(ball.model.health, 10), 5);
-
-      // add force to the ball based on the collision normal + player current force
-      const playerForce = otherPhysics?.getCurrentForce() || { x: 0, y: 0 };
-      const ballForce = {
-        x: collision.normal.x * playerForce.x * deltaTime,
-        y: collision.normal.y * playerForce.y * deltaTime,
-      };
-      const distanceFromCenterOfPaddle =
-        collision.contactPoint.x - (otherView.geometry?.width ?? 0) / 2;
-      const maxDistance = otherView.geometry?.width ?? 0;
-      const normalizedDistance = distanceFromCenterOfPaddle / maxDistance;
-      console.log(distanceFromCenterOfPaddle, maxDistance);
-      console.log(normalizedDistance);
-      ballForce.x *= normalizedDistance;
-      ballForce.y *= normalizedDistance;
-
-      ball.getComponent<PhysicsComponent>('physics')?.applyForce(ballForce);
     }
   );
 

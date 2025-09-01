@@ -84,7 +84,6 @@ export const clearAllViews = () => {
 
   // Clean up all views
   for (const view of allViews) {
-    console.log('clearAllViews', view);
     // Call view-specific cleanup if it exists
     view.destroy();
     // Remove view from game state

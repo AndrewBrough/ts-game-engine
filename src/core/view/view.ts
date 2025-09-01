@@ -234,43 +234,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
     drawImage();
     drawGeometry();
     drawText();
-
-    // // case 'circle':
-    // //   ctx.globalAlpha = mutableProps.fill.opacity;
-    // //   ctx.fillRect(x, y, w, h);
-    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
-    // //   ctx.ellipse(x, y, w, h, 0, 0, 2 * Math.PI);
-    // //   break;
-    // // case 'line':
-    // //   ctx.globalAlpha = mutableProps.fill.opacity;
-    // //   ctx.fillRect(x, y, w, h);
-    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
-    // //   ctx.strokeRect(x, y, w, h);
-    // //   break;
-    // // case 'text': {
-    // //   const textStr = text.toString();
-    // //   ctx.font = `${fontWeight} ${fontStyle} ${
-    // //     fontSizePx * mutableProps.scale
-    // //   }px ${fontFamily}`;
-    // //   ctx.globalAlpha = mutableProps.fill.opacity;
-    // //   ctx.fillText(textStr, x, y + fontSizePx);
-    // //   ctx.globalAlpha = mutableProps.stroke.opacity;
-    // //   ctx.strokeText(textStr, x, y + fontSizePx);
-
-    // //   // Calculate actual text dimensions
-    // //   const metrics = ctx.measureText(textStr);
-    // //   const actualWidth = metrics.width;
-    // //   const actualHeight =
-    // //     (metrics.actualBoundingBoxAscent || fontSizePx * 0.8) +
-    // //     (metrics.actualBoundingBoxDescent || fontSizePx * 0.2);
-    // //   mutableProps.bounds = calculateBounds(
-    // //     { x, y: y + actualHeight / 2 },
-    // //     { width: actualWidth, height: actualHeight }
-    // //   );
-    //   return;
-    // }
-    // };
-    // renderShape();
   };
 
   const render = (e: DeltaTimeEvent) => {
@@ -280,14 +243,8 @@ export const createView = (props: DeepPartial<View> = {}) => {
 
   const update = (e: DeltaTimeEvent) => {};
 
-  const cleanup = () => {
-    console.log('cleanup view', view.id);
-  };
-
   const destroy = () => {
-    console.log('destroy view', view.id);
     events.cleanup();
-    cleanup();
   };
 
   events.addEvent('update', update);
@@ -297,7 +254,6 @@ export const createView = (props: DeepPartial<View> = {}) => {
     ...view,
     ...components,
     update,
-    cleanup,
     destroy,
     events,
     updatePosition,
