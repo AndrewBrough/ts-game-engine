@@ -241,7 +241,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     draw();
   };
 
-  const update = (e: DeltaTimeEvent) => {};
+  const update = (e?: DeltaTimeEvent) => {};
 
   const destroy = () => {
     events.cleanup();
