@@ -1,5 +1,4 @@
 import { Screen } from '../../core/units';
-import { addAnimations } from '../../core/view/components/addAnimations';
 import { createView, type ViewInstance } from '../../core/view/view';
 
 export const scoreBoardView = (

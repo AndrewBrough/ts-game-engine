@@ -21,6 +21,16 @@ const createSceneManager = () => {
     return sceneInstance;
   };
 
+  // Load a scene by passing in a function instead of having to add the scene first
+  const loadSceneByFunction = (sceneFunction: () => SceneInstance) => {
+    if (Object.keys(loadedScenes).length > 0) {
+      unloadScene();
+    }
+    const sceneInstance = sceneFunction();
+    loadedScenes[sceneInstance.name] = sceneInstance;
+    return sceneInstance;
+  };
+
   const unloadScene = (sceneName?: string) => {
     const sceneToUnload = sceneName ?? Object.keys(loadedScenes)[0];
     if (!sceneToUnload) {
@@ -39,6 +49,7 @@ const createSceneManager = () => {
   return {
     addScene,
     loadScene,
+    loadSceneByFunction,
     unloadScene,
     unloadAllScenes,
   };

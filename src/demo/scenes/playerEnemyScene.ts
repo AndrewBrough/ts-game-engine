@@ -1,14 +1,14 @@
-import { Screen } from '../../core/units';
-import { createEnemyView } from '../../core/view/entity/enemyView';
-import { createPlayerView } from '../../core/view/entity/playerView';
 import { createScene } from '../../core/scene/scene';
-import { gridView } from '../../core/view/debug/gridView';
+import { Screen } from '../../core/units';
+import { addCollisionDamage } from '../../core/view/components/events/addCollisionDamage';
 import {
   addCollisionBounce,
   addWallBounce,
 } from '../../core/view/components/movement';
 import { addHealthOpacityStyle } from '../../core/view/components/styles/addHealthOpacityStyle';
-import { addCollisionDamage } from '../../core/view/components/events/addCollisionDamage';
+import { gridView } from '../../core/view/debug/gridView';
+import { createEnemyView } from '../../core/view/entity/enemyView';
+import { createPlayerView } from '../../core/view/entity/playerView';
 
 export const demoScene = () => {
   const scene = createScene('demo');

@@ -5,27 +5,26 @@ import { breakTheGameScene } from './scenes/breakTheGameScene';
 import { demoScene } from './scenes/playerEnemyScene';
 import { pong } from './scenes/pongScene';
 
+/**
+ * Use shortcuts 1,2,3 or 0 to start a demo or clear it off the screen.
+ */
 export const demoGame = () => {
-  getSceneManager().addScene('TEST', demoScene);
-  getSceneManager().addScene('BREAK_THE_ENGINE', breakTheGameScene);
-  getSceneManager().addScene('PONG', pong);
-
+  getSceneManager().addScene('DEMO', demoScene); // example method of referencing a scene
   const shortcuts = keyboardShortcuts();
 
   shortcuts.addShortcut('1', () => {
-    createGame();
-    getSceneManager().loadScene('TEST');
+    createGame(); // cleans up previous games, sets up new game
+    getSceneManager().loadScene('DEMO');
   });
   shortcuts.addShortcut('2', () => {
     createGame();
-    getSceneManager().loadScene('BREAK_THE_ENGINE');
+    getSceneManager().loadSceneByFunction(breakTheGameScene); // example of just loading a scene directly from it's function
   });
   shortcuts.addShortcut('3', () => {
     createGame();
-    getSceneManager().loadScene('PONG');
+    getSceneManager().loadSceneByFunction(pong);
   });
   shortcuts.addShortcut('0', () => {
-    getSceneManager().unloadAllScenes();
     destroyGame();
   });
 };
