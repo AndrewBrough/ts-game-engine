@@ -9,6 +9,7 @@ import { gridView } from '../../core/view/debug/gridView';
 import { defaultEntityProps } from '../../core/view/entity/entityView';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import { spawnBouncingEnemies } from '../views/bouncingEnemyView';
+import { cubeCountView } from '../views/cubeCountView';
 import { PAUSE_KEYS } from '../views/pauseButton';
 import { createSpawnButton } from '../views/spawnButton';
 
@@ -45,6 +46,9 @@ export const breakTheGameScene = (): SceneInstance => {
   player.addComponent('wallbounce', addWallBounce(player));
   player.addComponent('collisionbounce', addCollisionBounce(player));
   player.addComponent('collisiondamage', addCollisionDamage(player));
+
+  // Bottom-left counter; updates itself whenever a cube is added
+  cubeCountView();
 
   spawnBouncingEnemies(INITIAL_ENEMIES);
 
