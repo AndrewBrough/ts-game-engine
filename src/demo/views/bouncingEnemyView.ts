@@ -35,8 +35,21 @@ export const bouncingEnemyView = (props: DeepPartial<View> = {}) => {
   enemy.addComponent('wallbounce', addWallBounce(enemy));
   enemy.addComponent('collisionbounce', addCollisionBounce(enemy));
   enemy.addComponent('collisiondamage', addCollisionDamage(enemy));
+
+  window.dispatchEvent(
+    new CustomEvent(BOUNCING_ENEMY_SPAWNED, { detail: { enemy } })
+  );
+
   return enemy;
 };
+
+export type BouncingEnemyView = ReturnType<typeof bouncingEnemyView>;
+
+/** Fired on window once per bouncing enemy, after it is fully set up. */
+export const BOUNCING_ENEMY_SPAWNED = 'bouncingEnemySpawned';
+export type BouncingEnemySpawnedEvent = CustomEvent<{
+  enemy: BouncingEnemyView;
+}>;
 
 export const spawnBouncingEnemies = (
   count: number,

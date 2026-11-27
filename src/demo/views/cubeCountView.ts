@@ -1,21 +1,22 @@
-import { getAllViews } from '../../core/gameState/gameState';
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
 import { deepMerge } from '../../core/utils/deepMerge';
 import type { View } from '../../core/view/types';
-import { createView, type ViewInstance } from '../../core/view/view';
+import { createView } from '../../core/view/view';
+import {
+  BOUNCING_ENEMY_SPAWNED,
+  type BouncingEnemySpawnedEvent,
+} from './bouncingEnemyView';
 
 const FONT_SIZE = Screen.percent(2).w;
 const MARGIN = Screen.percent(1).w;
 
-const isCube = (view: ViewInstance) => view.layer === 'ENEMY';
-
 /**
- * Bottom-left text showing how many cubes are in the scene.
- * Counts cubes already present, then updates each time one is added.
+ * Bottom-left text counting bouncing enemies spawned in the scene.
+ * Only counts spawns after it is created, so create it before spawning.
  */
 export const cubeCountView = (props: DeepPartial<View> = {}) => {
-  let count = getAllViews().filter(isCube).length;
+  let count = 0;
   const label = () => `Cubes: ${count}`;
 
   const defaults: DeepPartial<View> = {
@@ -36,11 +37,10 @@ export const cubeCountView = (props: DeepPartial<View> = {}) => {
 
   const view = createView(deepMerge(defaults, props));
 
-  // Fired by createView for every new view; removed when the scene unloads
+  // Listener is removed when the scene unloads
   view.events.addEvent(
-    'viewAdded',
-    (e: CustomEvent<{ view: ViewInstance }>) => {
-      if (!isCube(e.detail.view)) return;
+    BOUNCING_ENEMY_SPAWNED,
+    (_e: BouncingEnemySpawnedEvent) => {
       count++;
       view.updateText({ text: label() });
     }
