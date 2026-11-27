@@ -11,10 +11,6 @@ const createSceneManager = () => {
   };
 
   const loadScene = (sceneName: string) => {
-    if (Object.keys(loadedScenes).length > 0) {
-      unloadScene();
-      // destroyGame();
-    }
     const scene = scenes[sceneName];
     const sceneInstance = scene();
     loadedScenes[sceneInstance.name] = sceneInstance;
@@ -23,9 +19,6 @@ const createSceneManager = () => {
 
   // Load a scene by passing in a function instead of having to add the scene first
   const loadSceneByFunction = (sceneFunction: () => SceneInstance) => {
-    if (Object.keys(loadedScenes).length > 0) {
-      unloadScene();
-    }
     const sceneInstance = sceneFunction();
     loadedScenes[sceneInstance.name] = sceneInstance;
     return sceneInstance;

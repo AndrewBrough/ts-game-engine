@@ -17,6 +17,9 @@ export const createView = (props: DeepPartial<View> = {}) => {
   const view = deepMerge({ ...defaultViewConfig }, props, {
     id: props.id ?? `entity-${crypto.randomUUID()}`,
   }) as View;
+  // deepMerge keeps target-only nested objects by reference, so a view created
+  // without `text` props would share (and mutate) defaultViewConfig.text.
+  view.text = structuredClone(view.text);
   const components = addComponents();
   const events = createEvents();
   const viewImage: ImageLoader | null = view.imageUrl ? loadImage(view) : null;
@@ -74,10 +77,9 @@ export const createView = (props: DeepPartial<View> = {}) => {
   };
 
   const updateText = (props: DeepPartial<View['text']>) => {
-    view.text = {
-      ...view.text,
-      ...props,
-    } as View['text'];
+    // Mutate in place: the returned view instance shares this object, so
+    // replacing it would leave `instance.text` stale.
+    Object.assign(view.text, props);
   };
 
   const updateTextSize = () => {
@@ -267,6 +269,7 @@ export const createView = (props: DeepPartial<View> = {}) => {
     updateFontSize,
     viewImage,
     handlers: new Map(),
+    interactive: false, // true = receives mouseover/mouseout (see input/targeting.ts)
   };
 
   window.dispatchEvent(

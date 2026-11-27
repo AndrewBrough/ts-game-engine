@@ -11,7 +11,7 @@ import { ballView } from '../views/ballView';
 import { basePlayerProps, playerPaddleView } from '../views/playerPaddleView';
 import { scoreBoardView } from '../views/scoreBoardView';
 
-export const pong = () => {
+export const pongScene = () => {
   const scene = createScene('pong');
 
   setCollisionLayers({

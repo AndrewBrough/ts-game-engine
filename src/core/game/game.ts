@@ -30,7 +30,6 @@ export const destroyGame = () => {
   gameLoop?.stop();
   cleanupEventListeners();
   clearAllViews();
-  getSceneManager().unloadAllScenes();
   const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
   if (canvas) {
     canvas.remove();

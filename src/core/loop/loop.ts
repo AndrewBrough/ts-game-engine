@@ -1,5 +1,5 @@
 import { getCanvas, getContext } from '../canvas/canvas';
-import { updateFPS, getState } from '../gameState/gameState';
+import { getState, updateFPS } from '../gameState/gameState';
 import { updateDeltaTime } from '../input/keyboard';
 
 export const createLoop = () => {
