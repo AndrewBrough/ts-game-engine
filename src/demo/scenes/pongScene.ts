@@ -3,11 +3,9 @@ import type { Collision } from '../../core/gameState/collisionManager';
 import { createScene } from '../../core/scene/scene';
 import { Screen } from '../../core/units';
 import type {
-  CollisionComponent,
-  PhysicsComponent,
+  CollisionComponent
 } from '../../core/view/components';
 import { gridView } from '../../core/view/debug/gridView';
-import { createPlayerView } from '../../core/view/entity/playerView';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import { ballView } from '../views/ballView';
 import { basePlayerProps, playerPaddleView } from '../views/playerPaddleView';
@@ -91,9 +89,11 @@ export const pong = () => {
       const collision = e.detail.collision;
 
       if (collision.view2.id === leftWall.id) {
-        player1.givePoint();
+        player2.givePoint(1);
+        player1.flashPaddle();
       } else if (collision.view2.id === rightWall.id) {
-        player2.givePoint();
+        player1.givePoint(1);
+        player2.flashPaddle();
       }
 
       scoreBoard.updateText({

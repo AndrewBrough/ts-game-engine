@@ -1,7 +1,6 @@
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
 import { deepMerge } from '../../core/utils/deepMerge';
-import { addCollisionDamage } from '../../core/view/components/events/addCollisionDamage';
 import type { ControlProps } from '../../core/view/components/input';
 import { createPlayerView } from '../../core/view/entity/playerView';
 import type { View } from '../../core/view/types';
@@ -23,15 +22,17 @@ export const playerPaddleView = (
 
   const givePoint = (points: number = 0) => {
     view.model.score += points;
+  };
 
+  const flashPaddle = () => {
     if (!view.hasComponent('flashPaddle')) {
       view.addComponent('flashPaddle', addPaddleFlash(view));
     } else {
       view.getComponent('flashPaddle')?.play();
     }
-  };
+  }
 
-  return { ...view, givePoint };
+  return { ...view, givePoint, flashPaddle };
 };
 
 export const basePlayerProps: DeepPartial<View> = {
