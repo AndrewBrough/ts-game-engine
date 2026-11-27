@@ -1,4 +1,3 @@
-import { destroyGame } from '../game/game';
 import { type SceneInstance } from './scene';
 
 export type SceneManager = ReturnType<typeof createSceneManager>;
@@ -14,7 +13,7 @@ const createSceneManager = () => {
   const loadScene = (sceneName: string) => {
     if (Object.keys(loadedScenes).length > 0) {
       unloadScene();
-      destroyGame();
+      // destroyGame();
     }
     const scene = scenes[sceneName];
     const sceneInstance = scene();

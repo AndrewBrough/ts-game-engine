@@ -9,6 +9,7 @@ import { getSceneManager } from '../scene/sceneManager';
 let gameLoop: ReturnType<typeof createLoop> | null = null;
 
 export const createGame = () => {
+  destroyGame();
   const canvas = createCanvas('app');
   const mouse = bindMouse();
   const keyboard = bindKeyboard();
