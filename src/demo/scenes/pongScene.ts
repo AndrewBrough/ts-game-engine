@@ -1,7 +1,6 @@
 import { setCollisionLayers } from '../../core/gameState/collisionLayers';
 import type { Collision } from '../../core/gameState/collisionManager';
 import { createScene } from '../../core/scene/scene';
-import { Screen } from '../../core/units';
 import type { CollisionComponent } from '../../core/view/components';
 import { gridView } from '../../core/view/debug/gridView';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
@@ -31,7 +30,6 @@ export const pongScene = () => {
       id: 'player-1',
       geometry: {
         ...basePlayerProps.geometry,
-        x: 20,
         style: {
           ...basePlayerProps.geometry?.style,
           fill: {
@@ -47,7 +45,8 @@ export const pongScene = () => {
     {
       up: 'w',
       down: 's',
-    }
+    },
+    'left'
   );
 
   const player2 = playerPaddleView(
@@ -56,7 +55,6 @@ export const pongScene = () => {
       id: 'player-2',
       geometry: {
         ...basePlayerProps.geometry,
-        x: Screen.w - (basePlayerProps.geometry?.width ?? 0) - 20,
         style: {
           fill: {
             color: 'blue',
@@ -71,7 +69,8 @@ export const pongScene = () => {
     {
       up: 'ArrowUp',
       down: 'ArrowDown',
-    }
+    },
+    'right'
   );
 
   const scoreBoard = scoreBoardView(player1, player2);

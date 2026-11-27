@@ -1,4 +1,5 @@
 import { Screen } from '../../core/units';
+import { addLayout } from '../../core/view/components/addLayout';
 import { createView, type ViewInstance } from '../../core/view/view';
 
 export const scoreBoardView = (
@@ -8,15 +9,10 @@ export const scoreBoardView = (
   const view = createView({
     id: 'score-board',
     layer: 'UI',
-    geometry: {
-      x: Screen.center.x,
-      y: Screen.center.y,
-    },
     text: {
       align: 'center',
       verticalAlign: 'center',
       text: `${player1.model.score} - ${player2.model.score}`,
-      fontSize: Screen.percent(5).w,
       style: {
         fill: {
           color: 'white',
@@ -29,6 +25,16 @@ export const scoreBoardView = (
       },
     },
   });
+
+  // Centred, re-run on resize
+  view.addComponent(
+    'layout',
+    addLayout(view, () => ({
+      x: Screen.center.x,
+      y: Screen.center.y,
+      fontSize: Screen.percent(5).w,
+    }))
+  );
 
   return view;
 };

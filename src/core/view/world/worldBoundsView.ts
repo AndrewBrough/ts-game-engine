@@ -1,10 +1,10 @@
 import type { DeepPartial } from '../../types';
 import { Screen } from '../../units';
+import { addLayout, type LayoutFn } from '../components/addLayout';
 import { createEntityView } from '../entity/entityView';
 import type { View } from '../types';
 
-const WALL_THICKNESS_X = Screen.percent(1).w;
-const WALL_THICKNESS_Y = Screen.percent(1).h;
+const thickness = () => ({ x: Screen.percent(1).w, y: Screen.percent(1).h });
 
 const baseProps: DeepPartial<View> = {
   layer: 'DEFAULT',
@@ -16,8 +16,6 @@ const baseProps: DeepPartial<View> = {
   },
   geometry: {
     shape: 'rect',
-    width: WALL_THICKNESS_X,
-    height: WALL_THICKNESS_Y,
     style: {
       fill: {
         color: 'white',
@@ -34,51 +32,44 @@ const baseProps: DeepPartial<View> = {
   },
 };
 
-export const createWorldBoundsView = () => {
-  const topWall = createEntityView({
-    ...baseProps,
-    id: 'top-wall',
-    geometry: {
-      ...baseProps.geometry,
-      y: -WALL_THICKNESS_X * 0.5,
-      width: Screen.w,
-    },
-  });
-
-  const bottomWall = createEntityView({
-    ...baseProps,
-    id: 'bottom-wall',
-    geometry: {
-      ...baseProps.geometry,
-      y: Screen.percent(99).h + WALL_THICKNESS_X * 0.5,
-      width: Screen.w,
-    },
-  });
-
-  const leftWall = createEntityView({
-    ...baseProps,
-    id: 'left-wall',
-    geometry: {
-      ...baseProps.geometry,
-      x: -WALL_THICKNESS_X * 0.5,
-      height: Screen.h,
-    },
-  });
-
-  const rightWall = createEntityView({
-    ...baseProps,
-    id: 'right-wall',
-    geometry: {
-      ...baseProps.geometry,
-      x: Screen.percent(99).w + WALL_THICKNESS_X * 0.5,
-      height: Screen.h,
-    },
-  });
-
-  return {
-    topWall,
-    bottomWall,
-    leftWall,
-    rightWall,
-  };
+// Each wall straddles a screen edge, half inside and half outside.
+// Layouts re-run on resize so the walls keep tracking the edges.
+const wallLayouts: Record<string, LayoutFn> = {
+  'top-wall': () => ({
+    x: 0,
+    y: -thickness().y * 0.5,
+    width: Screen.w,
+    height: thickness().y,
+  }),
+  'bottom-wall': () => ({
+    x: 0,
+    y: Screen.percent(99).h + thickness().y * 0.5,
+    width: Screen.w,
+    height: thickness().y,
+  }),
+  'left-wall': () => ({
+    x: -thickness().x * 0.5,
+    y: 0,
+    width: thickness().x,
+    height: Screen.h,
+  }),
+  'right-wall': () => ({
+    x: Screen.percent(99).w + thickness().x * 0.5,
+    y: 0,
+    width: thickness().x,
+    height: Screen.h,
+  }),
 };
+
+const createWall = (id: keyof typeof wallLayouts) => {
+  const wall = createEntityView({ ...baseProps, id });
+  wall.addComponent('layout', addLayout(wall, wallLayouts[id]));
+  return wall;
+};
+
+export const createWorldBoundsView = () => ({
+  topWall: createWall('top-wall'),
+  bottomWall: createWall('bottom-wall'),
+  leftWall: createWall('left-wall'),
+  rightWall: createWall('right-wall'),
+});
