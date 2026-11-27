@@ -28,7 +28,7 @@ export const demoGame = () => {
   const loadScene = (scene: () => SceneInstance) => {
     createGame();
     getSceneManager().loadSceneByFunction(scene); // alternate way to load a scene without adding it first
-  }
+  };
 
   loadScene(demoMenuScene);
 };

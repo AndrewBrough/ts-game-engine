@@ -2,9 +2,7 @@ import { setCollisionLayers } from '../../core/gameState/collisionLayers';
 import type { Collision } from '../../core/gameState/collisionManager';
 import { createScene } from '../../core/scene/scene';
 import { Screen } from '../../core/units';
-import type {
-  CollisionComponent
-} from '../../core/view/components';
+import type { CollisionComponent } from '../../core/view/components';
 import { gridView } from '../../core/view/debug/gridView';
 import { createWorldBoundsView } from '../../core/view/world/worldBoundsView';
 import { ballView } from '../views/ballView';

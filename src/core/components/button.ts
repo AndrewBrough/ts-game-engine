@@ -1,6 +1,7 @@
 import type { DeepPartial } from '../types';
 import { Screen } from '../units';
 import { deepMerge } from '../utils/deepMerge';
+import { addLayout, type LayoutFn } from '../view/components/addLayout';
 import type { StyleProps, View } from '../view/types';
 import { createView } from '../view/view';
 
@@ -11,6 +12,11 @@ export type ButtonProps = DeepPartial<View> & {
   hotkeys?: string[];
   /** Geometry style merged in while hovered, reverted on mouse out. */
   hoverStyle?: DeepPartial<StyleProps>;
+  /**
+   * Position/size relative to the screen, re-run on every canvas resize.
+   * Overrides geometry x/y/width/height (and text fontSize if returned).
+   */
+  layout?: LayoutFn;
 };
 
 export type ButtonInstance = ReturnType<typeof createButton>;
@@ -47,7 +53,7 @@ const defaultHoverStyle: DeepPartial<StyleProps> = {
  *
  * const play = createButton({
  *   text: { text: 'Play' },
- *   geometry: { x: Screen.center.x, y: Screen.center.y },
+ *   layout: () => ({ x: Screen.center.x - 60, y: Screen.center.y - 20 }),
  *   onClick: () => getSceneManager().loadScene('PONG'),
  * });
  */
@@ -55,12 +61,15 @@ export const createButton = ({
   onClick,
   hotkeys = [],
   hoverStyle = defaultHoverStyle,
+  layout,
   ...viewProps
 }: ButtonProps = {}) => {
   const view = createView({
     ...deepMerge(defaultButtonProps, viewProps),
     id: viewProps.id ?? `button-${crypto.randomUUID()}`,
   });
+
+  if (layout) view.addComponent('layout', addLayout(view, layout));
 
   const click = () => onClick?.(button);
 

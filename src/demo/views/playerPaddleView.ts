@@ -30,7 +30,7 @@ export const playerPaddleView = (
     } else {
       view.getComponent('flashPaddle')?.play();
     }
-  }
+  };
 
   return { ...view, givePoint, flashPaddle };
 };

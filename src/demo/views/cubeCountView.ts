@@ -1,6 +1,7 @@
 import type { DeepPartial } from '../../core/types';
 import { Screen } from '../../core/units';
 import { deepMerge } from '../../core/utils/deepMerge';
+import { addLayout } from '../../core/view/components/addLayout';
 import type { View } from '../../core/view/types';
 import { createView } from '../../core/view/view';
 import {
@@ -8,8 +9,12 @@ import {
   type BouncingEnemySpawnedEvent,
 } from './bouncingEnemyView';
 
-const FONT_SIZE = Screen.percent(2).w;
-const MARGIN = Screen.percent(1).w;
+// Bottom-left corner; a function so it's recalculated on resize
+const bottomLeft = () => {
+  const fontSize = Screen.percent(2).w;
+  const margin = Screen.percent(1).w;
+  return { x: margin, y: Screen.h - fontSize - margin, fontSize };
+};
 
 /**
  * Bottom-left text counting bouncing enemies spawned in the scene.
@@ -22,13 +27,8 @@ export const cubeCountView = (props: DeepPartial<View> = {}) => {
   const defaults: DeepPartial<View> = {
     id: 'cube-count',
     layer: 'UI',
-    geometry: {
-      x: MARGIN,
-      y: Screen.h - FONT_SIZE - MARGIN,
-    },
     text: {
       text: label(),
-      fontSize: FONT_SIZE,
       style: {
         fill: { color: 'white', opacity: 1 },
       },
@@ -36,6 +36,7 @@ export const cubeCountView = (props: DeepPartial<View> = {}) => {
   };
 
   const view = createView(deepMerge(defaults, props));
+  view.addComponent('layout', addLayout(view, bottomLeft));
 
   // Listener is removed when the scene unloads
   view.events.addEvent(

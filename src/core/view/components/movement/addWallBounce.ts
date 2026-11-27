@@ -4,11 +4,11 @@ import type { addPhysics, PhysicsComponent } from '../addPhysics';
 import { getBounceForce } from './getBounceForce';
 
 export const addWallBounce = (view: ViewInstance) => {
-  const yMax = Screen.h - view.geometry.height;
-  const xMax = Screen.w - view.geometry.width;
-
   view.events.addEvent('update', e => {
     const deltaTime = e.detail.deltaTime;
+    // Read each update so bounds follow window resizes
+    const yMax = Screen.h - view.geometry.height;
+    const xMax = Screen.w - view.geometry.width;
 
     const bounceVector = { x: 0, y: 0 };
 

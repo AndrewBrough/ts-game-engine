@@ -2,9 +2,19 @@ import { createButton, type ButtonProps } from '../../core/components/button';
 import { Screen } from '../../core/units';
 import { deepMerge } from '../../core/utils/deepMerge';
 
-const WIDTH = Screen.percent(12).w;
-const HEIGHT = Screen.percent(6).h;
-const MARGIN = Screen.percent(1).w;
+// Bottom-right corner; functions so they're recalculated on resize
+const bottomRight = () => {
+  const width = Screen.percent(12).w;
+  const height = Screen.percent(6).h;
+  const margin = Screen.percent(1).w;
+  return {
+    width,
+    height,
+    x: Screen.w - width - margin,
+    y: Screen.h - height - margin,
+    fontSize: Screen.percent(1.5).w,
+  };
+};
 
 /**
  * Bottom-right button (and Space by default) that calls `spawn` with
@@ -24,16 +34,8 @@ export const createSpawnButton = (
   const defaults: ButtonProps = {
     id: 'spawnButton',
     hotkeys: [' '],
-    text: {
-      text: label(),
-      fontSize: Screen.percent(1.5).w,
-    },
-    geometry: {
-      width: WIDTH,
-      height: HEIGHT,
-      x: Screen.w - WIDTH - MARGIN,
-      y: Screen.h - HEIGHT - MARGIN,
-    },
+    text: { text: label() },
+    layout: bottomRight,
   };
 
   const { onClick, ...rest } = props;

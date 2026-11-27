@@ -1,4 +1,4 @@
-import { createCanvas } from '../canvas/canvas';
+import { createCanvas, destroyCanvas } from '../canvas/canvas';
 import { cleanupEventListeners } from '../events/events';
 import { clearAllViews } from '../gameState/gameState';
 import { bindKeyboard } from '../input/keyboard';
@@ -30,10 +30,7 @@ export const destroyGame = () => {
   gameLoop?.stop();
   cleanupEventListeners();
   clearAllViews();
-  const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-  if (canvas) {
-    canvas.remove();
-  }
+  destroyCanvas();
 
   const sceneManager = getSceneManager();
   sceneManager.unloadAllScenes();
