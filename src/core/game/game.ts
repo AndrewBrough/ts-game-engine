@@ -1,9 +1,9 @@
 import { createCanvas } from '../canvas/canvas';
+import { cleanupEventListeners } from '../events/events';
+import { clearAllViews } from '../gameState/gameState';
 import { bindKeyboard } from '../input/keyboard';
 import { bindMouse } from '../input/mouse';
 import { createLoop } from '../loop/loop';
-import { cleanupEventListeners } from '../events/events';
-import { clearAllViews } from '../gameState/gameState';
 import { getSceneManager } from '../scene/sceneManager';
 
 let gameLoop: ReturnType<typeof createLoop> | null = null;
@@ -29,6 +29,7 @@ export const destroyGame = () => {
   gameLoop?.stop();
   cleanupEventListeners();
   clearAllViews();
+  getSceneManager().unloadAllScenes();
   const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
   if (canvas) {
     canvas.remove();

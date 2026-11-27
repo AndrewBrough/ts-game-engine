@@ -35,7 +35,6 @@ const createSceneManager = () => {
     for (const sceneName in loadedScenes) {
       unloadScene(sceneName);
     }
-    destroyGame();
   };
 
   return {
