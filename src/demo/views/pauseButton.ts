@@ -1,9 +1,9 @@
-import { createButton, type ButtonProps } from '../components/button';
-import { getState, toggleLogicPaused } from '../gameState/gameState';
-import { Screen } from '../units';
-import { deepMerge } from '../utils/deepMerge';
+import { createButton, type ButtonProps } from '../../core/components/button';
+import { getState, toggleLogicPaused } from '../../core/gameState/gameState';
+import { Screen } from '../../core/units';
+import { deepMerge } from '../../core/utils/deepMerge';
 
-const PAUSE_KEYS = [' ', 'p', 'Escape', 'Delete', 'Backspace'];
+export const PAUSE_KEYS =[' ', 'p', 'Escape', 'Delete', 'Backspace'];
 
 /**
  * Pauses game logic (updates, physics, collisions) while rendering continues,

@@ -1,3 +1,5 @@
+import { createPauseButton } from '../../demo/views/pauseButton';
+import type { ButtonProps } from '../components/button';
 import { createEvents, type EventInstance } from '../events/events';
 import {
   collisionManager,
@@ -5,7 +7,6 @@ import {
 } from '../gameState/collisionManager';
 import { clearAllViews, getState } from '../gameState/gameState';
 import { createFpsView } from '../loop/fpsView';
-import { createPauseButton } from '../view/pauseButton';
 import type { View } from '../view/types';
 
 export type Scene = {
@@ -17,13 +18,21 @@ export type Scene = {
 
 export type SceneInstance = ReturnType<typeof createScene>;
 
-export const createScene = (name: string = 'default') => {
+export type SceneOptions = {
+  /** Overrides for the built-in pause button, e.g. different hotkeys. */
+  pauseButton?: ButtonProps;
+};
+
+export const createScene = (
+  name: string = 'default',
+  { pauseButton }: SceneOptions = {}
+) => {
   const state = getState();
   const events = createEvents();
   const collisions = collisionManager();
 
   createFpsView();
-  createPauseButton();
+  createPauseButton(pauseButton);
 
   const destroy = () => {
     // Clean up scene-specific events

@@ -6,12 +6,19 @@ import {
   addWallBounce,
 } from '../../core/view/components/movement';
 import { gridView } from '../../core/view/debug/gridView';
-import { createEnemyView } from '../../core/view/entity/enemyView';
 import { defaultEntityProps } from '../../core/view/entity/entityView';
 import { createPlayerView } from '../../core/view/entity/playerView';
+import { spawnBouncingEnemies } from '../views/bouncingEnemyView';
+import { PAUSE_KEYS } from '../views/pauseButton';
+import { createSpawnButton } from '../views/spawnButton';
+
+const INITIAL_ENEMIES = 50;
 
 export const breakTheGameScene = (): SceneInstance => {
-  const scene = createScene('breakTheGame');
+  const scene = createScene('breakTheGame', {
+    // Space spawns enemies in this scene, so take it off the pause button
+    pauseButton: { hotkeys: PAUSE_KEYS.filter(key => key !== ' ') },
+  });
 
   const grid = gridView();
 
@@ -39,25 +46,13 @@ export const breakTheGameScene = (): SceneInstance => {
   player.addComponent('collisionbounce', addCollisionBounce(player));
   player.addComponent('collisiondamage', addCollisionDamage(player));
 
-  for (let i = 0; i < 500; i++) {
-    const randomPos = {
-      x: Math.random() * Screen.w,
-      y: Math.random() * Screen.h,
-    };
-    const enemy = createEnemyView({
-      model: {
-        speed: 5,
-        collisionDamage: 10,
-      },
-      geometry: {
-        x: randomPos.x - (defaultEntityProps.geometry?.width ?? 0) / 2,
-        y: randomPos.y - (defaultEntityProps.geometry?.height ?? 0) / 2,
-      },
-    });
-    enemy.addComponent('wallbounce', addWallBounce(enemy));
-    enemy.addComponent('collisionbounce', addCollisionBounce(enemy));
-    enemy.addComponent('collisiondamage', addCollisionDamage(enemy));
-  }
+  spawnBouncingEnemies(INITIAL_ENEMIES);
+
+  // Bottom-right button; Space also triggers it
+  createSpawnButton(spawnBouncingEnemies, {
+    count: 50,
+    initialTotal: INITIAL_ENEMIES,
+  });
 
   return scene;
 };
